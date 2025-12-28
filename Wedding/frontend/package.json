@@ -1,0 +1,65 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.2",
+    "@mui/lab": "^7.0.0-beta.17",
+    "@mui/material": "^7.3.2",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "http-proxy-middleware": "^3.0.5",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.9.1",
+    "react-scripts": "5.0.1",
+    "uuid": "^13.0.0",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "start:original": "react-scripts start",
+    "start:fixed": "node webpack-dev-server-fix.js",
+    "start:direct": "node direct-start.js",
+    "start:simple": "react-scripts --openssl-legacy-provider start",
+    "start:basic": "node simple-start.js",
+    "build": "react-scripts build",
+    "build:production": "GENERATE_SOURCEMAP=false react-scripts build",
+    "build:cpanel": "GENERATE_SOURCEMAP=false REACT_APP_API_URL=https://matthewandsydneyapi.triadtech.co.za REACT_APP_SITE_URL=https://matthewandsydney.triadtech.co.za react-scripts build",
+    "build:analyze": "npm run build && npx serve -s build",
+    "test": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage --watchAll=false",
+    "eject": "react-scripts eject",
+    "patch-webpack": "node patch-webpack-dev-server.js",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "proxy": "http://localhost:3001",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "cross-spawn": "^7.0.6",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.2.1"
+  }
+}

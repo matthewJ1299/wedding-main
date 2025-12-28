@@ -1,0 +1,370 @@
+/* Styles for HomePageHero - Isolated from other pages */
+body.home-hero-page {
+  background: #000;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.hero-page-container {
+  /* position: relative; */
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Background Image */
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.hero-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.hero-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.hero-image.active {
+  opacity: 1;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 2;
+}
+
+/* Navigation */
+.hero-navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero-navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  padding: 0 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-logo {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: #222;
+  text-decoration: none;
+  letter-spacing: 2px;
+  transition: color 0.3s ease;
+}
+
+.hero-logo:hover {
+  color: #555;
+}
+
+.hero-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.hero-details-btn {
+  background: transparent !important;
+  border: 1px solid rgba(0, 0, 0, 0.3) !important;
+  color: #222 !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  padding: 8px 20px !important;
+  border-radius: 20px !important;
+  text-transform: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.hero-details-btn:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.hero-hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.hero-hamburger span {
+  width: 20px;
+  height: 2px;
+  background: #222;
+  transition: all 0.3s ease;
+}
+
+.hero-hamburger:hover span {
+  background: #555;
+}
+
+/* Main Content */
+.hero-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: white;
+  width: 100%;
+  max-width: 600px;
+  padding: 0 20px;
+  margin-top: 40px; /* Account for the hero navbar */
+}
+
+/* Countdown Timer */
+.hero-countdown {
+  margin-bottom: 40px;
+}
+
+.countdown-numbers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.countdown-numbers span {
+  font-family: 'Arial', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.countdown-labels {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.countdown-labels span {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  width: 60px;
+  text-align: center;
+}
+
+/* Names */
+.hero-names {
+  font-family: 'Great Vibes', cursive;
+  font-size: 4rem;
+  font-weight: 400;
+  color: white;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+  margin-bottom: 40px;
+  letter-spacing: 3px;
+}
+
+/* Event Details Pill */
+.hero-pill {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50px;
+  padding: 20px 40px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.pill-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.pill-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.pill-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.2);
+  margin: 0 20px;
+}
+
+.pill-day,
+.pill-time {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.7);
+  margin-bottom: 4px;
+}
+
+.pill-date,
+.pill-location {
+  font-family: 'Arial', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #222;
+}
+
+/* RSVP Button */
+.hero-rsvp-btn {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  color: white !important;
+  font-family: 'Arial', sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  padding: 12px 30px !important;
+  border-radius: 25px !important;
+  text-transform: none !important;
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(10px);
+}
+
+.hero-rsvp-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: white !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-navbar-content {
+    padding: 0 20px;
+  }
+  
+  .hero-logo {
+    font-size: 2rem;
+  }
+  
+  .hero-details-btn {
+    font-size: 0.9rem !important;
+    padding: 6px 16px !important;
+  }
+  
+  .hero-hamburger span {
+    width: 18px;
+  }
+  
+  .countdown-numbers span {
+    font-size: 2rem;
+  }
+  
+  .countdown-labels span {
+    font-size: 0.8rem;
+    width: 50px;
+  }
+  
+  .hero-names {
+    font-size: 3rem;
+    margin-bottom: 30px;
+  }
+  
+  .hero-pill {
+    padding: 15px 25px;
+    margin-bottom: 25px;
+  }
+  
+  .pill-day,
+  .pill-time {
+    font-size: 0.8rem;
+  }
+  
+  .pill-date,
+  .pill-location {
+    font-size: 1rem;
+  }
+  
+  .pill-divider {
+    height: 30px;
+    margin: 0 15px;
+  }
+  
+  .hero-rsvp-btn {
+    font-size: 0.9rem !important;
+    padding: 10px 25px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-content {
+    padding: 0 15px;
+  }
+  
+  .countdown-numbers span {
+    font-size: 1.8rem;
+  }
+  
+  .countdown-labels span {
+    font-size: 0.7rem;
+    width: 45px;
+  }
+  
+  .hero-names {
+    font-size: 2.5rem;
+  }
+  
+  .hero-pill {
+    padding: 12px 20px;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .pill-divider {
+    width: 60px;
+    height: 1px;
+    margin: 0;
+  }
+}

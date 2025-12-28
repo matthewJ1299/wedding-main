@@ -1,0 +1,20 @@
+/* admin.css - Only for AdminPage */
+body.admin-bg {
+  background: linear-gradient(135deg, #fffbe6 80%, #f5f5dc 100%) !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  max-width: unset;
+}
+
+.admin-container {
+  max-width: unset;
+  margin: 0 auto;
+  padding: 32px 0;
+}
+
+.admin-link {
+  color: #2d5c3a !important;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+/* Add more admin-specific styles as needed */

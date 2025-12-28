@@ -1,0 +1,150 @@
+/* Global CSS variables for theme */
+
+:root {
+  --primary-color: #000000; /* Black */
+  --secondary-color: #ffffff; /* White */
+  --accent-color: #043A14; /* Phthalo Green */
+  --global-bg: var(--secondary-color);
+  --global-color: var(--primary-color);
+  --global-font-size: 16px;
+  --page-bg: #ffffff; /* Default page background */
+  --card-bg: #ffffff; /* Default card background */
+  --text-color: #000000; /* Default text color */
+}
+
+/* Force HTML and body to have white background */
+html {
+  background-color: var(--page-bg) !important;
+}
+
+body {
+  background: var(--page-bg) !important;
+  color: var(--text-color) !important;
+  font-size: var(--global-font-size, 16px);
+  transition: background 0.3s, color 0.3s, font-size 0.2s;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root, .App {
+  color: var(--text-color);
+  font-size: var(--global-font-size);
+  background: var(--page-bg);
+}
+
+/* Global page container styles */
+.page-container {
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  background: var(--page-bg);
+  color: var(--text-color);
+  font-family: 'Cormorant Garamond', serif;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Global card styles */
+.global-card {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* Utility classes */
+.accent {
+  color: var(--accent-color);
+}
+
+.primary-bg {
+  background: var(--primary-color);
+  color: var(--secondary-color);
+}
+
+.secondary-bg {
+  background: var(--secondary-color);
+  color: var(--primary-color);
+}
+
+/* Ensure consistent spacing */
+.page-content {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* Responsive design helpers */
+@media (max-width: 768px) {
+  .page-content {
+    padding: 1rem;
+  }
+  
+  /* Improve touch targets on mobile */
+  button, .MuiButton-root, .MuiIconButton-root {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better spacing for mobile */
+  .MuiCard-root {
+    margin: 0.5rem;
+  }
+  
+  /* Improve text readability on mobile */
+  body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-content {
+    padding: 0.75rem;
+  }
+  
+  /* Smaller margins for very small screens */
+  .MuiCard-root {
+    margin: 0.25rem;
+  }
+  
+  /* Adjust font sizes for very small screens */
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.6rem; }
+  h3 { font-size: 1.4rem; }
+  h4 { font-size: 1.2rem; }
+  h5 { font-size: 1.1rem; }
+  h6 { font-size: 1rem; }
+}
+
+@media (max-width: 360px) {
+  .page-content {
+    padding: 0.5rem;
+  }
+  
+  /* Even smaller margins for very small screens */
+  .MuiCard-root {
+    margin: 0.125rem;
+  }
+}
+
+/* Prevent horizontal overflow globally */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Ensure all containers respect viewport width */
+.container, .MuiContainer-root {
+  max-width: 100vw !important;
+  overflow-x: hidden;
+}

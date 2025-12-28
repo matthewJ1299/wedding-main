@@ -1,0 +1,679 @@
+import React, { useEffect, useState } from 'react';
+import '../styles/HomePageScroll.css';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
+import { useInviteeNavigation } from '../contexts/InviteeNavigationContext';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+
+// Import UI components
+import Typography from '../components/ui/Typography';
+import Timeline from '../components/ui/Timeline';
+import CountdownTimer from '../components/ui/CountdownTimer';
+
+// Import image assets
+import heroImage from '../assets/images/234.jpg';
+import img1 from '../assets/images/123.jpg';
+import img2 from '../assets/images/234.jpg';
+import img3 from '../assets/images/456.jpg';
+import img4 from '../assets/images/567.jpg';
+import invitePhoto from '../assets/images/invite-photo.jpg';
+import mSvg from '../assets/images/M.svg';
+
+// Import icons
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import CelebrationIcon from '@mui/icons-material/Celebration';
+import LocalBarIcon from '@mui/icons-material/LocalBar';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import CakeIcon from '@mui/icons-material/Cake';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+
+// Create transparent SVG data URI (removed white background rectangles)
+const transparentSvgDataUri = `data:image/svg+xml;base64,${btoa(`
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500" zoomAndPan="magnify" viewBox="0 0 375 374.999991" height="500" preserveAspectRatio="xMidYMid meet" version="1.0">
+<defs>
+<g/>
+<clipPath id="0c02de585c"><rect x="0" width="212" y="0" height="299"/></clipPath>
+<clipPath id="b6f9950a10"><rect x="0" width="125" y="0" height="303"/></clipPath>
+<clipPath id="21ee815fc3"><path d="M 160.015625 38.519531 L 210.160156 38.519531 L 210.160156 327.964844 L 160.015625 327.964844 Z M 160.015625 38.519531 " clip-rule="nonzero"/></clipPath>
+<clipPath id="ff21ff0c9e"><path d="M 0.015625 0.519531 L 50.160156 0.519531 L 50.160156 289.964844 L 0.015625 289.964844 Z M 0.015625 0.519531 " clip-rule="nonzero"/></clipPath>
+<clipPath id="14b8b99a10"><rect x="0" width="51" y="0" height="290"/></clipPath>
+<clipPath id="abe72546e9"><path d="M 210.160156 68.226562 L 236.523438 68.226562 L 236.523438 86.664062 L 210.160156 86.664062 Z M 210.160156 68.226562 " clip-rule="nonzero"/></clipPath>
+<clipPath id="d3968d5e14"><path d="M 0.160156 0.226562 L 26.523438 0.226562 L 26.523438 18.664062 L 0.160156 18.664062 Z M 0.160156 0.226562 " clip-rule="nonzero"/></clipPath>
+<clipPath id="8fa0f8a783"><rect x="0" width="27" y="0" height="19"/></clipPath>
+</defs>
+<!-- Removed white background rectangles -->
+<g transform="matrix(1, 0, 0, 1, 21, 0)">
+<g clip-path="url(#0c02de585c)">
+<g fill="#000000" fill-opacity="1">
+<g transform="translate(0.33621, 233.002492)">
+<g>
+<path d="M 8.53125 0 L 8.53125 -2.25 L 17.28125 -2.25 C 29.550781 -2.25 35.6875 -7.632812 35.6875 -18.40625 L 35.6875 -142.765625 C 35.6875 -152.941406 29.550781 -158.03125 17.28125 -158.03125 L 8.53125 -158.03125 L 8.53125 -160.265625 L 54.09375 -160.265625 L 111.34375 -25.140625 L 160.9375 -160.265625 L 202.015625 -160.265625 L 202.015625 -158.03125 L 199.109375 -158.03125 C 186.835938 -158.03125 180.703125 -152.640625 180.703125 -141.859375 L 180.703125 -18.40625 C 180.703125 -7.632812 186.835938 -2.25 199.109375 -2.25 L 202.015625 -2.25 L 202.015625 0 L 142.3125 0 L 142.3125 -2.25 L 142.984375 -2.25 C 147.921875 -2.25 151.847656 -3.59375 154.765625 -6.28125 C 157.679688 -8.976562 159.140625 -13.019531 159.140625 -18.40625 L 159.140625 -148.59375 L 104.609375 0 L 99.21875 0 L 37.9375 -145.6875 L 37.9375 -18.40625 C 37.9375 -7.632812 44.070312 -2.25 56.34375 -2.25 L 60.375 -2.25 L 60.375 0 Z M 8.53125 0 "/>
+</g>
+</g>
+</g>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 172, 72)">
+<g clip-path="url(#b6f9950a10)">
+<g fill="#000000" fill-opacity="1">
+<g transform="translate(0.586082, 243.507094)">
+<g>
+<path d="M 58.640625 2.265625 C 43.640625 2.265625 31.929688 -0.722656 23.515625 -6.703125 C 15.109375 -12.691406 10.90625 -20.15625 10.90625 -29.09375 C 10.90625 -39.695312 16.359375 -45 27.265625 -45 C 27.421875 -30.144531 30.1875 -18.929688 35.5625 -11.359375 C 40.945312 -3.785156 49.164062 0 60.21875 0 C 69.914062 0 77.753906 -2.800781 83.734375 -8.40625 C 89.722656 -14.007812 92.71875 -22.421875 92.71875 -33.640625 C 92.71875 -40.453125 91.46875 -45.976562 88.96875 -50.21875 C 86.46875 -54.46875 82.453125 -58.296875 76.921875 -61.703125 C 71.398438 -65.109375 64.164062 -68.859375 55.21875 -72.953125 C 50.53125 -75.222656 45.722656 -77.679688 40.796875 -80.328125 C 35.867188 -82.984375 31.320312 -86.164062 27.15625 -89.875 C 22.988281 -93.59375 19.65625 -98.101562 17.15625 -103.40625 C 14.65625 -108.707031 13.40625 -115.144531 13.40625 -122.71875 C 13.40625 -136.351562 17.757812 -146.734375 26.46875 -153.859375 C 35.1875 -160.984375 46.816406 -164.546875 61.359375 -164.546875 C 70.148438 -164.546875 77.878906 -163.332031 84.546875 -160.90625 C 91.210938 -158.476562 96.398438 -155.296875 100.109375 -151.359375 C 103.816406 -147.421875 105.671875 -143.101562 105.671875 -138.40625 C 105.671875 -134.007812 104.003906 -130.5625 100.671875 -128.0625 C 97.335938 -125.5625 93.019531 -124.3125 87.71875 -124.3125 C 87.71875 -136.882812 85.671875 -146.351562 81.578125 -152.71875 C 77.492188 -159.082031 70.679688 -162.265625 61.140625 -162.265625 C 52.347656 -162.265625 45.335938 -159.613281 40.109375 -154.3125 C 34.878906 -149.007812 32.265625 -141.207031 32.265625 -130.90625 C 32.265625 -123.476562 33.628906 -117.492188 36.359375 -112.953125 C 39.085938 -108.410156 43.175781 -104.507812 48.625 -101.25 C 54.082031 -97.988281 61.054688 -94.390625 69.546875 -90.453125 C 77.117188 -86.960938 84.125 -83.320312 90.5625 -79.53125 C 97 -75.75 102.1875 -70.941406 106.125 -65.109375 C 110.070312 -59.273438 112.046875 -51.738281 112.046875 -42.5 C 112.046875 -28.707031 107.382812 -17.796875 98.0625 -9.765625 C 88.75 -1.742188 75.609375 2.265625 58.640625 2.265625 Z M 58.640625 2.265625 "/>
+</g>
+</g>
+</g>
+</g>
+</g>
+<g clip-path="url(#21ee815fc3)">
+<g transform="matrix(1, 0, 0, 1, 160, 38)">
+<g clip-path="url(#14b8b99a10)">
+<g clip-path="url(#ff21ff0c9e)">
+<path fill="#ffffff" d="M 0.015625 0.519531 L 50.160156 0.519531 L 50.160156 290.039062 L 0.015625 290.039062 Z M 0.015625 0.519531 " fill-opacity="1" fill-rule="nonzero"/>
+</g>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 305.399862)">
+<g>
+<path d="M -13.765625 -14.75 L 0.015625 -16.359375 L 0 -14.8125 L -10.8125 -13.546875 L -0.34375 -8 L -0.34375 -7.9375 L -10.640625 -2.578125 L 0.015625 -1.140625 L 0.015625 -0.78125 L -13.765625 -2.640625 L -13.765625 -2.703125 L -2.296875 -8.640625 L -13.765625 -14.6875 Z M -13.765625 -14.75 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 285.044612)">
+<g>
+<path d="M 0.015625 -11.25 L -5.421875 -8.921875 L -5.421875 -3.65625 L 0.015625 -1.25 L 0.015625 -0.75 L -13.765625 -6.875 L -13.765625 -7.015625 L 0.015625 -12.90625 Z M -5.765625 -3.828125 L -5.765625 -8.765625 L -11.4375 -6.34375 Z M -5.765625 -3.828125 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 271.891003)">
+<g>
+<path d="M -13.5 -10.578125 L -13.140625 -10.578125 L -13.140625 -6.40625 L 0.015625 -6.40625 L 0.015625 -4.875 L -13.140625 -4.875 L -13.140625 -0.703125 L -13.5 -0.703125 Z M -13.5 -10.578125 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 257.467603)">
+<g>
+<path d="M -13.5 -10.578125 L -13.140625 -10.578125 L -13.140625 -6.40625 L 0.015625 -6.40625 L 0.015625 -4.875 L -13.140625 -4.875 L -13.140625 -0.703125 L -13.5 -0.703125 Z M -13.5 -10.578125 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 243.044203)">
+<g>
+<path d="M -13.5 -8.90625 L -13.5 -10.421875 L 0.015625 -10.421875 L 0.015625 -8.90625 L -6.859375 -8.90625 L -6.859375 -2.578125 L 0.015625 -2.578125 L 0.015625 -1.03125 L -13.5 -1.03125 L -13.5 -2.578125 L -7.21875 -2.578125 L -7.21875 -8.90625 Z M -13.5 -8.90625 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 228.362899)">
+<g>
+<path d="M -13.140625 -7.890625 L -13.140625 -2.578125 L -7.21875 -2.578125 L -7.21875 -7.3125 L -6.859375 -7.3125 L -6.859375 -2.578125 L -0.34375 -2.578125 L -0.34375 -7.890625 L 0.015625 -7.890625 L 0.015625 -1.03125 L -13.5 -1.03125 L -13.5 -7.890625 Z M -13.140625 -7.890625 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 216.432594)">
+<g>
+<path d="M -13.5 -18.140625 L -13.5 -18.515625 L 0.28125 -14.296875 L 0.28125 -14.171875 L -10.9375 -9.609375 L 0.28125 -5.046875 L 0.28125 -4.921875 L -13.484375 -0.703125 L -13.484375 -2.328125 L -2.328125 -5.734375 L -11.390625 -9.421875 L -13.359375 -10.21875 L -13.359375 -10.296875 L -2.390625 -14.75 Z M -13.5 -18.140625 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 194.014101)">
+<g/>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 185.501047)">
+<g>
+<path d="M 0.015625 -12.625 L 0.015625 -10.6875 C -0.222656 -10.5 -0.515625 -10.269531 -0.859375 -10 C -1.203125 -9.738281 -1.566406 -9.457031 -1.953125 -9.15625 C -1.296875 -8.601562 -0.738281 -7.960938 -0.28125 -7.234375 C 0.175781 -6.515625 0.40625 -5.707031 0.40625 -4.8125 C 0.40625 -3.925781 0.25 -3.179688 -0.0625 -2.578125 C -0.375 -1.972656 -0.785156 -1.519531 -1.296875 -1.21875 C -1.816406 -0.925781 -2.378906 -0.78125 -2.984375 -0.78125 C -3.742188 -0.78125 -4.410156 -0.972656 -4.984375 -1.359375 C -5.554688 -1.753906 -6.054688 -2.253906 -6.484375 -2.859375 C -6.921875 -3.472656 -7.316406 -4.101562 -7.671875 -4.75 C -7.960938 -4.519531 -8.207031 -4.332031 -8.40625 -4.1875 C -8.851562 -3.84375 -9.304688 -3.585938 -9.765625 -3.421875 C -10.222656 -3.265625 -10.664062 -3.1875 -11.09375 -3.1875 C -11.882812 -3.1875 -12.550781 -3.460938 -13.09375 -4.015625 C -13.632812 -4.578125 -13.90625 -5.394531 -13.90625 -6.46875 C -13.90625 -7.425781 -13.679688 -8.148438 -13.234375 -8.640625 C -12.785156 -9.128906 -12.226562 -9.375 -11.5625 -9.375 C -11.019531 -9.375 -10.570312 -9.253906 -10.21875 -9.015625 C -9.875 -8.785156 -9.539062 -8.460938 -9.21875 -8.046875 C -9.019531 -7.796875 -8.832031 -7.523438 -8.65625 -7.234375 C -8.476562 -6.941406 -8.300781 -6.644531 -8.125 -6.34375 C -7.550781 -6.789062 -6.851562 -7.320312 -6.03125 -7.9375 C -5.21875 -8.5625 -4.394531 -9.195312 -3.5625 -9.84375 C -4.082031 -10.1875 -4.578125 -10.472656 -5.046875 -10.703125 C -5.523438 -10.929688 -5.910156 -11.109375 -6.203125 -11.234375 C -6.492188 -11.367188 -6.640625 -11.4375 -6.640625 -11.4375 L -6.640625 -11.875 C -6.640625 -11.875 -6.472656 -11.804688 -6.140625 -11.671875 C -5.816406 -11.546875 -5.390625 -11.351562 -4.859375 -11.09375 C -4.335938 -10.832031 -3.789062 -10.507812 -3.21875 -10.125 C -2.601562 -10.601562 -2.015625 -11.054688 -1.453125 -11.484375 C -0.898438 -11.921875 -0.410156 -12.300781 0.015625 -12.625 Z M -13.546875 -6.46875 C -13.546875 -5.9375 -13.363281 -5.476562 -13 -5.09375 C -12.644531 -4.707031 -12.164062 -4.515625 -11.5625 -4.515625 C -11.238281 -4.515625 -10.878906 -4.585938 -10.484375 -4.734375 C -10.097656 -4.890625 -9.6875 -5.132812 -9.25 -5.46875 C -9.070312 -5.59375 -8.796875 -5.804688 -8.421875 -6.109375 C -8.671875 -6.535156 -8.921875 -6.921875 -9.171875 -7.265625 C -9.429688 -7.617188 -9.695312 -7.882812 -9.96875 -8.0625 C -10.40625 -8.320312 -10.875 -8.453125 -11.375 -8.453125 C -11.945312 -8.453125 -12.453125 -8.273438 -12.890625 -7.921875 C -13.328125 -7.566406 -13.546875 -7.082031 -13.546875 -6.46875 Z M -0.578125 -6.84375 C -0.753906 -7.226562 -0.988281 -7.59375 -1.28125 -7.9375 C -1.582031 -8.289062 -1.914062 -8.617188 -2.28125 -8.921875 C -2.84375 -8.472656 -3.425781 -8.015625 -4.03125 -7.546875 C -4.632812 -7.085938 -5.222656 -6.632812 -5.796875 -6.1875 C -6.378906 -5.75 -6.90625 -5.347656 -7.375 -4.984375 C -7.269531 -4.796875 -7.148438 -4.585938 -7.015625 -4.359375 C -6.878906 -4.128906 -6.765625 -3.945312 -6.671875 -3.8125 C -5.847656 -2.6875 -4.847656 -2.125 -3.671875 -2.125 C -3.203125 -2.125 -2.71875 -2.21875 -2.21875 -2.40625 C -1.582031 -2.632812 -1.082031 -3.003906 -0.71875 -3.515625 C -0.363281 -4.023438 -0.1875 -4.601562 -0.1875 -5.25 C -0.1875 -5.78125 -0.316406 -6.3125 -0.578125 -6.84375 Z M -0.578125 -6.84375 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 169.035884)">
+<g/>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 160.522831)">
+<g>
+<path d="M -1.015625 -0.53125 C -0.710938 -0.90625 -0.429688 -1.375 -0.171875 -1.9375 C 0.0859375 -2.507812 0.21875 -3.253906 0.21875 -4.171875 C 0.21875 -4.753906 0.101562 -5.296875 -0.125 -5.796875 C -0.351562 -6.304688 -0.703125 -6.710938 -1.171875 -7.015625 C -1.640625 -7.328125 -2.222656 -7.484375 -2.921875 -7.484375 C -3.523438 -7.484375 -4.019531 -7.359375 -4.40625 -7.109375 C -4.789062 -6.867188 -5.113281 -6.546875 -5.375 -6.140625 C -5.632812 -5.734375 -5.859375 -5.285156 -6.046875 -4.796875 C -6.234375 -4.304688 -6.425781 -3.8125 -6.625 -3.3125 C -6.832031 -2.820312 -7.078125 -2.375 -7.359375 -1.96875 C -7.648438 -1.5625 -8.019531 -1.234375 -8.46875 -0.984375 C -8.925781 -0.742188 -9.5 -0.625 -10.1875 -0.625 C -10.863281 -0.625 -11.4375 -0.75 -11.90625 -1 C -12.382812 -1.257812 -12.769531 -1.597656 -13.0625 -2.015625 C -13.351562 -2.429688 -13.566406 -2.875 -13.703125 -3.34375 C -13.835938 -3.820312 -13.90625 -4.273438 -13.90625 -4.703125 C -13.90625 -5.273438 -13.835938 -5.785156 -13.703125 -6.234375 C -13.566406 -6.691406 -13.429688 -7.050781 -13.296875 -7.3125 C -13.160156 -7.582031 -13.09375 -7.71875 -13.09375 -7.71875 L -12.65625 -7.734375 C -12.65625 -7.734375 -12.726562 -7.609375 -12.875 -7.359375 C -13.019531 -7.109375 -13.164062 -6.757812 -13.3125 -6.3125 C -13.46875 -5.863281 -13.546875 -5.328125 -13.546875 -4.703125 C -13.546875 -3.785156 -13.269531 -3.070312 -12.71875 -2.5625 C -12.175781 -2.0625 -11.519531 -1.8125 -10.75 -1.8125 C -10.101562 -1.8125 -9.578125 -1.976562 -9.171875 -2.3125 C -8.773438 -2.644531 -8.441406 -3.070312 -8.171875 -3.59375 C -7.910156 -4.125 -7.660156 -4.679688 -7.421875 -5.265625 C -7.191406 -5.859375 -6.921875 -6.414062 -6.609375 -6.9375 C -6.304688 -7.457031 -5.898438 -7.878906 -5.390625 -8.203125 C -4.890625 -8.535156 -4.25 -8.703125 -3.46875 -8.703125 C -2.65625 -8.703125 -1.945312 -8.488281 -1.34375 -8.0625 C -0.75 -7.632812 -0.289062 -7.070312 0.03125 -6.375 C 0.363281 -5.675781 0.53125 -4.941406 0.53125 -4.171875 C 0.53125 -3.398438 0.441406 -2.742188 0.265625 -2.203125 C 0.0976562 -1.660156 -0.0664062 -1.242188 -0.234375 -0.953125 C -0.410156 -0.671875 -0.5 -0.53125 -0.5 -0.53125 Z M -1.015625 -0.53125 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 148.678906)">
+<g>
+<path d="M -13.5 -10.484375 L -13.5 -10.90625 L -6.296875 -6.59375 L 0.015625 -6.59375 L 0.015625 -5.046875 L -5.875 -5.046875 L -13.5 -0.6875 L -13.5 -2.46875 L -6.640625 -6.390625 Z M -13.5 -10.484375 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 133.933127)">
+<g>
+<path d="M -13.5 -6.625 C -13.5 -7.113281 -13.457031 -7.660156 -13.375 -8.265625 C -13.289062 -8.878906 -13.125 -9.488281 -12.875 -10.09375 C -12.632812 -10.707031 -12.273438 -11.265625 -11.796875 -11.765625 C -11.328125 -12.265625 -10.695312 -12.664062 -9.90625 -12.96875 C -9.125 -13.28125 -8.144531 -13.4375 -6.96875 -13.4375 C -5.75 -13.4375 -4.726562 -13.265625 -3.90625 -12.921875 C -3.082031 -12.578125 -2.414062 -12.125 -1.90625 -11.5625 C -1.394531 -11.007812 -1.003906 -10.410156 -0.734375 -9.765625 C -0.460938 -9.128906 -0.273438 -8.515625 -0.171875 -7.921875 C -0.0664062 -7.328125 -0.0078125 -6.816406 0 -6.390625 C 0.0078125 -5.972656 0.015625 -5.707031 0.015625 -5.59375 L 0.015625 -1.03125 L -13.5 -1.03125 Z M -0.34375 -5.5625 C -0.34375 -6.300781 -0.441406 -7.039062 -0.640625 -7.78125 C -0.847656 -8.53125 -1.191406 -9.210938 -1.671875 -9.828125 C -2.160156 -10.441406 -2.832031 -10.9375 -3.6875 -11.3125 C -4.550781 -11.6875 -5.644531 -11.875 -6.96875 -11.875 C -8.007812 -11.875 -8.894531 -11.742188 -9.625 -11.484375 C -10.363281 -11.222656 -10.960938 -10.875 -11.421875 -10.4375 C -11.878906 -10 -12.226562 -9.515625 -12.46875 -8.984375 C -12.707031 -8.453125 -12.875 -7.910156 -12.96875 -7.359375 C -13.0625 -6.804688 -13.109375 -6.289062 -13.109375 -5.8125 L -13.109375 -2.578125 L -0.34375 -2.578125 Z M -0.34375 -5.5625 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 116.371871)">
+<g>
+<path d="M -13.5 -12.015625 L 0.390625 -12.015625 L 0.390625 -11.953125 L -11.3125 -1.390625 L 0.015625 -1.390625 L 0.015625 -1.03125 L -13.765625 -1.03125 L -13.765625 -1.09375 L -2.0625 -11.65625 L -13.5 -11.65625 Z M -13.5 -12.015625 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 100.100147)">
+<g>
+<path d="M -13.140625 -7.890625 L -13.140625 -2.578125 L -7.21875 -2.578125 L -7.21875 -7.3125 L -6.859375 -7.3125 L -6.859375 -2.578125 L -0.34375 -2.578125 L -0.34375 -7.890625 L 0.015625 -7.890625 L 0.015625 -1.03125 L -13.5 -1.03125 L -13.5 -7.890625 Z M -13.140625 -7.890625 "/>
+</g>
+</g>
+</g>
+<g fill="#1f2122" fill-opacity="1">
+<g transform="translate(191.08426, 88.16982)">
+<g>
+<path d="M -13.5 -10.484375 L -13.5 -10.90625 L -6.296875 -6.59375 L 0.015625 -6.59375 L 0.015625 -5.046875 L -5.875 -5.046875 L -13.5 -0.6875 L -13.5 -2.46875 L -6.640625 -6.390625 Z M -13.5 -10.484375 "/>
+</g>
+</g>
+</g>
+</g>
+<g clip-path="url(#abe72546e9)">
+<g transform="matrix(1, 0, 0, 1, 210, 68)">
+<g clip-path="url(#8fa0f8a783)">
+<g clip-path="url(#d3968d5e14)">
+<path fill="#ffffff" d="M 0.160156 0.226562 L 26.523438 0.226562 L 26.523438 18.664062 L 0.160156 18.664062 Z M 0.160156 0.226562 " fill-opacity="1" fill-rule="nonzero"/>
+</g>
+</g>
+</g>
+</g>
+</svg>
+`)}`;
+
+/**
+ * Scroll-based home page with all content in one continuous scroll
+ */
+export default function HomePageScroll() {
+  const { inviteeId, hasInviteeContext } = useInviteeNavigation();
+  const [mobileMenuAnchor, setMobileMenuAnchor] = useState(null);
+  const mobileMenuOpen = Boolean(mobileMenuAnchor);
+  const [activeSection, setActiveSection] = useState('home');
+
+  useEffect(() => {
+    document.body.classList.add('home-scroll-page');
+    // Hide the main navbar
+    const mainNavbar = document.querySelector('.MuiAppBar-root');
+    if (mainNavbar) {
+      mainNavbar.style.display = 'none';
+    }
+    
+    // Add scroll listener for section tracking
+    const handleScroll = () => {
+      const sections = ['home', 'our-story', 'schedule', 'registry', 'faq', 'accommodation'];
+      const scrollPosition = window.scrollY + 100;
+      
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sections[i]);
+        if (section && section.offsetTop <= scrollPosition) {
+          setActiveSection(sections[i]);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      document.body.classList.remove('home-scroll-page');
+      // Show the main navbar again
+      const mainNavbar = document.querySelector('.MuiAppBar-root');
+      if (mainNavbar) {
+        mainNavbar.style.display = 'block';
+      }
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  // Navigation links
+  const links = [
+    { to: '/our-story', label: 'Our Story' },
+    { to: '/schedule', label: 'Schedule' },
+    { to: '/registry', label: 'Registry' },
+    { to: '/faq', label: 'FAQ' },
+    { to: '/accommodation', label: 'Accommodation' },
+  ];
+
+  const getRSVPUrl = () => {
+    return hasInviteeContext ? `/rsvp/${inviteeId}` : '/rsvp';
+  };
+
+  const handleMobileMenuOpen = (event) => {
+    setMobileMenuAnchor(event.currentTarget);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileMenuAnchor(null);
+  };
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    handleMobileMenuClose();
+  };
+
+  // Timeline event data
+  const timelineEvents = [
+    {
+      title: "The First Meeting",
+      date: "January 15, 2023",
+      description: "We first met at the Coffee Corner downtown. Matt spilled his latte all over Sydney's favorite book. Somehow she still agreed to a second meeting!",
+      image: img1
+    },
+    {
+      title: "First Date",
+      date: "January 28, 2023",
+      description: "Our first official date was at Bella's Italian Restaurant. We talked for hours about our favorite books, movies, and dreams for the future.",
+      image: img2
+    },
+    {
+      title: "Road Trip Adventure",
+      date: "June 10, 2023",
+      description: "We took our first road trip together to the mountains. Got lost twice, ran out of gas once, but made memories that would last a lifetime.",
+      image: img3
+    },
+    {
+      title: "Moving In Together",
+      date: "November 5, 2023",
+      description: "Took the big step of moving in together. Sydney's plant collection and Matt's vintage record player finally found a shared home.",
+      image: img4
+    },
+    {
+      title: "The Proposal",
+      date: "May 21, 2024",
+      description: "Matt proposed during sunset at the same coffee shop where they first met. This time, no beverages were spilled, and Sydney said yes!",
+      image: invitePhoto
+    },
+    {
+      title: "Wedding Planning",
+      date: "Summer 2024 - Present",
+      description: "From venue hunting to cake tasting, we've been enjoying (almost) every minute of planning our special day together.",
+      image: img1
+    }
+  ];
+
+  // Schedule data
+  const scheduleItems = [
+    {
+      time: "3:00 PM",
+      event: "Venue Opens",
+      description: "Doors open for guest arrival. Ushers will be available to guide you to your seats.",
+      icon: <DirectionsCarIcon />
+    },
+    {
+      time: "3:30 PM",
+      event: "Ceremony",
+      description: "Please be seated by 3:25 PM as the ceremony will begin promptly at 3:30 PM.",
+      icon: <FavoriteIcon />
+    },
+    {
+      time: "4:00 PM",
+      event: "Cocktail Hour",
+      description: "Enjoy drinks and hors d'oeuvres while the wedding party takes photos.",
+      icon: <LocalBarIcon />
+    },
+    {
+      time: "4:00 - 5:00 PM",
+      event: "Photo Session",
+      description: "Wedding party and family formal photos. Other guests will be at the cocktail hour.",
+      icon: <CameraAltIcon />
+    },
+    {
+      time: "5:15 PM",
+      event: "Reception Entrance",
+      description: "Please take your seats for the grand entrance of the wedding party and the newlyweds.",
+      icon: <CelebrationIcon />
+    },
+    {
+      time: "5:30 PM",
+      event: "Dinner Service",
+      description: "A three-course meal will be served. Please inform us of any dietary restrictions in your RSVP.",
+      icon: <RestaurantIcon />
+    },
+    {
+      time: "7:00 PM",
+      event: "First Dance & Toasts",
+      description: "The couple's first dance followed by toasts from the best man and maid of honor.",
+      icon: <MusicNoteIcon />
+    },
+    {
+      time: "7:30 PM",
+      event: "Cake Cutting",
+      description: "Join us as we cut our wedding cake, which will be served with coffee and tea.",
+      icon: <CakeIcon />
+    },
+    {
+      time: "8:00 PM - 11:00 PM",
+      event: "Dancing & Celebration",
+      description: "Open dance floor and celebration continues until 11:00 PM.",
+      icon: <MusicNoteIcon />
+    }
+  ];
+
+  return (
+    <Box className="scroll-page-container">
+      {/* Top Navigation */}
+      <Box className="scroll-navbar">
+        <Box className="scroll-nav-content">
+          {/* Logo */}
+          <Box className="scroll-logo">
+            <Box className="logo-circle">
+              <span className="logo-text">M&S</span>
+            </Box>
+            <span className="logo-subtitle scroll-logo-subtitle-desktop">We're getting married!</span>
+          </Box>
+
+          {/* Desktop Navigation Links */}
+          <Box className="scroll-nav-links scroll-nav-links-desktop">
+            <Button 
+              onClick={() => scrollToSection('home')}
+              className={`scroll-nav-link ${activeSection === 'home' ? 'active' : ''}`}
+            >
+              Home
+            </Button>
+            {links.map(link => (
+              <Button 
+                key={link.to}
+                onClick={() => scrollToSection(link.to.replace('/', '').replace('-', ''))}
+                className={`scroll-nav-link ${activeSection === link.to.replace('/', '').replace('-', '') ? 'active' : ''}`}
+              >
+                {link.label}
+              </Button>
+            ))}
+          </Box>
+
+          {/* Desktop RSVP Button */}
+          <Button 
+            component={Link} 
+            to={getRSVPUrl()}
+            className="scroll-rsvp-btn scroll-rsvp-btn-desktop"
+          >
+            RSVP
+          </Button>
+
+          {/* Mobile Menu Button */}
+          <IconButton
+            size="large"
+            edge="end"
+            aria-label="menu"
+            aria-controls={mobileMenuOpen ? 'mobile-menu' : undefined}
+            aria-haspopup="true"
+            onClick={handleMobileMenuOpen}
+            className="scroll-mobile-menu-btn"
+            sx={{ color: '#222' }}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Box>
+      </Box>
+
+      {/* Mobile Menu */}
+      <Menu
+        id="mobile-menu"
+        anchorEl={mobileMenuAnchor}
+        open={mobileMenuOpen}
+        onClose={handleMobileMenuClose}
+        MenuListProps={{
+          'aria-labelledby': 'mobile-menu-button',
+        }}
+        sx={{
+          '& .MuiPaper-root': {
+            backgroundColor: 'rgba(255,255,255,0.95)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: 2,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+          }
+        }}
+      >
+        <MenuItem onClick={() => scrollToSection('home')}>
+          Home
+        </MenuItem>
+        {links.map(link => (
+          <MenuItem 
+            key={link.to}
+            onClick={() => scrollToSection(link.to.replace('/', '').replace('-', ''))}
+          >
+            {link.label}
+          </MenuItem>
+        ))}
+        <MenuItem component={Link} to={getRSVPUrl()} onClick={handleMobileMenuClose}>
+          RSVP
+        </MenuItem>
+      </Menu>
+
+      {/* Home Section */}
+      <Box id="home" className="scroll-section home-section">
+        <Box className="scroll-background">
+          <img 
+            src={heroImage} 
+            alt="Matt & Sydney" 
+            className="scroll-bg-image"
+          />
+        </Box>
+
+        <Box className="scroll-content">
+          <Box className="scroll-logo-container">
+            <img 
+              src={mSvg} 
+              alt="M&S Logo" 
+              className="scroll-main-logo"
+            />
+          </Box>
+          
+          <Typography className="scroll-names">
+            Matt & Sydney
+          </Typography>
+          
+          <Typography className="scroll-details">
+            October 15, 2023
+          </Typography>
+          
+          <Box className="scroll-countdown-container">
+            <CountdownTimer 
+              variant="default" 
+              size="large" 
+              color="white"
+              style={{ marginBottom: '30px' }}
+            />
+          </Box>
+          
+          <Typography className="scroll-subtitle">
+            Join us as we celebrate our love story
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Our Story Section */}
+      <Box id="ourstory" className="scroll-section story-section">
+        <Box className="section-header">
+          <Typography variant="h2" className="section-title">
+            Our Story
+          </Typography>
+          <Typography variant="body1" className="section-subtitle">
+            Every love story is special, but ours is our favorite.
+          </Typography>
+        </Box>
+        
+        <Box className="timeline-container">
+          <Box className="scroll-logo-container">
+            <img 
+              src={transparentSvgDataUri} 
+              alt="M&S Logo" 
+              className="scroll-main-logo"
+            />
+          </Box>
+          <Timeline events={timelineEvents} />
+        </Box>
+      </Box>
+
+      {/* Schedule Section */}
+      <Box id="schedule" className="scroll-section schedule-section">
+        <Box className="section-header">
+          <Typography variant="h2" className="section-title">
+            Wedding Day Schedule
+          </Typography>
+          <Typography variant="body1" className="section-subtitle">
+            Saturday, October 15, 2023
+          </Typography>
+        </Box>
+        
+        <Box className="schedule-container">
+          {scheduleItems.map((item, index) => (
+            <Box key={index} className="schedule-item">
+              <Box className="schedule-time">{item.time}</Box>
+              <Box className="schedule-icon">{item.icon}</Box>
+              <Box className="schedule-content">
+                <Typography variant="h6" className="schedule-event">
+                  {item.event}
+                </Typography>
+                <Typography variant="body2" className="schedule-description">
+                  {item.description}
+                </Typography>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+
+      {/* Registry Section */}
+      <Box id="registry" className="scroll-section registry-section">
+        <Box className="section-header">
+          <Typography variant="h2" className="section-title">
+            Registry
+          </Typography>
+          <Typography variant="body1" className="section-subtitle">
+            Your presence is the greatest gift, but if you'd like to help us start our new life together...
+          </Typography>
+        </Box>
+        
+        <Box className="registry-container">
+          <Box className="registry-item">
+            <Typography variant="h6">Amazon Registry</Typography>
+            <Typography variant="body2">Find our curated list of home essentials</Typography>
+            <Button variant="contained" className="registry-btn">
+              View Registry
+            </Button>
+          </Box>
+          
+          <Box className="registry-item">
+            <Typography variant="h6">Honeymoon Fund</Typography>
+            <Typography variant="body2">Help us create memories on our dream honeymoon</Typography>
+            <Button variant="contained" className="registry-btn">
+              Contribute
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* FAQ Section */}
+      <Box id="faq" className="scroll-section faq-section">
+        <Box className="section-header">
+          <Typography variant="h2" className="section-title">
+            Frequently Asked Questions
+          </Typography>
+        </Box>
+        
+        <Box className="faq-container">
+          <Box className="faq-item">
+            <Typography variant="h6" className="faq-question">
+              What time should I arrive?
+            </Typography>
+            <Typography variant="body2" className="faq-answer">
+              Please arrive by 3:15 PM to ensure you're seated before the ceremony begins at 3:30 PM.
+            </Typography>
+          </Box>
+          
+          <Box className="faq-item">
+            <Typography variant="h6" className="faq-question">
+              What should I wear?
+            </Typography>
+            <Typography variant="body2" className="faq-answer">
+              Cocktail attire is requested. Please avoid wearing white or ivory.
+            </Typography>
+          </Box>
+          
+          <Box className="faq-item">
+            <Typography variant="h6" className="faq-question">
+              Can I bring a plus one?
+            </Typography>
+            <Typography variant="body2" className="faq-answer">
+              Plus ones are by invitation only. Please check your invitation for details.
+            </Typography>
+          </Box>
+          
+          <Box className="faq-item">
+            <Typography variant="h6" className="faq-question">
+              Is there parking available?
+            </Typography>
+            <Typography variant="body2" className="faq-answer">
+              Yes, complimentary valet parking is available at the venue.
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Accommodation Section */}
+      <Box id="accommodation" className="scroll-section accommodation-section">
+        <Box className="section-header">
+          <Typography variant="h2" className="section-title">
+            Accommodations
+          </Typography>
+          <Typography variant="body1" className="section-subtitle">
+            Recommended hotels near the venue
+          </Typography>
+        </Box>
+        
+        <Box className="accommodation-container">
+          <Box className="accommodation-item">
+            <Typography variant="h6">The Grand Hotel</Typography>
+            <Typography variant="body2">5 minutes from venue</Typography>
+            <Typography variant="body2">Special wedding rate: $150/night</Typography>
+            <Button variant="outlined" className="accommodation-btn">
+              Book Now
+            </Button>
+          </Box>
+          
+          <Box className="accommodation-item">
+            <Typography variant="h6">Downtown Inn</Typography>
+            <Typography variant="body2">10 minutes from venue</Typography>
+            <Typography variant="body2">Special wedding rate: $120/night</Typography>
+            <Button variant="outlined" className="accommodation-btn">
+              Book Now
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Footer */}
+      <Box className="scroll-footer">
+        <Typography variant="h5" className="footer-text">
+          "And so the adventure begins..."
+        </Typography>
+        <Typography variant="body2" className="footer-subtitle">
+          We can't wait to celebrate with you!
+        </Typography>
+      </Box>
+    </Box>
+  );
+}

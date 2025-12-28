@@ -1,0 +1,37 @@
+# Public directory .htaccess for static asset serving
+
+# Enable mod_rewrite
+RewriteEngine On
+
+# Gzip compression for static assets
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# Browser caching for static assets
+<IfModule mod_expires.c>
+    ExpiresActive on
+    
+    # Cache static assets for 1 year
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
+    ExpiresByType image/png "access python 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+</IfModule>
+
+# Security headers for static assets
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set Cache-Control "public, max-age=31536000"
+</IfModule>
+

@@ -1,0 +1,514 @@
+/* Styles for HomePageModern - Modern minimalist design */
+
+.home-page-modern {
+  width: 100%;
+  min-height: 100vh;
+  background: #fff;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Header Navigation */
+.modern-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.modern-header-logo {
+  justify-content: center;
+}
+
+.modern-header-link {
+  text-align: center;
+}
+
+.modern-nav-left,
+.modern-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex: 1;
+}
+
+.modern-nav-right {
+  justify-content: flex-end;
+}
+
+.modern-nav-link {
+  text-decoration: none;
+  color: #222;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.modern-nav-link:hover {
+  color: #666;
+}
+
+.modern-couple-name {
+  text-decoration: none;
+  color: #222;
+  font-family: 'Cormorant Garamond', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.modern-couple-name:hover {
+  color: #666;
+}
+
+.modern-rsvp-button {
+  border: 1px solid #222 !important;
+  color: #222 !important;
+  font-family: 'Cormorant Garamond', sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  padding: 8px 24px !important;
+  border-radius: 0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  transition: all 0.3s ease !important;
+  background: transparent !important;
+}
+
+.modern-rsvp-button:hover {
+  background: #222 !important;
+  color: #fff !important;
+}
+
+/* Hero Section */
+.modern-hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.modern-wedding-date {
+  font-family: 'Cormorant Garamond', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #222;
+  letter-spacing: 2px;
+  margin-bottom: 40px;
+}
+
+.modern-images-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 40px 0;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.modern-image {
+  width: 100%;
+  max-width: 300px;
+  height: 400px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.modern-image-left,
+.modern-image-right {
+  flex: 1;
+}
+
+.modern-image-center {
+  height: 500px;
+  max-width: 400px;
+}
+
+.modern-tagline {
+  font-family: 'Cormorant Garamond', sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  color: #666;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  max-width: 800px;
+  margin-top: 40px;
+  line-height: 1.6;
+}
+
+/* Schedule Section */
+.modern-schedule-section {
+  padding: 80px 40px;
+  background: #f9f9f9;
+  text-align: center;
+}
+
+.modern-section-title {
+  font-family: 'Cormorant Garamond', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: #222;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 60px;
+}
+
+.modern-schedule-items {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.modern-schedule-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.modern-schedule-time {
+  font-family: 'Cormorant Garamond', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #222;
+  letter-spacing: 1px;
+}
+
+.modern-schedule-event {
+  font-family: 'Cormorant Garamond', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #666;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Location Section */
+.modern-location-section {
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.modern-location-title {
+  margin-bottom: 60px;
+}
+
+.modern-location-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  flex-wrap: wrap;
+}
+
+.modern-location-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.modern-location-left,
+.modern-location-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modern-venue-name {
+  font-family: 'Cormorant Garamond', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #222;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.modern-venue-image {
+  width: 100%;
+  max-width: 400px;
+  height: 300px;
+  object-fit: cover;
+  object-position: center;
+  flex: 1;
+}
+
+.modern-venue-location {
+  font-family: 'Cormorant Garamond', sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  color: #666;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.modern-travel-button {
+  background: #222 !important;
+  color: #fff !important;
+  font-family: 'Cormorant Garamond', sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  padding: 12px 32px !important;
+  border-radius: 0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  transition: all 0.3s ease !important;
+  border: 1px solid #222 !important;
+}
+
+.modern-travel-button:hover {
+  background: #444 !important;
+  border-color: #444 !important;
+}
+
+/* Countdown Section */
+.modern-countdown-section {
+  padding: 80px 40px;
+  background: #f9f9f9;
+  text-align: center;
+}
+
+.modern-countdown-title {
+  margin-bottom: 60px;
+}
+
+.modern-countdown-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.modern-countdown-number {
+  font-family: 'Arial', sans-serif;
+  font-size: 4rem;
+  font-weight: 300;
+  color: #222;
+  letter-spacing: 2px;
+  min-width: 100px;
+  text-align: center;
+}
+
+.modern-countdown-labels {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.modern-countdown-label {
+  font-family: 'Arial', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #666;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Bottom Section (Registry and Dress Code) */
+.modern-bottom-section {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 0;
+  padding: 80px 0;
+  max-width: 100%;
+}
+
+.modern-registry-section,
+.modern-dresscode-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.modern-registry-section {
+  background: #f9f9f9;
+}
+
+.modern-dresscode-section {
+  background: #fff;
+}
+
+.modern-bottom-title {
+  margin-bottom: 30px;
+}
+
+.modern-bottom-image {
+  width: 100%;
+  max-width: 400px;
+  height: 300px;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .modern-images-row {
+    flex-wrap: wrap;
+  }
+
+  .modern-image {
+    max-width: 250px;
+    height: 350px;
+  }
+
+  .modern-location-content {
+    flex-direction: column;
+  }
+
+  .modern-venue-image {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .modern-header {
+    padding: 15px 20px;
+    flex-wrap: wrap;
+  }
+
+  .modern-nav-left,
+  .modern-nav-right {
+    gap: 15px;
+  }
+
+  .modern-nav-link {
+    font-size: 0.8rem;
+  }
+
+  .modern-couple-name {
+    font-size: 1rem;
+    order: -1;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .modern-hero-section {
+    padding: 40px 20px;
+  }
+
+  .modern-wedding-date {
+    font-size: 4rem !important;
+    font-weight: bold !important;
+  }
+
+  .modern-images-row {
+    gap: 15px;
+  }
+
+  .modern-image {
+    max-width: 150px;
+    height: 250px;
+  }
+
+  .modern-tagline {
+    font-size: 0.9rem;
+  }
+
+  .modern-schedule-section,
+  .modern-location-section,
+  .modern-countdown-section {
+    padding: 60px 20px;
+  }
+
+  .modern-schedule-items {
+    gap: 40px;
+  }
+
+  .modern-countdown-number {
+    font-size: 3rem;
+    min-width: 80px;
+  }
+
+  .modern-countdown-label {
+    min-width: 80px;
+    font-size: 0.8rem;
+  }
+
+  .modern-bottom-section {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-header {
+    padding: 10px 15px;
+  }
+
+  .modern-nav-left,
+  .modern-nav-right {
+    gap: 10px;
+  }
+
+  .modern-nav-link {
+    font-size: 0.7rem;
+  }
+
+  .modern-couple-name {
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+  }
+
+  .modern-rsvp-button {
+    padding: 6px 16px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .modern-images-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modern-image {
+    max-width: 100%;
+    height: 200px;
+  }
+
+  .modern-schedule-items {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .modern-countdown-display,
+  .modern-countdown-labels {
+    gap: 15px;
+  }
+
+  .modern-countdown-number {
+    font-size: 2.5rem;
+    min-width: 60px;
+  }
+
+  .modern-countdown-label {
+    min-width: 60px;
+    font-size: 0.7rem;
+  }
+}
