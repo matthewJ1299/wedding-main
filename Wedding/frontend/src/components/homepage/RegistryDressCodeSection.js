@@ -6,27 +6,27 @@ import img2 from '../../assets/images/234.jpg';
 
 export default function RegistryDressCodeSection() {
   return (
-    <Box className="modern-bottom-section">
-      <Box className="modern-registry-section">
-        <Typography className="modern-section-title modern-bottom-title">
+    <Box className="bottom-section">
+      <Box className="registry-section">
+        <Typography className="section-title bottom-title">
           REGISTRY
         </Typography>
         <Box
           component="img"
           src={img1}
           alt="Registry"
-          className="modern-bottom-image"
+          className="bottom-image"
         />
       </Box>
-      <Box className="modern-dresscode-section">
-        <Typography className="modern-section-title modern-bottom-title">
+      <Box className="dresscode-section">
+        <Typography className="section-title bottom-title">
           DRESS CODE
         </Typography>
         <Box
           component="img"
           src={img2}
           alt="Dress Code"
-          className="modern-bottom-image"
+          className="bottom-image"
         />
       </Box>
     </Box>

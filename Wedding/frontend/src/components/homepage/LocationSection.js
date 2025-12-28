@@ -16,13 +16,13 @@ export default function LocationSection() {
   };
 
   return (
-    <Box className="modern-location-section">
-      <Typography className="modern-section-title modern-location-title">
+    <Box className="location-section">
+      <Typography className="section-title location-title">
         LOCATION
       </Typography>
-      <Box className="modern-location-content">
-        <Box className="modern-location-info modern-location-left">
-          <Typography className="modern-venue-name">
+      <Box className="location-content">
+        <Box className="location-info location-left">
+          <Typography className="venue-name">
             {WEDDING_VENUE.name.toUpperCase()}
           </Typography>
         </Box>
@@ -30,10 +30,10 @@ export default function LocationSection() {
           component="img"
           src={img4}
           alt="Venue"
-          className="modern-venue-image"
+          className="venue-image"
         />
-        <Box className="modern-location-info modern-location-right">
-          <Typography className="modern-venue-location">
+        <Box className="location-info location-right">
+          <Typography className="venue-location">
             {WEDDING_VENUE.location.toUpperCase()}
           </Typography>
         </Box>
@@ -41,7 +41,7 @@ export default function LocationSection() {
       <Button
         component={Link}
         to={getUrlWithContext("/accommodation")}
-        className="modern-travel-button"
+        className="travel-button"
         variant="contained"
       >
         TRAVEL & STAY

@@ -94,6 +94,7 @@ export default function OurStoryPage() {
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',
+          filter: 'grayscale(100%)',
         }}
       >
         <FadeInSection>

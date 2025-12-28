@@ -5,8 +5,6 @@ import {
   HeroSection,
   ScheduleSection,
   LocationSection,
-  CountdownSection,
-  RegistryDressCodeSection,
 } from '../components/homepage';
 import '../styles/HomePageModern.css';
 
@@ -35,8 +33,7 @@ export default function HomePage() {
       <HeroSection />
       <ScheduleSection />
       <LocationSection />
-      <CountdownSection />
-      <RegistryDressCodeSection />
+      {/* <RegistryDressCodeSection /> */}
     </Box>
   );
 }

@@ -8,29 +8,26 @@ export default function CountdownSection() {
   const { timeLeft } = useCountdown(WEDDING_DATE);
 
   return (
-    <Box className="modern-countdown-section">
-      <Typography className="modern-section-title modern-countdown-title">
-        LET THE COUNTDOWN BEGIN
-      </Typography>
-      <Box className="modern-countdown-display">
-        <Box className="modern-countdown-number">
+    <Box className="countdown-section">
+      <Box className="countdown-display">
+        <Box className="countdown-number">
           {timeLeft.days.toString().padStart(3, '0')}
         </Box>
-        <Box className="modern-countdown-number">
+        <Box className="countdown-number">
           {timeLeft.hours.toString().padStart(2, '0')}
         </Box>
-        <Box className="modern-countdown-number">
+        <Box className="countdown-number">
           {timeLeft.minutes.toString().padStart(2, '0')}
         </Box>
-        <Box className="modern-countdown-number">
+        <Box className="countdown-number">
           {timeLeft.seconds.toString().padStart(2, '0')}
         </Box>
       </Box>
-      <Box className="modern-countdown-labels">
-        <Typography className="modern-countdown-label">DAYS</Typography>
-        <Typography className="modern-countdown-label">HOURS</Typography>
-        <Typography className="modern-countdown-label">MINUTES</Typography>
-        <Typography className="modern-countdown-label">SECONDS</Typography>
+      <Box className="countdown-labels">
+        <Typography className="countdown-label">DAYS</Typography>
+        <Typography className="countdown-label">HOURS</Typography>
+        <Typography className="countdown-label">MINUTES</Typography>
+        <Typography className="countdown-label">SECONDS</Typography>
       </Box>
     </Box>
   );

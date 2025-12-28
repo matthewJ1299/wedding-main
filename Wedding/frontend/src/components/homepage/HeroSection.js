@@ -2,6 +2,7 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { WEDDING_DATE } from '../../utils/constants';
+import CountdownSection from './CountdownSection';
 
 // Import image assets
 import img1 from '../../assets/images/123.jpg';
@@ -19,33 +20,39 @@ export default function HeroSection() {
   };
 
   return (
-    <Box className="modern-hero-section">
-      <Typography className="modern-wedding-date">
+    <Box className="hero-section">
+      {/* <Typography className="wedding-date">
         {formatWeddingDate()}
-      </Typography>
+      </Typography> */}
+<Box className="countdown-overlay">
+          <CountdownSection />
+        </Box>
+      <Box className="images-container">
+        <Box className="images-row">
+          <Box
+            component="img"
+            src={img1}
+            alt="Wedding"
+            className="image image-left"
+          />
+          <Box
+            component="img"
+            src={img2}
+            alt="Wedding"
+            className="image image-center"
+          />
+          <Box
+            component="img"
+            src={img3}
+            alt="Wedding"
+            className="image image-right"
+          />
+        </Box>
 
-      <Box className="modern-images-row">
-        <Box
-          component="img"
-          src={img1}
-          alt="Wedding"
-          className="modern-image modern-image-left"
-        />
-        <Box
-          component="img"
-          src={img2}
-          alt="Wedding"
-          className="modern-image modern-image-center"
-        />
-        <Box
-          component="img"
-          src={img3}
-          alt="Wedding"
-          className="modern-image modern-image-right"
-        />
+        
       </Box>
 
-      <Typography className="modern-tagline">
+      <Typography className="tagline">
         JOIN US AS WE EMBARK ON A JOURNEY OF LOVE, JOY, AND ETERNAL HAPPINESS
       </Typography>
     </Box>

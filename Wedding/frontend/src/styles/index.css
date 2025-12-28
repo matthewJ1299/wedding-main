@@ -12,6 +12,14 @@ body, * {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Apply grayscale filter to all images */
+img,
+.MuiCardMedia-img,
+.MuiCardMedia-root img {
+  filter: grayscale(100%) !important;
+  transition: filter 0.3s ease;
+}
+
 .script-heading {
   font-family: 'Great Vibes', cursive;
   font-weight: 400;

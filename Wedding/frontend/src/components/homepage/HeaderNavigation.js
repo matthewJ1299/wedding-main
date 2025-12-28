@@ -20,9 +20,9 @@ export default function HeaderNavigation() {
 
   return (
     <Box>
-      <Box className="modern-header modern-header-logo">
+      <Box className="header header-logo">
         <Link to={getUrlWithContext("/")}
-          className="modern-header-link">
+          className="header-link">
           <Box
             component="img"
             src={logoImage}
@@ -31,15 +31,13 @@ export default function HeaderNavigation() {
           />
         </Link>
       </Box>
-      <Box className="modern-header">
-        <Box className="modern-nav-left">
-          <Link to={getUrlWithContext("/our-story")} className="modern-nav-link">OUR STORY</Link>
-          <Link to={getUrlWithContext("/accommodation")} className="modern-nav-link">TRAVEL & STAY</Link>
-          <Link to={getUrlWithContext("/registry")} className="modern-nav-link">REGISTRY</Link>
-        </Box>
-        <Box className="modern-nav-right">
-          <Link to={getUrlWithContext("/faq")} className="modern-nav-link">FAQS</Link>
-        </Box>
+      <Box className="header">
+        {/* <Box className="nav-left"> */}
+          <Link to={getUrlWithContext("/our-story")} className="nav-link">OUR STORY</Link>
+          <Link to={getUrlWithContext("/accommodation")} className="nav-link">TRAVEL & STAY</Link>
+          <Link to={getUrlWithContext("/registry")} className="nav-link">REGISTRY</Link>
+          <Link to={getUrlWithContext("/faq")} className="nav-link">FAQS</Link>
+        {/* </Box> */}
       </Box>
     </Box>
 

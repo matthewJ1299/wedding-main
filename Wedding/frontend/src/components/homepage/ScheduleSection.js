@@ -11,15 +11,15 @@ const SCHEDULE_ITEMS = [
 
 export default function ScheduleSection() {
   return (
-    <Box className="modern-schedule-section">
-      <Typography className="modern-section-title modern-schedule-title">
+    <Box className="schedule-section">
+      <Typography className="section-title schedule-title">
         HERE'S A SNEAK PEEK OF OUR SPECIAL DAY'S SCHEDULE
       </Typography>
-      <Box className="modern-schedule-items">
+      <Box className="schedule-items">
         {SCHEDULE_ITEMS.map((item, index) => (
-          <Box key={index} className="modern-schedule-item">
-            <Typography className="modern-schedule-time">{item.time}</Typography>
-            <Typography className="modern-schedule-event">{item.event}</Typography>
+          <Box key={index} className="schedule-item">
+            <Typography className="schedule-time">{item.time}</Typography>
+            <Typography className="schedule-event">{item.event}</Typography>
           </Box>
         ))}
       </Box>
