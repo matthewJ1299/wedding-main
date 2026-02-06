@@ -1,12 +1,93 @@
 /* Styles for HomePageModern - Modern minimalist design */
 
+/* Typography scale - Cormorant Garamond throughout for consistency */
+:root {
+  --font-heading: 'Cormorant Garamond', serif;
+  --font-body: 'Cormorant Garamond', serif;
+  --color-primary: #222;
+  --color-secondary: #666;
+  --mobile-section-padding: 40px;
+}
+
+/* Section title (H1) - main section headings - override MUI Typography defaults */
+.section-title,
+.MuiTypography-root.section-title,
+h1.section-title {
+  font-family: var(--font-heading) !important;
+  font-size: 2.4rem !important;
+  font-weight: 500 !important;
+  color: var(--color-primary) !important;
+  letter-spacing: 3px !important;
+  text-transform: uppercase !important;
+  margin-bottom: 50px !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5) !important;
+}
+
+.registry-with-bg .section-title {
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7) !important;
+}
+
+/* Subsection title (H2) - venue names, menu categories, etc. */
+.subsection-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--color-primary);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Body text - main content */
+.body-text {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--color-secondary);
+  letter-spacing: 1px;
+  line-height: 1.6;
+}
+
+.body-text-primary {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--color-primary);
+  letter-spacing: 1px;
+  line-height: 1.6;
+}
+
+/* Subtext - secondary info, captions */
+.subtext {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: var(--color-secondary);
+  letter-spacing: 1px;
+}
+
 .home-page-modern {
   width: 100%;
   min-height: 100vh;
   background: #fff;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Fade-in animation for sections */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-section.fade-in-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Header Navigation */
@@ -24,12 +105,33 @@
   gap: 1rem;
 }
 
-.header-logo {
-  justify-content: center;
+.header-nav-bar {
+  flex-wrap: wrap;
+  gap: 30px;
 }
 
-.header-link {
-  text-align: center;
+.header-hamburger {
+  margin-right: -12px;
+}
+
+.header-drawer .nav-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  min-height: 44px;
+}
+
+.header-banner-wrapper {
+  min-height: 90vh;
+}
+
+.header-banner {
+  width: 100%;
+  min-height: 90vh;
+}
+
+.hero-couple-name {
+  font-family: 'La Bohemienne Deluxe', 'Great Vibes', cursive !important;
 }
 
 .nav-left,
@@ -56,7 +158,49 @@
 }
 
 .nav-link:hover {
-  color: #666;
+  color: #2d5c3a;
+}
+
+.nav-link-rsvp,
+.footer-link-rsvp {
+  color: #2d5c3a;
+  font-weight: 500;
+}
+
+.nav-link-rsvp:hover,
+.footer-link-rsvp:hover {
+  color: #1e4028;
+}
+
+.nav-link {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* Footer Navigation */
+.footer-navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  gap: 1rem;
+  background: #f9f9f9;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.footer-link {
+  text-decoration: none;
+  color: #222;
+  font-family: 'Arial', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #2d5c3a;
 }
 
 .couple-name {
@@ -98,17 +242,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 40px;
+  padding: 50px 40px;
   text-align: center;
 }
 
-.wedding-date {
-  font-family: 'Cormorant Garamond', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 300;
-  color: #222;
-  letter-spacing: 2px;
-  margin-bottom: 40px;
+.wedding-date,
+.MuiTypography-root.wedding-date {
+  font-family: var(--font-heading) !important;
+  font-size: 2.5rem !important;
+  font-weight: 200 !important;
+  color: var(--color-primary) !important;
+  letter-spacing: 2px !important;
+  margin-bottom: 4px !important;
 }
 
 .images-container {
@@ -117,7 +262,7 @@
   grid-template-rows: 1fr;
   width: 100%;
   max-width: 1200px;
-  margin: 40px 0;
+  margin: 30px 0;
   justify-items: center;
   align-items: start;
 }
@@ -132,97 +277,187 @@
   grid-row: 1;
 }
 
+/* Hero images below countdown - full color (override global grayscale) */
+.hero-section .images-container .image {
+  filter: none !important;
+}
+
+/* 4K source - landscape (left/right), portrait (center), focal point via object-position */
 .image {
-  width: 100%;
-  max-width: 300px;
-  height: 400px;
   object-fit: cover;
-  object-position: center;
-  filter: grayscale(100%);
   transition: filter 0.3s ease;
 }
 
+/* Left and right: landscape (wider than tall) */
 .image-left,
 .image-right {
   flex: 1;
+  width: 100%;
+  max-width: 500px;
+  height: 350px;
 }
 
+/* Center: portrait (taller than wide) */
 .image-center {
-  height: 500px;
+  width: 100%;
   max-width: 400px;
+  height: 650px;
 }
 
 .tagline {
-  font-family: 'Cormorant Garamond', sans-serif;
+  font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 300;
-  color: #666;
+  color: var(--color-secondary);
   letter-spacing: 2px;
   text-transform: uppercase;
-  max-width: 800px;
-  margin-top: 40px;
+  max-width: 400px;
+  margin-top: 30px;
   line-height: 1.6;
 }
 
 /* Schedule Section */
 .schedule-section {
-  padding: 80px 40px;
-  background: #f9f9f9;
+  padding: 60px 40px;
+  background: #fff;
   text-align: center;
 }
 
-.section-title {
-  font-family: 'Cormorant Garamond', sans-serif;
-  font-size: 1.2rem;
+.schedule-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
   font-weight: 300;
-  color: #222;
-  letter-spacing: 3px;
+  color: var(--color-secondary);
+  letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 60px;
+  padding-top: 30px;
+}
+
+.schedule-content {
+  display: flex;
+  flex-wrap: nowrap;
+  min-height: 400px;
+}
+
+.schedule-image-wrapper {
+  flex: 0 0 50%;
+  overflow: hidden;
+}
+
+.schedule-image {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  object-fit: cover;
+  object-position: center center;
 }
 
 .schedule-items {
+  flex: 0 0 50%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 60px;
-  flex-wrap: wrap;
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: 24px;
+  padding: 30px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .schedule-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+  width: 100%;
+  text-align: center;
 }
 
 .schedule-time {
-  font-family: 'Cormorant Garamond', sans-serif;
-  font-size: 1.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
   font-weight: 300;
-  color: #222;
+  color: var(--color-primary);
   letter-spacing: 1px;
+  text-align: center;
 }
 
 .schedule-event {
-  font-family: 'Cormorant Garamond', sans-serif;
-  font-size: 0.9rem;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
   font-weight: 400;
-  color: #666;
+  color: var(--color-secondary);
   letter-spacing: 2px;
   text-transform: uppercase;
+  text-align: center;
+}
+
+.schedule-title {
+  margin-bottom: 50px;
 }
 
 /* Location Section */
 .location-section {
-  padding: 80px 40px;
+  padding: 60px 40px 80px;
   text-align: center;
+  background: #f9f9f9;
+}
+
+/* Menu Section */
+.menu-page-section {
+  background: #f9f9f9;
+}
+
+/* FAQ Section */
+.faq-section {
+  background: #f9f9f9;
+}
+
+/* Travel & Stay Section */
+.travel-stay-section {
+  padding: 60px 40px;
+  text-align: center;
+  background: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.travel-accommodations {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+.accommodation-card {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+}
+
+.accommodation-image-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.accommodation-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .location-title {
-  margin-bottom: 60px;
+  margin-bottom: 50px;
 }
 
 .location-content {
@@ -233,6 +468,45 @@
   max-width: 1200px;
   margin: 0 auto 40px;
   flex-wrap: wrap;
+}
+
+/* Location section: 50/50 split, map right, text left */
+.location-split {
+  max-width: none;
+  flex-wrap: nowrap;
+  min-height: 400px;
+  margin-bottom: 30px;
+}
+
+.location-split .location-info.location-left {
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 30px;
+}
+
+.location-split .location-directions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.location-split .location-map-wrapper {
+  flex: 0 0 50%;
+  overflow: hidden;
+}
+
+.location-split .location-map-image {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  object-fit: cover;
+  object-position: center center;
 }
 
 .location-info {
@@ -248,10 +522,10 @@
 }
 
 .venue-name {
-  font-family: 'Cormorant Garamond', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 300;
-  color: #222;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--color-primary);
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -263,23 +537,23 @@
   object-fit: cover;
   object-position: center;
   flex: 1;
-  filter: grayscale(100%);
+  /* filter: grayscale(100%); */
   transition: filter 0.3s ease;
 }
 
 .venue-location {
-  font-family: 'Cormorant Garamond', sans-serif;
-  font-size: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
   font-weight: 300;
-  color: #666;
+  color: var(--color-secondary);
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
 .travel-button {
-  background: #222 !important;
+  background: var(--color-primary) !important;
   color: #fff !important;
-  font-family: 'Cormorant Garamond', sans-serif !important;
+  font-family: var(--font-body) !important;
   font-size: 0.9rem !important;
   font-weight: 400 !important;
   padding: 12px 32px !important;
@@ -297,7 +571,7 @@
 
 /* Countdown Section */
 .countdown-section {
-  padding: 80px 40px;
+  padding: 60px 40px;
   text-align: center;
 }
 
@@ -313,8 +587,13 @@
   pointer-events: none;
 }
 
+.countdown-overlay .countdown-section {
+  padding-top: 20px;
+  padding-bottom: 120px;
+}
+
 .images-container .countdown-overlay .countdown-section {
-  padding: 0;
+  padding: 20px 0 120px 0;
   background: transparent;
   pointer-events: auto;
   width: 100%;
@@ -368,10 +647,10 @@
 }
 
 .countdown-label {
-  font-family: 'Arial', sans-serif;
+  font-family: var(--font-heading);
   font-size: 0.9rem;
   font-weight: 400;
-  color: #666;
+  color: var(--color-secondary);
   letter-spacing: 2px;
   text-transform: uppercase;
   min-width: 100px;
@@ -384,7 +663,7 @@
   justify-content: center;
   align-items: stretch;
   gap: 0;
-  padding: 80px 0;
+  padding: 60px 0;
   max-width: 100%;
 }
 
@@ -394,7 +673,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px;
+  padding: 30px;
   text-align: center;
 }
 
@@ -407,7 +686,7 @@
 }
 
 .bottom-title {
-  margin-bottom: 30px;
+  margin-bottom: 50px;
 }
 
 .bottom-image {
@@ -416,7 +695,6 @@
   height: 300px;
   object-fit: cover;
   object-position: center;
-  filter: grayscale(100%);
   transition: filter 0.3s ease;
 }
 
@@ -430,9 +708,15 @@
     flex-wrap: wrap;
   }
 
-  .image {
-    max-width: 250px;
-    height: 350px;
+  .image-left,
+  .image-right {
+    max-width: 320px;
+    height: 220px;
+  }
+
+  .image-center {
+    max-width: 280px;
+    height: 450px;
   }
 
   .images-container .countdown-overlay {
@@ -443,15 +727,73 @@
     flex-direction: column;
   }
 
+  .location-split {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .location-split .location-map-wrapper {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 250px;
+  }
+
+  .location-split .location-map-image {
+    min-height: 0;
+    height: 100%;
+  }
+
   .venue-image {
     max-width: 100%;
+  }
+
+  .section-title,
+  .MuiTypography-root.section-title {
+    font-size: 2rem !important;
+    margin-bottom: 24px !important;
+  }
+
+  .schedule-title,
+  .location-title,
+  .bottom-title {
+    margin-bottom: 24px;
+  }
+}
+
+
+@media (max-width: 900px) {
+  .header {
+    background: transparent;
+    backdrop-filter: none;
+    border-bottom: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: auto;
+    width: auto;
+    padding: 12px 16px;
+    z-index: 1100;
+  }
+
+  .header-hamburger {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);
+  }
+
+  .header-hamburger:hover {
+    background: rgba(255, 255, 255, 0.5);
   }
 }
 
 @media (max-width: 768px) {
   .header {
-    padding: 15px 20px;
+    padding: calc(var(--mobile-section-padding) / 2) 20px;
     flex-wrap: wrap;
+  }
+
+  .header-banner-wrapper,
+  .header-banner {
+    min-height: 63vh;
   }
 
   .nav-left,
@@ -472,29 +814,87 @@
   }
 
   .hero-section {
-    padding: 40px 20px;
+    padding: 56px 20px 40px;
   }
 
-  .wedding-date {
-    font-size: 4rem !important;
-    font-weight: bold !important;
+  .hero-section .wedding-date,
+  .hero-section .wedding-date.MuiTypography-root {
+    font-size: 2.25rem !important;
+    font-weight: 200 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0;
+    padding-bottom: 2px;
+  }
+
+  .hero-date-countdown-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    width: 100%;
+    padding-top: 0;
+    padding-bottom: 20px;
+  }
+
+  .hero-section .countdown-overlay {
+    padding: 0;
+  }
+
+  .hero-section .countdown-overlay .countdown-section {
+    padding: 0;
+  }
+
+  .hero-section .images-container {
+    margin-top: 48px;
+  }
+
+  .hero-section .countdown-display {
+    margin-bottom: 8px;
+  }
+
+  .hero-section .countdown-labels {
+    gap: 15px;
+  }
+
+  .wedding-date,
+  .MuiTypography-root.wedding-date {
+    font-size: 2.25rem !important;
+    font-weight: 200 !important;
   }
 
   .images-row {
     gap: 15px;
   }
 
-  .image {
-    max-width: 150px;
-    height: 250px;
+  .image-left,
+  .image-right {
+    max-width: 180px;
+    height: 130px;
+  }
+
+  .image-center {
+    max-width: 160px;
+    height: 260px;
   }
 
   .images-container .countdown-overlay {
     padding-top: 5%;
   }
 
-  .images-container .countdown-overlay .countdown-title {
+  .section-title,
+  .MuiTypography-root.section-title {
+    margin-bottom: 20px !important;
+  }
+
+  .schedule-title,
+  .location-title,
+  .bottom-title {
     margin-bottom: 20px;
+  }
+
+  .images-container .countdown-overlay .countdown-title {
+    margin-bottom: 16px;
     font-size: 1rem;
   }
 
@@ -504,13 +904,52 @@
 
   .schedule-section,
   .location-section,
+  .travel-stay-section,
   .countdown-section {
-    padding: 60px 20px;
+    padding: var(--mobile-section-padding) 20px;
+  }
+
+  .schedule-content {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .schedule-image-wrapper {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 250px;
+  }
+
+  .schedule-image {
+    min-height: 0;
+    height: 100%;
   }
 
   .schedule-items {
-    gap: 40px;
+    padding: 30px 20px;
   }
+
+  .menu-page-section > div {
+    padding-bottom: var(--mobile-section-padding) !important;
+  }
+
+  .travel-accommodations {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .accommodation-card {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 40px;
+    padding: 0 10px;
+  }
+
+  .accommodation-card:last-child {
+    margin-bottom: 0;
+  }
+
 
   .countdown-number {
     font-size: 3rem;
@@ -534,12 +973,49 @@
 
   .bottom-section {
     flex-direction: column;
+    padding: var(--mobile-section-padding) 0;
+  }
+
+  .footer-navigation {
+    padding: var(--mobile-section-padding) 20px;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-link {
+    font-size: 0.8rem;
   }
 }
 
 @media (max-width: 480px) {
   .header {
-    padding: 10px 15px;
+    padding: calc(var(--mobile-section-padding) / 2) 15px;
+  }
+
+  .hero-section .wedding-date,
+  .hero-section .wedding-date.MuiTypography-root {
+    font-size: 2rem !important;
+  }
+
+  .header-banner-wrapper,
+  .header-banner {
+    min-height: 45vh;
+  }
+
+  .section-title,
+  .MuiTypography-root.section-title {
+    font-size: 1.8rem !important;
+    margin-bottom: 16px !important;
+  }
+
+  .schedule-title,
+  .location-title,
+  .bottom-title {
+    margin-bottom: 16px;
+  }
+
+  .images-container .countdown-overlay .countdown-title {
+    margin-bottom: 12px;
   }
 
   .nav-left,
@@ -566,14 +1042,15 @@
     gap: 10px;
   }
 
-  .image {
+  .image-left,
+  .image-right {
     max-width: 100%;
-    height: 200px;
+    height: 220px;
   }
 
-  .schedule-items {
-    flex-direction: column;
-    gap: 30px;
+  .image-center {
+    max-width: 100%;
+    height: 360px;
   }
 
   .countdown-display,
@@ -607,5 +1084,15 @@
 
   .images-container .countdown-overlay .countdown-labels {
     gap: 15px;
+  }
+
+  .footer-navigation {
+    padding: var(--mobile-section-padding) 15px;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-link {
+    font-size: 0.7rem;
   }
 }

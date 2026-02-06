@@ -17,9 +17,10 @@ export const WEDDING_DATE = '2026-10-03T15:00:00'; // October 3rd, 2026 at 3:00 
  * Wedding venue information
  */
 export const WEDDING_VENUE = {
-  name: 'De Harte',
-  location: 'Onderstepoort',
-  address: 'De Harte, Onderstepoort'
+  name: 'De Harte Venue',
+  location: '206 Rentia St, Onderstepoort, Pretoria, 0110',
+  address: 'De Harte, Onderstepoort',
+  mapsUrl: 'https://www.google.com/maps/search/?api=1&query=206+Rentia+St,+Onderstepoort,+Pretoria,+0110'
 };
 
 /**

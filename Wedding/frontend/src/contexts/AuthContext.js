@@ -40,6 +40,7 @@ export const AuthProvider = ({ children, storedHash = DEFAULT_HASHED_PASSWORD })
    * Log in with password
    * @param {string} password - The password to verify
    * @returns {Promise<boolean>} - True if login successful, false otherwise
+   * @throws {Error} - If there's an HTTPS/secure context error
    */
   const login = async (password) => {
     try {
@@ -52,7 +53,15 @@ export const AuthProvider = ({ children, storedHash = DEFAULT_HASHED_PASSWORD })
       return false;
     } catch (error) {
       console.error('Login error:', error);
-      return false;
+      // Check if it's a crypto.subtle error
+      if (error.message && error.message.includes('Secure context required')) {
+        throw new Error(
+          'Authentication requires HTTPS. Please access the site via ' +
+          'https://matthewandsydney.triadtech.co.za (not http://)'
+        );
+      }
+      // Re-throw other errors so they can be handled by the caller
+      throw error;
     }
   };
 

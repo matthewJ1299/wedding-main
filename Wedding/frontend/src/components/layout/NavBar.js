@@ -6,62 +6,13 @@ import MenuItem from '@mui/material/MenuItem';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useInviteeNavigation } from '../../contexts/InviteeNavigationContext';
 
-const HomeDropdown = ({ location, hasInviteeContext, inviteeId }) => {
-	const [anchorEl, setAnchorEl] = React.useState(null);
-	const open = Boolean(anchorEl);
-	const handleClick = (event) => {
-		setAnchorEl(event.currentTarget);
-	};
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
-	
-	const getHomeUrl = (path) => {
-		return hasInviteeContext ? `${path}?invitee=${inviteeId}` : path;
-	};
-	
-	return (
-		<>
-			<Button
-				aria-controls={open ? 'home-menu' : undefined}
-				aria-haspopup="true"
-				aria-expanded={open ? 'true' : undefined}
-				onClick={handleClick}
-				sx={{ color: '#222', fontFamily: 'Cormorant Garamond, serif', fontWeight: 400, fontSize: '1.15rem', marginLeft: 8, marginRight: 8, zIndex: 9100, position: 'relative' }}
-			>
-				Home
-			</Button>
-			<Menu
-				id="home-menu"
-				anchorEl={anchorEl}
-				open={open}
-				onClose={handleClose}
-				MenuListProps={{ 'aria-labelledby': 'home-button' }}
-				sx={{ zIndex: 9999 }}
-			>
-				<MenuItem component={Link} to={getHomeUrl("/")} onClick={handleClose}>Home Modern</MenuItem>
-				<MenuItem component={Link} to={getHomeUrl("/home-frosted")} onClick={handleClose}>Home Frosted</MenuItem>
-				<MenuItem component={Link} to={getHomeUrl("/home-hero")} onClick={handleClose}>Home Hero</MenuItem>
-				<MenuItem component={Link} to={getHomeUrl("/home-vertical")} onClick={handleClose}>Home Vertical</MenuItem>
-				<MenuItem component={Link} to={getHomeUrl("/home-fullscreen")} onClick={handleClose}>Home Fullscreen</MenuItem>
-				<MenuItem component={Link} to={getHomeUrl("/home-scroll")} onClick={handleClose}>Home Scroll</MenuItem>
-				<MenuItem component={Link} to={getHomeUrl("/in-love")} onClick={handleClose}>So In Love</MenuItem>
-			</Menu>
-		</>
-	);
-};
-
 const links = [
-	{ to: '/our-story', label: 'Our Story' },
-	{ to: '/schedule', label: 'Schedule' },
-	{ to: '/registry', label: 'Registry' },
-	{ to: '/faq', label: 'FAQ' },
-	{ to: '/accommodation', label: 'Accommodation' },
+	{ to: '/rsvp', label: 'RSVP' },
+	{ to: '/gallery', label: 'Gallery' },
 ];
 
 const NavBar = ({ title, isMobile }) => {
@@ -148,9 +99,27 @@ const NavBar = ({ title, isMobile }) => {
 					justifyContent: 'center',
 					overflow: 'hidden'
 				}}>
-					<HomeDropdown location={location} hasInviteeContext={hasInviteeContext} inviteeId={inviteeId} />
+					<Typography
+						component={Link}
+						to={hasInviteeContext ? `/?invitee=${inviteeId}` : "/"}
+						sx={{
+							color: location.pathname === '/' ? 'var(--accent-color, #39834d)' : '#222',
+							textDecoration: 'none',
+							fontFamily: 'Cormorant Garamond, serif',
+							fontWeight: 400,
+							fontSize: '1.1rem',
+							transition: 'color 0.2s',
+							letterSpacing: 1,
+							whiteSpace: 'nowrap',
+							'&:hover': {
+								color: 'var(--accent-color, #39834d)'
+							}
+						}}
+					>
+						Home
+					</Typography>
 					{links.map(link => {
-						const isActive = location.pathname === link.to;
+						const isActive = location.pathname === link.to || (link.to === '/rsvp' && location.pathname.startsWith('/rsvp'));
 						const linkUrl = hasInviteeContext ? `${link.to}?invitee=${inviteeId}` : link.to;
 						
 						return (
@@ -240,63 +209,16 @@ const NavBar = ({ title, isMobile }) => {
 						onClick={handleMobileMenuClose}
 						sx={{ fontFamily: 'Cormorant Garamond, serif' }}
 					>
-						Home Modern
-					</MenuItem>
-					<MenuItem 
-						component={Link} 
-						to={hasInviteeContext ? `/home-frosted?invitee=${inviteeId}` : "/home-frosted"} 
-						onClick={handleMobileMenuClose}
-						sx={{ fontFamily: 'Cormorant Garamond, serif' }}
-					>
-						Home Frosted
-					</MenuItem>
-					<MenuItem 
-						component={Link} 
-						to={hasInviteeContext ? `/home-hero?invitee=${inviteeId}` : "/home-hero"} 
-						onClick={handleMobileMenuClose}
-						sx={{ fontFamily: 'Cormorant Garamond, serif' }}
-					>
-						Home Hero
-					</MenuItem>
-					<MenuItem 
-						component={Link} 
-						to={hasInviteeContext ? `/home-vertical?invitee=${inviteeId}` : "/home-vertical"} 
-						onClick={handleMobileMenuClose}
-						sx={{ fontFamily: 'Cormorant Garamond, serif' }}
-					>
-						Home Vertical
-					</MenuItem>
-					<MenuItem 
-						component={Link} 
-						to={hasInviteeContext ? `/home-fullscreen?invitee=${inviteeId}` : "/home-fullscreen"} 
-						onClick={handleMobileMenuClose}
-						sx={{ fontFamily: 'Cormorant Garamond, serif' }}
-					>
-						Home Fullscreen
-					</MenuItem>
-					<MenuItem 
-						component={Link} 
-						to={hasInviteeContext ? `/home-scroll?invitee=${inviteeId}` : "/home-scroll"} 
-						onClick={handleMobileMenuClose}
-						sx={{ fontFamily: 'Cormorant Garamond, serif' }}
-					>
-						Home Scroll
-					</MenuItem>
-					<MenuItem 
-						component={Link} 
-						to={hasInviteeContext ? `/in-love?invitee=${inviteeId}` : "/in-love"} 
-						onClick={handleMobileMenuClose}
-						sx={{ fontFamily: 'Cormorant Garamond, serif' }}
-					>
-						So In Love
+						Home
 					</MenuItem>
 					{allLinks.map(link => {
-						const isActive = location.pathname === link.to;
+						const isActive = location.pathname === link.to || (link.to === '/rsvp' && location.pathname.startsWith('/rsvp'));
+						const linkUrl = hasInviteeContext ? `${link.to}?invitee=${inviteeId}` : link.to;
 						return (
 							<MenuItem 
 								key={link.to}
 								component={Link} 
-								to={link.to} 
+								to={linkUrl} 
 								onClick={handleMobileMenuClose}
 								sx={{ 
 									fontFamily: 'Cormorant Garamond, serif',

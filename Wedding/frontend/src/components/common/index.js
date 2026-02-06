@@ -18,6 +18,9 @@ export {
   ValidationErrors 
 } from './AlertMessage';
 
+// Animation components
+export { default as FadeInSection } from './FadeInSection';
+
 // Re-export all components as default for convenience
 export { default } from './FormField';
 

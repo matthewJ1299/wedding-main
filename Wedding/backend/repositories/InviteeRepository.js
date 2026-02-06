@@ -21,22 +21,29 @@ class InviteeRepository {
       rsvp TEXT,
       inviteCode TEXT,
       allowPlusOne INTEGER DEFAULT 0,
-      plusOneName TEXT
+      plusOneName TEXT,
+      mealSelection TEXT,
+      songRequest TEXT
     )`).run();
-    
-    // Add plusOneName column if it doesn't exist (migration)
-    try {
-      this.db.prepare(`ALTER TABLE invitees ADD COLUMN plusOneName TEXT`).run();
-    } catch (error) {
-      // Column already exists, ignore error
-      if (!error.message.includes('duplicate column name')) {
-        console.error('Error adding plusOneName column:', error);
+
+    const migrations = [
+      { column: 'plusOneName', sql: 'ALTER TABLE invitees ADD COLUMN plusOneName TEXT' },
+      { column: 'mealSelection', sql: 'ALTER TABLE invitees ADD COLUMN mealSelection TEXT' },
+      { column: 'songRequest', sql: 'ALTER TABLE invitees ADD COLUMN songRequest TEXT' },
+    ];
+    migrations.forEach(({ sql }) => {
+      try {
+        this.db.prepare(sql).run();
+      } catch (error) {
+        if (!error.message.includes('duplicate column name')) {
+          console.error('Migration error:', error);
+        }
       }
-    }
+    });
   }
 
   create(invitee) {
-    const stmt = this.db.prepare(`INSERT INTO invitees (id, name, partner, email, phone, rsvp, inviteCode, allowPlusOne, plusOneName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+    const stmt = this.db.prepare(`INSERT INTO invitees (id, name, partner, email, phone, rsvp, inviteCode, allowPlusOne, plusOneName, mealSelection, songRequest) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
     return stmt.run(
       invitee.id,
       invitee.name,
@@ -46,7 +53,9 @@ class InviteeRepository {
       invitee.rsvp ?? null,
       invitee.inviteCode ?? null,
       invitee.allowPlusOne ? 1 : 0,
-      invitee.plusOneName ?? null
+      invitee.plusOneName ?? null,
+      invitee.mealSelection ?? null,
+      invitee.songRequest ?? null
     );
   }
 
@@ -61,7 +70,7 @@ class InviteeRepository {
   update(id, updates) {
     const invitee = this.getById(id);
     if (!invitee) return null;
-    const stmt = this.db.prepare(`UPDATE invitees SET name = ?, partner = ?, email = ?, phone = ?, rsvp = ?, inviteCode = ?, allowPlusOne = ?, plusOneName = ? WHERE id = ?`);
+    const stmt = this.db.prepare(`UPDATE invitees SET name = ?, partner = ?, email = ?, phone = ?, rsvp = ?, inviteCode = ?, allowPlusOne = ?, plusOneName = ?, mealSelection = ?, songRequest = ? WHERE id = ?`);
     return stmt.run(
       updates.name ?? invitee.name,
       updates.partner ?? invitee.partner,
@@ -71,6 +80,8 @@ class InviteeRepository {
       updates.inviteCode !== undefined ? updates.inviteCode : invitee.inviteCode,
       updates.allowPlusOne !== undefined ? (updates.allowPlusOne ? 1 : 0) : invitee.allowPlusOne,
       updates.plusOneName !== undefined ? updates.plusOneName : invitee.plusOneName,
+      updates.mealSelection !== undefined ? updates.mealSelection : (invitee.mealSelection ?? null),
+      updates.songRequest !== undefined ? updates.songRequest : (invitee.songRequest ?? null),
       id
     );
   }

@@ -2,12 +2,9 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { WEDDING_DATE } from '../../utils/constants';
+import { HERO_COPY } from '../../data/copy';
 import CountdownSection from './CountdownSection';
-
-// Import image assets
-import img1 from '../../assets/images/123.jpg';
-import img2 from '../../assets/images/234.jpg';
-import img3 from '../../assets/images/456.jpg';
+import { heroImages } from '../../data/heroImageConfig';
 
 export default function HeroSection() {
   // Format wedding date for display (14 • 07 • 2024 format)
@@ -20,40 +17,52 @@ export default function HeroSection() {
   };
 
   return (
-    <Box className="hero-section">
-      {/* <Typography className="wedding-date">
-        {formatWeddingDate()}
-      </Typography> */}
-<Box className="countdown-overlay">
+    <Box id="hero" className="hero-section">
+      <Box className="hero-date-countdown-section">
+        <Typography className="wedding-date">
+          {formatWeddingDate()}
+        </Typography>
+        <Box
+          className="countdown-overlay countdown-with-bg"
+          sx={{
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            width: '100%',
+            minHeight: '200px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            py: 0,
+          }}
+        >
           <CountdownSection />
         </Box>
+      </Box>
       <Box className="images-container">
         <Box className="images-row">
-          <Box
-            component="img"
-            src={img1}
+          <img
+            src={heroImages.left.src}
             alt="Wedding"
             className="image image-left"
+            style={{ objectPosition: heroImages.left.objectPosition }}
           />
-          <Box
-            component="img"
-            src={img2}
+          <img
+            src={heroImages.center.src}
             alt="Wedding"
             className="image image-center"
+            style={{ objectPosition: heroImages.center.objectPosition }}
           />
-          <Box
-            component="img"
-            src={img3}
+          <img
+            src={heroImages.right.src}
             alt="Wedding"
             className="image image-right"
+            style={{ objectPosition: heroImages.right.objectPosition }}
           />
         </Box>
-
-        
       </Box>
 
       <Typography className="tagline">
-        JOIN US AS WE EMBARK ON A JOURNEY OF LOVE, JOY, AND ETERNAL HAPPINESS
+        {HERO_COPY.tagline}
       </Typography>
     </Box>
   );

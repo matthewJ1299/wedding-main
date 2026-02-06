@@ -5,6 +5,14 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:wght@400;500;600&display=swap');
 
+@font-face {
+  font-family: 'La Bohemienne Deluxe';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/la-bohemienne-deluxe.otf') format('opentype');
+}
+
 body, * {
   margin: 0;
   font-family: 'Cormorant Garamond', serif !important;
@@ -12,13 +20,7 @@ body, * {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Apply grayscale filter to all images */
-img,
-.MuiCardMedia-img,
-.MuiCardMedia-root img {
-  filter: grayscale(100%) !important;
-  transition: filter 0.3s ease;
-}
+/* Images are full colour by default. Our Story section applies grayscale explicitly. */
 
 .script-heading {
   font-family: 'Great Vibes', cursive;

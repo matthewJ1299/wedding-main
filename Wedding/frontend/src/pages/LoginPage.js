@@ -45,7 +45,9 @@ const LoginPage = () => {
         setError('Incorrect password. Please try again.');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      // Display the actual error message if it's about HTTPS or other specific errors
+      const errorMessage = err.message || 'An error occurred. Please try again.';
+      setError(errorMessage);
       console.error('Login error:', err);
     } finally {
       setLoading(false);

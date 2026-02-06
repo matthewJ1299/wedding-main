@@ -30,7 +30,9 @@ export const isValidEmail = (email) => {
  */
 export const isValidPhone = (phone) => {
   if (!phone || typeof phone !== 'string') return false;
-  return PHONE_REGEX.test(phone.trim());
+  // Remove dashes and spaces before validation
+  const cleanedPhone = phone.trim().replace(/-/g, '').replace(/\s/g, '');
+  return PHONE_REGEX.test(cleanedPhone);
 };
 
 /**

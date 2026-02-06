@@ -3,10 +3,10 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
-// import TextField from '@mui/material/TextField';
-// import Alert from '@mui/material/Alert';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import { HeaderNavigation } from '../components/homepage';
+import '../styles/HomePageModern.css';
 import '../styles/RSVPPage.css';
 
 // Import contexts
@@ -21,19 +21,9 @@ import Typography from '../components/ui/Typography';
 import Button from '../components/ui/Button';
 
 // Import shared utilities and components
-import { validateInviteeForm, sanitizeInput } from '../utils/validation';
+import { validateInviteeForm, sanitizeInput, validateEmail, validatePhone } from '../utils/validation';
 import { APP_URLS, SUCCESS_MESSAGES, ERROR_MESSAGES } from '../utils/constants';
-import { TextInput, EmailInput, PhoneInput, ErrorMessage, SuccessMessage } from '../components/common';
-
-// Add Google Fonts import for a script font
-const scriptFontUrl = 'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap';
-if (typeof document !== 'undefined' && !document.getElementById('great-vibes-font')) {
-  const link = document.createElement('link');
-  link.id = 'great-vibes-font';
-  link.rel = 'stylesheet';
-  link.href = scriptFontUrl;
-  document.head.appendChild(link);
-}
+import { TextInput, EmailInput, PhoneInput, TextAreaInput, SelectInput, ErrorMessage, SuccessMessage } from '../components/common';
 
 /**
  * RSVP page component handling wedding attendance confirmation
@@ -41,10 +31,13 @@ if (typeof document !== 'undefined' && !document.getElementById('great-vibes-fon
 export default function RSVPPage() {
   const { inviteCode } = useParams();
   const { invitees, updateInvitee } = useInvitees();
+  
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [plusOneName, setPlusOneName] = useState('');
+  const [mealSelection, setMealSelection] = useState('');
+  const [songRequest, setSongRequest] = useState('');
   const [status, setStatus] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -92,14 +85,47 @@ export default function RSVPPage() {
     setEmailError('');
     setPhoneError('');
     
-    const validation = validateInviteeForm({ email, phone }, { emailRequired: false, phoneRequired: false });
-    if (!validation.isValid) {
-      if (validation.errors.email) setEmailError(validation.errors.email);
-      if (validation.errors.phone) setPhoneError(validation.errors.phone);
-      return;
+    // Get trimmed values for validation (empty string if not provided)
+    const trimmedEmail = (email || '').trim();
+    // Remove dashes from phone number before validation
+    const trimmedPhone = (phone || '').trim().replace(/-/g, '');
+    
+    // Validate email and phone separately (name is already verified)
+    // Only validate if they have values (not required fields)
+    let hasErrors = false;
+    let emailErr = '';
+    let phoneErr = '';
+    
+    // Validate email only if provided
+    if (trimmedEmail) {
+      const emailValidation = validateEmail(trimmedEmail, false);
+      if (!emailValidation.isValid) {
+        emailErr = emailValidation.message;
+        hasErrors = true;
+      }
     }
     
-    // Mark as verified and show RSVP buttons
+    // Validate phone only if provided
+    if (trimmedPhone) {
+      const phoneValidation = validatePhone(trimmedPhone, false);
+      if (!phoneValidation.isValid) {
+        phoneErr = phoneValidation.message;
+        hasErrors = true;
+      }
+    }
+    
+    // Set errors if any
+    if (emailErr) setEmailError(emailErr);
+    if (phoneErr) setPhoneError(phoneErr);
+    
+    // If there are errors, stop here
+    if (hasErrors) {
+      return;
+    }
+    // Update state with trimmed values and move to next step
+    // React batches these state updates automatically
+    setEmail(trimmedEmail);
+    setPhone(trimmedPhone);
     setIsVerified(true);
     setShowDetailsVerification(false);
     setShowRSVPButtons(true);
@@ -182,10 +208,11 @@ export default function RSVPPage() {
       }
     }
 
-    // Update invitee RSVP status and plus one name (but not email/phone if changed)
     const updateData = { 
       rsvp: rsvpStatus, 
-      plusOneName: invitee.allowPlusOne ? plusOneName : undefined
+      plusOneName: invitee.allowPlusOne ? plusOneName : undefined,
+      mealSelection: rsvpStatus === 'accepted' ? mealSelection : undefined,
+      songRequest: rsvpStatus === 'accepted' ? songRequest.trim() : undefined,
     };
     
     // Only update email/phone if they haven't changed (to avoid overriding pending approval)
@@ -217,11 +244,13 @@ export default function RSVPPage() {
   };
 
   return (
-    <Box className="rsvp-page">
-      <Card className="rsvp-card">
-        <CardContent className="rsvp-card-content">
+    <Box className="home-page-modern rsvp-page">
+      <HeaderNavigation />
+      <Box className="rsvp-container">
+        <Card className="rsvp-card">
+          <CardContent className="rsvp-card-content">
           <Typography 
-            variant="h2" 
+            variant="h4" 
             className="rsvp-title"
           >
             RSVP to the Wedding
@@ -232,7 +261,8 @@ export default function RSVPPage() {
               <TextInput
                 label="Your Name"
                 value={name}
-                onChange={e => setName(sanitizeInput(e.target.value))}
+                onChange={e => setName(e.target.value)}
+                onBlur={e => setName(sanitizeInput(e.target.value))}
                 className="rsvp-form-field"
                 required
               />
@@ -249,21 +279,27 @@ export default function RSVPPage() {
               <EmailInput
                 label="Email"
                 value={email}
-                onChange={e => setEmail(sanitizeInput(e.target.value))}
+                onChange={e => setEmail(e.target.value)}
+                onBlur={e => setEmail(sanitizeInput(e.target.value))}
                 error={emailError}
                 className="rsvp-form-field"
               />
               <PhoneInput
                 label="Phone"
                 value={phone}
-                onChange={e => setPhone(sanitizeInput(e.target.value))}
+                onChange={e => setPhone(e.target.value)}
+                onBlur={e => setPhone(sanitizeInput(e.target.value))}
                 error={phoneError}
                 className="rsvp-form-field"
               />
               <Button
                 variant="outlined"
-                onClick={handleDetailsVerification}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleDetailsVerification();
+                }}
                 className="rsvp-button"
+                type="button"
               >
                 Verify Details
               </Button>
@@ -286,7 +322,8 @@ export default function RSVPPage() {
                 <TextInput
                   label="Plus One Name"
                   value={plusOneName}
-                  onChange={e => setPlusOneName(sanitizeInput(e.target.value))}
+                  onChange={e => setPlusOneName(e.target.value)}
+                  onBlur={e => setPlusOneName(sanitizeInput(e.target.value))}
                   className="rsvp-form-field"
                   required
                 />
@@ -294,6 +331,33 @@ export default function RSVPPage() {
             }
             return null;
           })()}
+
+          {/* Meal selection and song request - only when accepting */}
+          {showRSVPButtons && (
+            <>
+              <SelectInput
+                label="Meal Preference"
+                value={mealSelection}
+                onChange={e => setMealSelection(e.target.value)}
+                options={[
+                  { value: '', label: 'Select meal preference' },
+                  { value: 'standard', label: 'Standard' },
+                  { value: 'vegetarian', label: 'Vegetarian' },
+                  { value: 'other', label: 'Other (please specify in dietary notes)' },
+                ]}
+                className="rsvp-form-field"
+              />
+              <TextAreaInput
+                label="Song Request (optional)"
+                value={songRequest}
+                onChange={e => setSongRequest(e.target.value)}
+                onBlur={e => setSongRequest(sanitizeInput(e.target.value))}
+                placeholder="A song you would love to hear on the dance floor"
+                className="rsvp-form-field"
+                rows={2}
+              />
+            </>
+          )}
           
           {/* Only show RSVP buttons after full verification */}
           {showRSVPButtons && (
@@ -336,8 +400,9 @@ export default function RSVPPage() {
               Your RSVP: <b>{status}</b>
             </Typography>
           )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </Box>
     </Box>
   );
 }

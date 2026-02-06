@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { AuthProvider } from '../contexts/AuthContext';
 import { InviteeProvider } from '../contexts/InviteeContext';
@@ -11,21 +10,27 @@ import { EmailTemplateProvider } from '../contexts/EmailTemplateContext';
 import NavBar from '../components/layout/NavBar';
 import RSVPButton from '../components/layout/RSVPButton';
 import HomePage from './HomePage';
-import SoInLovePage from './SoInLovePage';
-import OurStoryPage from './OurStoryPage';
-import SchedulePage from './SchedulePage';
-import RegistryPage from './RegistryPage';
-import FAQPage from './FAQPage';
 import InvitationPage from './InvitationPage';
 import RSVPPage from './RSVPPage';
+import RSVPLandingPage from './RSVPLandingPage';
 import EditDetailsPage from './EditDetailsPage';
 import LoginPage from './LoginPage';
 import AdminPage from './AdminPage';
-import AccommodationPage from './AccommodationPage';
 import GalleryPage from './GalleryPage';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 
 function App() {
+	const location = useLocation();
+	const pathname = location.pathname;
+	const showNavBar = !['/', '/admin', '/login'].includes(pathname) &&
+		!pathname.startsWith('/invitation') &&
+		!pathname.startsWith('/rsvp');
+	const isFullBleed = pathname === '/' ||
+		pathname.startsWith('/invitation') ||
+		pathname.startsWith('/rsvp');
+	const isAdmin = pathname.startsWith('/admin');
+	const isLogin = pathname === '/login';
+
 	const muiTheme = createTheme({
 		typography: {
 			fontFamily: `'Cormorant Garamond', serif`,
@@ -59,6 +64,7 @@ function App() {
 									className="page-container"
 									sx={{
 										overflowX: 'hidden',
+										overflowY: 'visible',
 										transition: 'background-color 0.3s, color 0.3s',
 										minHeight: '100vh',
 										width: '100%',
@@ -69,32 +75,33 @@ function App() {
 										justifyContent: 'flex-start',
 									}}
 								>
-									<NavBar />
+									{showNavBar && <NavBar />}
 									<Box 
 										className="page-content"
 										sx={{ 
 											width: '100%',
 											maxWidth: '100vw',
-											pt: { xs: 10, sm: 12, md: 13 }, 
-											pb: 4,
-											px: { xs: 2, sm: 3, md: 4 },
+											...(isFullBleed || isAdmin || isLogin
+												? { p: 0 }
+												: {
+													pt: { xs: 10, sm: 12, md: 13 },
+													pb: 4,
+													px: { xs: 2, sm: 3, md: 4 },
+												}
+											),
 											display: 'flex',
 											flexDirection: 'column',
 											alignItems: 'center',
 											justifyContent: 'flex-start',
-											overflowX: 'hidden'
+											overflowX: 'hidden',
+											overflowY: 'visible'
 										}}
 									>
 										<Routes>
 											<Route path="/" element={<HomePage />} />
-											<Route path="/in-love" element={<SoInLovePage />} />
-											<Route path="/our-story" element={<OurStoryPage />} />
-											<Route path="/schedule" element={<SchedulePage />} />
-											<Route path="/registry" element={<RegistryPage />} />
-											<Route path="/faq" element={<FAQPage />} />
-											<Route path="/accommodation" element={<AccommodationPage />} />
 											<Route path="/gallery" element={<GalleryPage />} />
 											<Route path="/invitation/:inviteCode" element={<InvitationPage />} />
+											<Route path="/rsvp" element={<RSVPLandingPage />} />
 											<Route path="/rsvp/:inviteCode" element={<RSVPPage />} />
 											<Route path="/edit-details/:inviteeId" element={<EditDetailsPage />} />
 											<Route path="/login" element={<LoginPage />} />
@@ -109,7 +116,7 @@ function App() {
 											<Route path="*" element={<Navigate to="/" replace />} />
 										</Routes>
 									</Box>
-									<RSVPButton />
+									{!isAdmin && !isLogin && <RSVPButton />}
 									{/* Theme selector removed */}
 								</Box>
 							</ThemeProvider>

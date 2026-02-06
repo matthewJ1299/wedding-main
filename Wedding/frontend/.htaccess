@@ -9,7 +9,8 @@ RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
 RewriteRule ^ - [L]
 
 # If the requested resource doesn't exist, use index.html
-RewriteRule ^ /index.html [L]
+# Try absolute path first, if that doesn't work, use relative path
+RewriteRule ^ index.html [L]
 
 # Security headers
 <IfModule mod_headers.c>
@@ -26,7 +27,7 @@ RewriteRule ^ /index.html [L]
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     
     # Content Security Policy (adjust as needed)
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://matthewandsydneyapi.triadtech.co.za;"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://matthewandsydneyapi.triadtech.co.za;"
 </IfModule>
 
 # Compression

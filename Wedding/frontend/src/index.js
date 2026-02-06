@@ -19,9 +19,7 @@ document.body.style.backgroundColor = 'var(--page-bg, #ffffff)';
 root.render(
   <React.StrictMode>
     <Router>
-      <div style={{ backgroundColor: 'var(--page-bg, #ffffff)', minHeight: '100vh' }}>
-        <App />
-      </div>
+      <App />
     </Router>
   </React.StrictMode>
 );

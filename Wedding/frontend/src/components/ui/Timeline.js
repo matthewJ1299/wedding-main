@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
+import '../../styles/HomePageModern.css';
 // Import removed as we're using responsive styling with MUI breakpoints
 // import { useTheme } from '@mui/material/styles';
 // import useMediaQuery from '@mui/material/useMediaQuery';
@@ -58,7 +59,7 @@ const Timeline = ({ events }) => {
       ref={timelineRef}
       sx={{ 
         position: 'relative',
-        padding: { xs: '20px', sm: '40px', md: '60px' },
+        padding: { xs: '16px', sm: '30px', md: '40px' },
         width: '100%',
         maxWidth: '1200px',
         margin: '0 auto',
@@ -66,7 +67,7 @@ const Timeline = ({ events }) => {
           content: '""',
           position: 'absolute',
           width: '4px',
-          backgroundColor: 'var(--accent-color, rgba(45, 92, 58, 0.7))',
+          backgroundColor: 'rgba(152,132,81,1)',
           top: 0,
           bottom: 0,
           left: '50%',
@@ -84,13 +85,15 @@ const Timeline = ({ events }) => {
             padding: { xs: '15px', sm: '20px', md: '40px' },
             position: 'relative',
             width: { xs: '95%', sm: '90%', md: '50%' },
-            marginBottom: { xs: '40px', sm: '50px', md: '60px' },
+            marginBottom: index < events.length - 1 
+              ? { xs: '35px', sm: '30px', md: '35px' }
+              : { xs: '40px', sm: '50px', md: '60px' },
             marginLeft: { xs: 'auto', md: index % 2 === 0 ? '0' : '50%' },
             marginRight: { xs: 'auto', md: index % 2 === 0 ? '50%' : '0' },
             left: { xs: '0', md: '0' },
             boxSizing: 'border-box',
-            opacity: Math.abs(activeIndex - index) <= 1 ? 1 : 0.3,
-            transform: `translateY(${Math.abs(activeIndex - index) <= 1 ? '0' : '20px'})`,
+            opacity: index < events.length - 1 || Math.abs(activeIndex - index) <= 1 ? 1 : 0.3,
+            transform: `translateY(${index < events.length - 1 || Math.abs(activeIndex - index) <= 1 ? '0' : '20px'})`,
             transition: 'opacity 0.6s ease, transform 0.6s ease',
             '&:after': {
               content: '""',
@@ -100,9 +103,7 @@ const Timeline = ({ events }) => {
               right: { xs: 'auto', md: index % 2 === 0 ? '-12px' : 'auto' },
               left: { xs: '50%', md: index % 2 === 0 ? 'auto' : '-12px' },
               transform: { xs: 'translateX(-50%)', md: 'none' },
-              backgroundColor: activeIndex === index 
-                ? 'var(--accent-color, #2d5c3a)' 
-                : 'var(--global-color, rgba(0, 0, 0, 0.7))',
+              backgroundColor: 'rgba(152,132,81,1)',
               border: '3px solid var(--global-bg, #fff)',
               boxSizing: 'border-box',
               borderRadius: '50%',
@@ -132,9 +133,8 @@ const Timeline = ({ events }) => {
             }}
           >
             <Typography 
-              variant="h4" 
+              className="subsection-title"
               sx={{ 
-                fontFamily: 'Dancing Script, cursive',
                 mb: 1, 
                 color: 'var(--global-color)',
                 textAlign: { xs: 'center', md: index % 2 === 0 ? 'left' : 'right' },
@@ -143,38 +143,25 @@ const Timeline = ({ events }) => {
             >
               {event.title}
             </Typography>
-            
-            <Typography 
-              variant="subtitle1" 
-              sx={{ 
-                fontFamily: 'Cormorant Garamond, serif',
-                fontStyle: 'italic',
-                color: 'var(--global-color)',
-                opacity: 0.8,
-                mb: 2,
-                fontWeight: 600,
-                textAlign: { xs: 'center', md: index % 2 === 0 ? 'left' : 'right' },
-                width: '100%'
-              }}
-            >
-              {event.date}
-            </Typography>
-
             {event.image && (
               <Box
                 component="img"
                 src={event.image}
                 alt={event.title}
                 sx={{
-                  width: '100%',
-                  height: { xs: '150px', sm: '180px', md: '200px' },
+                  width: { xs: '100%', sm: '280px', md: '380px' },
+                  maxWidth: '100%',
+                  aspectRatio: '1',
+                  mx: { xs: 0, sm: 'auto' },
+                  display: 'block',
                   objectFit: 'cover',
+                  objectPosition: event.objectPosition || 'center center',
                   borderRadius: '4px',
                   mb: 2,
                   boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
                   transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
                   cursor: 'pointer',
-                  maxWidth: '100%',
+                  filter: 'grayscale(100%)',
                   '&:hover': {
                     transform: 'scale(1.03)',
                     boxShadow: '0 6px 20px rgba(0, 0, 0, 0.15)',
@@ -188,7 +175,7 @@ const Timeline = ({ events }) => {
             )}
             
             <Typography 
-              variant="body1" 
+              className="body-text-primary"
               sx={{ 
                 color: 'var(--global-color)', 
                 textAlign: { xs: 'center', md: index % 2 === 0 ? 'left' : 'right' },
