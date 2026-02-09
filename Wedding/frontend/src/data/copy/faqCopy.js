@@ -38,5 +38,9 @@ export const getFaqItems = (rsvpDeadlineFormatted) => [
   {
     question: 'Can I take photos during the ceremony?',
     answer: "We're going unplugged for the ceremony so everyone can be fully present and enjoy the moment, no phones or cameras needed! Our professional photographers will be capturing all the magic, and we can't wait to share the beautiful photos with you afterward.",
+  },
+  {
+    question: 'Will there be a cash bar?',
+    answer: "As much as we'd love to keep everyone's drinks flowing all night, knowing how much some of you can put away would bankrupt us😉. We'll have a limited tab during canapés(beer, cider and wine), and after that the bar will be cash.",
   }
 ];

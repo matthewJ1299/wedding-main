@@ -23,7 +23,7 @@ export default function OurStorySection() {
           textAlign: 'center',
           width: '100%',
           maxWidth: '100vw',
-          pt: { xs: 5, md: 5 },
+          pt: { xs: 2, md: 5 },
           pb: { xs: 3, md: 5 },
           px: 3,
           backgroundPosition: 'center',
@@ -43,6 +43,7 @@ export default function OurStorySection() {
               textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
               width: '100%',
               textAlign: 'center',
+              pb: 0,
             }}
           >
             {OUR_STORY_COPY.sectionTitle}
@@ -54,7 +55,7 @@ export default function OurStorySection() {
         sx={{
           width: '100%',
           maxWidth: '100vw',
-          pt: { xs: 3, md: 5 },
+          pt: { xs: 0, md: 0 },
           pb: { xs: 5, md: 5 },
           px: { xs: 2, sm: 4, md: 10 },
           background: '#fff',

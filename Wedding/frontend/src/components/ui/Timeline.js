@@ -149,7 +149,7 @@ const Timeline = ({ events }) => {
                 src={event.image}
                 alt={event.title}
                 sx={{
-                  width: { xs: '100%', sm: '280px', md: '380px' },
+                  width: { xs: '100%', sm: '100%', md: '100%' },
                   maxWidth: '100%',
                   aspectRatio: '1',
                   mx: { xs: 0, sm: 'auto' },

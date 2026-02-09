@@ -18,6 +18,9 @@ export default function HeroSection() {
 
   return (
     <Box id="hero" className="hero-section">
+      <Typography className="tagline">
+        {HERO_COPY.tagline}
+      </Typography>
       <Box className="hero-date-countdown-section">
         <Typography className="wedding-date">
           {formatWeddingDate()}
@@ -61,9 +64,7 @@ export default function HeroSection() {
         </Box>
       </Box>
 
-      <Typography className="tagline">
-        {HERO_COPY.tagline}
-      </Typography>
+      
     </Box>
   );
 }
