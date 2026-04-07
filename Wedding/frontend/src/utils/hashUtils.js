@@ -25,7 +25,7 @@ export const hashPassword = async (password) => {
   if (!isCryptoAvailable()) {
     throw new Error(
       'Secure context required: crypto.subtle is only available over HTTPS. ' +
-      'Please ensure the site is accessed via HTTPS (https://matthewandsydney.triadtech.co.za)'
+      'Please ensure the site is accessed via HTTPS (https://matthewandsydney.co.za)'
     );
   }
 

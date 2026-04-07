@@ -416,6 +416,7 @@ html {
 
 /* Travel & Stay Section */
 .travel-stay-section {
+  margin-top: -5rem;
   padding: 60px 40px;
   text-align: center;
   background: #f9f9f9;
@@ -845,7 +846,7 @@ html {
   }
 
   .hero-section .images-container {
-    margin-top: 48px;
+    margin-top: 80px;
   }
 
   .hero-section .countdown-display {

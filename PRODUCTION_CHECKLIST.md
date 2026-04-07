@@ -44,8 +44,8 @@ Use this checklist to ensure your wedding site is properly configured for produc
 - [ ] API endpoints accessible
 
 ### Domain Configuration
-- [ ] Frontend domain: `matthewandsydney.triadtech.co.za`
-- [ ] API domain: `matthewandsydneyapi.triadtech.co.za`
+- [ ] Frontend domain: `matthewandsydney.co.za`
+- [ ] API domain: `matthewandsydneyapi.co.za`
 - [ ] DNS records configured correctly
 - [ ] SSL certificates installed for both domains
 - [ ] CORS configuration matches domains

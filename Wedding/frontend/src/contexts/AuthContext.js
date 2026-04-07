@@ -57,7 +57,7 @@ export const AuthProvider = ({ children, storedHash = DEFAULT_HASHED_PASSWORD })
       if (error.message && error.message.includes('Secure context required')) {
         throw new Error(
           'Authentication requires HTTPS. Please access the site via ' +
-          'https://matthewandsydney.triadtech.co.za (not http://)'
+          'https://matthewandsydney.co.za (not http://)'
         );
       }
       // Re-throw other errors so they can be handled by the caller

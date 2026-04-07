@@ -28,7 +28,7 @@ export const getFaqItems = (rsvpDeadlineFormatted) => [
     answer: "The ceremony will take place undercover, so we're covered rain or shine! After the vows, the canapés will be served outdoors, shaded areas will be available to keep you comfortable. The reception will be indoors, but evenings can get a little chilly, so we recommend bringing a light jersey or wrap just in case.",
   },
   {
-    question: 'Are there accommodations nearby?',
+    question: 'Is there accommodation nearby?',
     answer: 'Please see our accommodation section for a list of our preferred accommodations nearby.',
   },
   {

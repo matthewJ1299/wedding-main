@@ -75,8 +75,7 @@ export default function OurStorySection() {
             textAlign: 'center',
             fontSize: { xs: '1rem', sm: '1rem' },
             maxWidth: 500,
-            mx: 'auto',
-            mt: 6,
+            mx: 'auto'
           }}
         >
           {OUR_STORY_COPY.closingMessage}

@@ -86,7 +86,7 @@ export default function RegistrySection() {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, alignItems: 'center' }}>
               <Typography className="body-text-primary">Bank Account: {REGISTRY_COPY.bankName}</Typography>
               <Typography className="body-text-primary">Account Number: {REGISTRY_COPY.accountNumber}</Typography>
-              <Typography className="body-text-primary">SWIFT Code: {REGISTRY_COPY.swiftCode}</Typography>
+              <Typography className="body-text-primary">Branch: {REGISTRY_COPY.branch}</Typography>
             </Box>
           </Box>
         </Box>

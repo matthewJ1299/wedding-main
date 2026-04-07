@@ -145,6 +145,13 @@ JWT_SECRET=your-secret-key
 
 ## Deployment
 
+### Production URLs
+
+- **Frontend (public site)**: `https://matthewandsydney.co.za`
+- **Backend API**: `https://matthewandsydneyapi.co.za`
+
+Set `REACT_APP_SITE_URL` and `REACT_APP_API_URL` on the frontend build, and `FRONTEND_URL` plus `ORIGIN_URL` on the backend so CORS matches the browser origin. Full steps: [DEPLOYMENT.md](DEPLOYMENT.md), [CPANEL_DEPLOYMENT.md](CPANEL_DEPLOYMENT.md), [DEPLOYMENT_QUICK_REFERENCE.md](DEPLOYMENT_QUICK_REFERENCE.md).
+
 ### Production Deployment
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to cPanel hosting.

@@ -48,8 +48,8 @@ fi
 # Build with production environment variables
 print_status "Building frontend with production URLs..."
 GENERATE_SOURCEMAP=false \
-REACT_APP_API_URL=https://matthewandsydneyapi.triadtech.co.za \
-REACT_APP_SITE_URL=https://matthewandsydney.triadtech.co.za \
+REACT_APP_API_URL=https://matthewandsydneyapi.co.za \
+REACT_APP_SITE_URL=https://matthewandsydney.co.za \
 npm run build
 
 if [ $? -eq 0 ]; then
@@ -105,7 +105,7 @@ echo "2. Upload the contents of 'deployment/backend/' to your backend domain's p
 echo "3. Set up Node.js application in cPanel for the backend"
 echo "4. Configure environment variables in the backend .env file"
 echo "5. Test the deployment using the URLs:"
-echo "   - Frontend: https://matthewandsydney.triadtech.co.za"
-echo "   - Backend: https://matthewandsydneyapi.triadtech.co.za/health"
+echo "   - Frontend: https://matthewandsydney.co.za"
+echo "   - Backend: https://matthewandsydneyapi.co.za/health"
 echo ""
 echo "📖 See CPANEL_DEPLOYMENT.md for detailed deployment instructions"

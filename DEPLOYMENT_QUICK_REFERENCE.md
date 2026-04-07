@@ -1,16 +1,16 @@
 # Wedding Application - Production URLs & Settings
 
 ## Deployment URLs
-- **Frontend**: https://matthewandsydney.triadtech.co.za
-- **Backend API**: https://matthewandsydneyapi.triadtech.co.za
+- **Frontend**: https://matthewandsydney.co.za
+- **Backend API**: https://matthewandsydneyapi.co.za
 
 ## Environment Variables
 
 ### Frontend (.env.production)
 ```
-REACT_APP_SITE_URL=https://matthewandsydney.triadtech.co.za
-REACT_APP_API_URL=https://matthewandsydneyapi.triadtech.co.za
-REACT_APP_ADMIN_EMAIL=admin@matthewandsydney.triadtech.co.za
+REACT_APP_SITE_URL=https://matthewandsydney.co.za
+REACT_APP_API_URL=https://matthewandsydneyapi.co.za
+REACT_APP_ADMIN_EMAIL=admin@matthewandsydney.co.za
 GENERATE_SOURCEMAP=false
 NODE_ENV=production
 ```
@@ -25,8 +25,8 @@ SMTP_PORT=587
 SMTP_SECURE=false
 SMTP_USER=your-email@gmail.com
 SMTP_PASS=your-app-password
-FRONTEND_URL=https://matthewandsydney.triadtech.co.za
-ADMIN_EMAIL=admin@matthewandsydney.triadtech.co.za
+FRONTEND_URL=https://matthewandsydney.co.za
+ADMIN_EMAIL=admin@matthewandsydney.co.za
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 SESSION_SECRET=your-super-secret-session-key-change-this-in-production
 RATE_LIMIT_WINDOW_MS=900000
@@ -44,8 +44,8 @@ npm run build:cpanel
 
 # Or manually with environment variables
 GENERATE_SOURCEMAP=false \
-REACT_APP_API_URL=https://matthewandsydneyapi.triadtech.co.za \
-REACT_APP_SITE_URL=https://matthewandsydney.triadtech.co.za \
+REACT_APP_API_URL=https://matthewandsydneyapi.co.za \
+REACT_APP_SITE_URL=https://matthewandsydney.co.za \
 npm run build
 ```
 
@@ -68,8 +68,8 @@ NODE_ENV=production PORT=3001 node server.js
 6. **Test**: Visit both URLs to verify deployment
 
 ## Health Check Endpoints
-- Backend health: https://matthewandsydneyapi.triadtech.co.za/health
-- Frontend: https://matthewandsydney.triadtech.co.za
+- Backend health: https://matthewandsydneyapi.co.za/health
+- Frontend: https://matthewandsydney.co.za
 
 ## Important Files Created
 - `Wedding/frontend/.htaccess` - Frontend Apache configuration

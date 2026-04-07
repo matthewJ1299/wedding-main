@@ -125,7 +125,7 @@ app.prepare().then(() => {
   // CORS middleware for production
   if (!dev) {
     server.use((req, res, next) => {
-      const origin = process.env.FRONTEND_URL || 'https://matthewandsydney.triadtech.co.za';
+      const origin = process.env.FRONTEND_URL || 'https://matthewandsydney.co.za';
       res.header('Access-Control-Allow-Origin', origin);
       res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
       res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');

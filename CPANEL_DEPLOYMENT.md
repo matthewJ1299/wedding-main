@@ -1,15 +1,15 @@
 # Wedding Application - cPanel Deployment Guide
 
 This guide will help you deploy the wedding application to cPanel hosting with the following URLs:
-- Frontend: https://matthewandsydney.triadtech.co.za
-- Backend API: https://matthewandsydneyapi.triadtech.co.za
+- Frontend: https://matthewandsydney.co.za
+- Backend API: https://matthewandsydneyapi.co.za
 
 ## Prerequisites
 
 1. cPanel hosting account with Node.js support
-2. Two subdomains configured:
-   - `matthewandsydney.triadtech.co.za` (for frontend)
-   - `matthewandsydneyapi.triadtech.co.za` (for backend)
+2. DNS configured for both hostnames:
+   - `matthewandsydney.co.za` (frontend / public site)
+   - `matthewandsydneyapi.co.za` (backend API)
 3. SSL certificates for both domains
 4. Access to cPanel File Manager or FTP
 
@@ -31,7 +31,8 @@ This guide will help you deploy the wedding application to cPanel hosting with t
      SMTP_PASS=your-actual-app-password
      JWT_SECRET=your-unique-jwt-secret-key
      SESSION_SECRET=your-unique-session-secret-key
-     FRONTEND_URL=https://matthewandsydney.triadtech.co.za
+     FRONTEND_URL=https://matthewandsydney.co.za
+     ORIGIN_URL=https://matthewandsydney.co.za
      DATABASE_PATH=./data.sqlite
      UPLOAD_DIR=./uploads
      ```
@@ -48,7 +49,7 @@ This guide will help you deploy the wedding application to cPanel hosting with t
 5. **Start the Backend Service**
    - Use cPanel's Node.js Selector to create a new application
    - Set the application root to your backend directory
-   - Set the application URL to `matthewandsydneyapi.triadtech.co.za`
+   - Set the application URL to `matthewandsydneyapi.co.za`
    - Set the application startup file to `server.js`
    - Set Node.js version to 18.x or higher
    - Set the startup command to: `npm run start:cpanel`
@@ -67,8 +68,8 @@ This guide will help you deploy the wedding application to cPanel hosting with t
 2. **Set Environment Variables**
    - Create a `.env` file in the frontend root directory with:
      ```
-     REACT_APP_API_URL=https://matthewandsydneyapi.triadtech.co.za
-     REACT_APP_SITE_URL=https://matthewandsydney.triadtech.co.za
+     REACT_APP_API_URL=https://matthewandsydneyapi.co.za
+     REACT_APP_SITE_URL=https://matthewandsydney.co.za
      GENERATE_SOURCEMAP=false
      ```
 
@@ -91,7 +92,7 @@ This guide will help you deploy the wedding application to cPanel hosting with t
 
 6. **Verify Environment Variables**
    - The build process should have used the correct API URL from the `.env` file
-   - Verify that all API calls point to `https://matthewandsydneyapi.triadtech.co.za`
+   - Verify that all API calls point to `https://matthewandsydneyapi.co.za`
 
 ### 3. Database Setup
 
@@ -120,11 +121,11 @@ This guide will help you deploy the wedding application to cPanel hosting with t
 ### 6. Testing
 
 1. **Health Check**
-   - Visit `https://matthewandsydneyapi.triadtech.co.za/health`
+   - Visit `https://matthewandsydneyapi.co.za/health`
    - Should return a JSON response with server status
 
 2. **Frontend Access**
-   - Visit `https://matthewandsydney.triadtech.co.za`
+   - Visit `https://matthewandsydney.co.za`
    - Verify the application loads correctly
    - Test API connectivity by using the admin features
 
@@ -144,7 +145,7 @@ This guide will help you deploy the wedding application to cPanel hosting with t
      2. Check that `mod_rewrite` is enabled on your cPanel hosting (contact hosting provider if unsure)
      3. Ensure the `.htaccess` file has the correct rewrite rule: `RewriteRule ^ index.html [L]`
      4. If the above doesn't work, try changing the rewrite rule to: `RewriteRule ^ /index.html [L]` (with leading slash)
-     5. Test by accessing `https://matthewandsydney.triadtech.co.za/.htaccess` - it should return 403 Forbidden (not 404), confirming the file exists
+     5. Test by accessing `https://matthewandsydney.co.za/.htaccess` - it should return 403 Forbidden (not 404), confirming the file exists
      6. Check cPanel error logs for any `.htaccess` syntax errors
    - **Alternative Solution:** If `.htaccess` rewrite rules don't work, you may need to configure the rewrite rules through cPanel's "Apache Handlers" or contact your hosting provider to enable `mod_rewrite` for your domain
 

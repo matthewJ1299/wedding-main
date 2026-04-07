@@ -25,13 +25,13 @@ Updated the deployment to work with **Node.js 18.20.8** with fallback support fo
 ## Deployment Folders Ready 📁
 
 ### Frontend (`deployment/frontend/`)
-✅ **Ready for**: `https://matthewandsydney.triadtech.co.za`
+✅ **Ready for**: `https://matthewandsydney.co.za`
 - All React build files
 - `.htaccess` for Apache routing
 - Static assets and media files
 
 ### Backend (`deployment/backend/`)
-✅ **Ready for**: `https://matthewandsydneyapi.triadtech.co.za`
+✅ **Ready for**: `https://matthewandsydneyapi.co.za`
 - Node.js 18 optimized `package.json`
 - Enhanced `server.js` with fallback support
 - `.env` file with production settings
@@ -66,8 +66,8 @@ Use cPanel's Node.js Selector:
 - Start the application
 
 ### 5. Test Deployment
-- Frontend: https://matthewandsydney.triadtech.co.za
-- Backend health: https://matthewandsydneyapi.triadtech.co.za/health
+- Frontend: https://matthewandsydney.co.za
+- Backend health: https://matthewandsydneyapi.co.za/health
 
 ## Key Improvements 📝
 

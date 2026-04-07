@@ -187,7 +187,7 @@ export default function HeaderNavigation() {
             component="span"
             className="hero-couple-name"
             sx={{
-              fontSize: { xs: '1.75rem', sm: '2.25rem', md: '9rem' },
+              fontSize: { xs: '3.5rem', sm: '2.25rem', md: '9rem' },
               color: '#fff',
               textShadow: '2px 2px 8px rgba(0,0,0,0.4)',
               letterSpacing: { xs: '0.01em', md: '0.02em' },

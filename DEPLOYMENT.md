@@ -11,8 +11,8 @@ This guide provides step-by-step instructions for deploying the wedding site to 
 
 ## Deployment Architecture
 
-- **Frontend**: `matthewandsydney.triadtech.co.za` (Static React build)
-- **Backend API**: `matthewandsydneyapi.triadtech.co.za` (Node.js application)
+- **Frontend**: `matthewandsydney.co.za` (Static React build)
+- **Backend API**: `matthewandsydneyapi.co.za` (Node.js application)
 
 ## Frontend Deployment
 
@@ -36,8 +36,8 @@ npm run build
 Create a `.env.production` file in the frontend root with:
 
 ```env
-REACT_APP_API_URL=https://matthewandsydneyapi.triadtech.co.za
-REACT_APP_SITE_URL=https://matthewandsydney.triadtech.co.za
+REACT_APP_API_URL=https://matthewandsydneyapi.co.za
+REACT_APP_SITE_URL=https://matthewandsydney.co.za
 GENERATE_SOURCEMAP=false
 ```
 
@@ -53,7 +53,7 @@ npm run build
 
 ### 2. Upload Backend Files
 
-1. Create a subdomain directory for your API (e.g., `api.matthewandsydney.triadtech.co.za`)
+1. Create a subdomain directory for your API (e.g., `matthewandsydneyapi.co.za`)
 2. Upload all backend files except `node_modules`
 3. Upload the `.htaccess` file from `Wedding/backend/.htaccess`
 
@@ -67,7 +67,7 @@ PORT=3001
 DATABASE_PATH=./data.sqlite
 EMAIL_USER=your-production-email@gmail.com
 EMAIL_PASS=your-production-app-password
-ORIGIN_URL=https://matthewandsydney.triadtech.co.za
+ORIGIN_URL=https://matthewandsydney.co.za
 ADMIN_EMAIL=matthew.j@live.com
 JWT_SECRET=your-super-secret-jwt-key-change-this
 MAX_FILE_SIZE=10485760
@@ -102,14 +102,14 @@ The SQLite database will be created automatically on first run. Ensure the backe
 ### 2. Seed Initial Data (Optional)
 
 ```bash
-curl -X POST https://matthewandsydneyapi.triadtech.co.za/api/seed
+curl -X POST https://matthewandsydneyapi.co.za/api/seed
 ```
 
 ## SSL Configuration
 
 Ensure SSL certificates are installed for both domains:
-- `matthewandsydney.triadtech.co.za`
-- `matthewandsydneyapi.triadtech.co.za`
+- `matthewandsydney.co.za`
+- `matthewandsydneyapi.co.za`
 
 ## File Permissions
 
@@ -145,7 +145,7 @@ pm2 startup
 Monitor the application health:
 
 ```bash
-curl https://matthewandsydneyapi.triadtech.co.za/api/health
+curl https://matthewandsydneyapi.co.za/api/health
 ```
 
 ### Logs
