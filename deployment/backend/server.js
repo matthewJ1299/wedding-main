@@ -53,6 +53,9 @@ function applyCors(res, req) {
 app.prepare().then(() => {
   const server = express();
 
+  // Behind Coolify / Traefik / nginx (needed for correct client IP in logs and rate limits)
+  server.set('trust proxy', 1);
+
   // Security middleware
   server.use(helmet({
     contentSecurityPolicy: {
@@ -65,7 +68,9 @@ app.prepare().then(() => {
         connectSrc: ["'self'"]
       }
     },
-    crossOriginEmbedderPolicy: false
+    crossOriginEmbedderPolicy: false,
+    // Default is same-origin; that blocks fetch() from https://matthewandsydney.co.za to https://api.matthewandsydney.co.za
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
   }));
 
   // Compression middleware
@@ -75,9 +80,16 @@ app.prepare().then(() => {
   server.use(express.json({ limit: '10mb' }));
   server.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // CORS before rate limiting so 429 and error paths still expose CORS headers to the browser
+  // CORS on every response (including Next 404/500) for /api once middleware has run
+  server.use((req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      applyCors(res, req);
+    }
+    next();
+  });
+
+  // Preflight for /api (CORS headers already applied above)
   server.use('/api', (req, res, next) => {
-    applyCors(res, req);
     if (req.method === 'OPTIONS') {
       return res.sendStatus(204);
     }
@@ -143,8 +155,8 @@ app.prepare().then(() => {
     }
   });
 
-  // Start server
-  server.listen(port, (err) => {
+  // Start server (0.0.0.0 so Docker / Coolify can reach the container)
+  server.listen(port, '0.0.0.0', (err) => {
     if (err) throw err;
     console.log(`> Backend server ready on http://${hostname}:${port}`);
     console.log(`> Environment: ${process.env.NODE_ENV || 'development'}`);

@@ -191,6 +191,8 @@ The compose file mounts a named volume at `/data` in the backend container for S
 
 **Coolify:** attach domains in the UI to the **frontend** (container port **80**) and **backend** (container port **3001**). Do not rely on publishing host ports 8080/3001; the default `docker-compose.yml` is built for that. If you ever see `Bind for 0.0.0.0:8080 failed: port is already allocated`, you are using a compose file that publishes 8080 on the host; use the repo default or remove host `ports` for Coolify.
 
+**Coolify / API subdomain troubleshooting:** If the browser reports CORS errors and the network tab shows **404** for `https://api.matthewandsydney.co.za/api/...`, the request is usually **not reaching the backend container** (wrong service, wrong internal port, or a path prefix/strip that removes `/api`). In Coolify, `api.matthewandsydney.co.za` must route to the **backend** service on port **3001** with the **full path** preserved (`/api/invitees`, etc.). Check `curl -sS -o /dev/null -w "%{http_code}" https://api.matthewandsydney.co.za/health` returns **200**. The backend sets `Cross-Origin-Resource-Policy: cross-origin` so Helmet does not block cross-subdomain `fetch()` from `https://matthewandsydney.co.za`.
+
 ### Production URLs
 
 - **Frontend (public site)**: `https://matthewandsydney.co.za`
