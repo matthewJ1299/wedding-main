@@ -171,18 +171,25 @@ Configure generic SMTP via `SMTP_HOST`, `SMTP_PORT`, and `SMTP_SECURE` (`true` f
 From the repository root (`wedding-main/`), with Docker installed:
 
 1. Copy `.env.docker.example` to `.env` and set SMTP, secrets, and public URLs if not using the localhost defaults.
-2. Run:
+2. Run one of:
 
-   ```bash
-   docker compose up --build
-   ```
+   - **Coolify / production-style proxy (no host ports):** avoids conflicts when something else already uses 8080 or 3001 on the server.
 
-3. **Frontend:** http://localhost:8080  
-   **Backend API:** http://localhost:3001 (health: http://localhost:3001/health or http://localhost:3001/api/health)
+     ```bash
+     docker compose up --build
+     ```
+
+   - **Local machine with http://localhost:8080 and :3001:**
+
+     ```bash
+     docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
+     ```
+
+3. **With `docker-compose.local.yml`:** frontend http://localhost:8080, API http://localhost:3001 (health: `/health` or `/api/health`). **Without it:** open the app only via your reverse proxy / Coolify domains (containers expose ports 80 and 3001 internally only).
 
 The compose file mounts a named volume at `/data` in the backend container for SQLite (`DATABASE_PATH=/data/data.sqlite`), uploads (`UPLOAD_DIR=/data/uploads`), and backups (`BACKUP_DIR=/data/backups`). The static site image is built with `REACT_APP_API_URL` / `REACT_APP_SITE_URL` build args so the browser calls the correct API origin.
 
-For Coolify or another platform, use the same Dockerfiles under `Wedding/backend` and `Wedding/frontend`, pass the same environment variables, and attach persistent storage to `/data` on the backend service.
+**Coolify:** attach domains in the UI to the **frontend** (container port **80**) and **backend** (container port **3001**). Do not rely on publishing host ports 8080/3001; the default `docker-compose.yml` is built for that. If you ever see `Bind for 0.0.0.0:8080 failed: port is already allocated`, you are using a compose file that publishes 8080 on the host; use the repo default or remove host `ports` for Coolify.
 
 ### Production URLs
 

@@ -1,10 +1,15 @@
+# Default stack: no host port bindings. Suited for Coolify / Traefik / platform proxies
+# (avoids "Bind for 0.0.0.0:8080 failed: port is already allocated" when 8080 is in use).
+#
+# Local dev with localhost URLs: docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
+
 services:
   backend:
     build:
       context: ./Wedding/backend
       dockerfile: Dockerfile
-    ports:
-      - "3001:3001"
+    expose:
+      - "3001"
     environment:
       NODE_ENV: production
       PORT: 3001
@@ -32,8 +37,8 @@ services:
       args:
         REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:3001}
         REACT_APP_SITE_URL: ${REACT_APP_SITE_URL:-http://localhost:8080}
-    ports:
-      - "8080:80"
+    expose:
+      - "80"
     depends_on:
       - backend
 
