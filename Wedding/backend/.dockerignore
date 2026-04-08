@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+*.md
+npm-debug.log*
+data.sqlite
+uploads
+logs
+backups
+.env
+.env.*

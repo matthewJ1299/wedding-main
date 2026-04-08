@@ -7,8 +7,17 @@ const fs = require('fs');
 const path = require('path');
 const { logger } = require('./logger');
 
-const DB_PATH = path.join(process.cwd(), 'data.sqlite');
-const BACKUP_DIR = path.join(process.cwd(), 'backups');
+function getDatabasePath() {
+  return (
+    process.env.DATABASE_PATH ||
+    process.env.DB_PATH ||
+    path.join(process.cwd(), 'data.sqlite')
+  );
+}
+
+const DB_PATH = getDatabasePath();
+const BACKUP_DIR =
+  process.env.BACKUP_DIR || path.join(path.dirname(DB_PATH), 'backups');
 
 /**
  * Ensure backup directory exists

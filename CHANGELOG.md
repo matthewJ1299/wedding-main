@@ -2,6 +2,8 @@
 
 ## 2026-04-08
 
+- **SMTP / Docker**: Replaced Gmail-only nodemailer with generic SMTP (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, optional `SMTP_FROM`) in `Wedding/backend/src/emailModule.js`; `EMAIL_USER` / `EMAIL_PASS` remain aliases for auth. Added `Wedding/backend/src/utils/paths.js` (`getDatabasePath`, `getUploadsDir`), wired API routes + `dbBackup` + `test-api`, fixed duplicate `environment` key in `/api/health`, added repo-root `docker-compose.yml`, `Wedding/backend/Dockerfile` + `docker-entrypoint.sh`, `Wedding/frontend/Dockerfile` + `nginx.conf`, and `.env.docker.example`.
+
 - **CORS hardening**: Normalized `ORIGIN_URL` / `FRONTEND_URL` origin parsing in `cors-origin.cjs` (handles trailing slash/path safely), and added `Vary: Origin`, `Access-Control-Max-Age`, plus broader preflight request headers in backend CORS responses (`server.js` and `/api/invitees` route in both `Wedding/backend` and `deployment/backend`).
 
 - **cPanel startup-file mode hardening**: Updated `Wedding/backend/server.js` and `deployment/backend/server.js` to default `NODE_ENV` to `production` when unset (common on shared hosts that only ask for a startup file). This prevents accidental Next dev-mode startup (`next-dev` paths, turbopack/thread-pool errors) in production.

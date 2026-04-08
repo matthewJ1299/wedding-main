@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
 import { logger } from '../../../utils/logger.js';
+import { getDatabasePath, getUploadsDir } from '../../../utils/paths.js';
 
 export const runtime = 'nodejs';
 
@@ -14,7 +15,7 @@ export async function GET() {
     const startTime = Date.now();
     
     // Check database file exists
-    const dbPath = path.join(process.cwd(), 'data.sqlite');
+    const dbPath = getDatabasePath();
     const dbExists = fs.existsSync(dbPath);
     const dbStats = dbExists ? fs.statSync(dbPath) : null;
     
@@ -23,7 +24,7 @@ export async function GET() {
     const logsExist = fs.existsSync(logsPath);
     
     // Check uploads directory
-    const uploadsPath = path.join(process.cwd(), 'uploads');
+    const uploadsPath = getUploadsDir();
     const uploadsExist = fs.existsSync(uploadsPath);
     
     // Memory usage
@@ -33,10 +34,11 @@ export async function GET() {
     const envCheck = {
       NODE_ENV: !!process.env.NODE_ENV,
       PORT: !!process.env.PORT,
-      EMAIL_USER: !!process.env.EMAIL_USER,
-      EMAIL_PASS: !!process.env.EMAIL_PASS,
+      SMTP_HOST: !!process.env.SMTP_HOST,
+      SMTP_USER: !!(process.env.SMTP_USER || process.env.EMAIL_USER),
+      SMTP_FROM: !!process.env.SMTP_FROM,
       ORIGIN_URL: !!process.env.ORIGIN_URL,
-      ADMIN_EMAIL: !!process.env.ADMIN_EMAIL
+      ADMIN_EMAIL: !!process.env.ADMIN_EMAIL,
     };
     
     const responseTime = Date.now() - startTime;
@@ -45,7 +47,7 @@ export async function GET() {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      environment: process.env.NODE_ENV || 'development',
+      nodeEnv: process.env.NODE_ENV || 'development',
       version: process.env.npm_package_version || '1.0.0',
       responseTime: `${responseTime}ms`,
       memory: {
@@ -63,7 +65,7 @@ export async function GET() {
         logs: logsExist,
         uploads: uploadsExist
       },
-      environment: envCheck,
+      envCheck,
       system: {
         platform: process.platform,
         arch: process.arch,

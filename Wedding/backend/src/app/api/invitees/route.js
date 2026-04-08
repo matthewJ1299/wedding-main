@@ -1,16 +1,15 @@
 import { NextResponse } from 'next/server';
-import path from 'path';
 import { randomUUID } from 'crypto';
 import { createRequire } from 'module';
 import InviteeRepository from '../../../../repositories/InviteeRepository.js';
+import { getDatabasePath } from '../../../utils/paths.js';
 
 const require = createRequire(import.meta.url);
 const { allowedOriginFromNextRequest } = require('../../../../cors-origin.cjs');
 
 export const runtime = 'nodejs';
 
-const dbPath =
-  process.env.DATABASE_PATH || process.env.DB_PATH || path.join(process.cwd(), 'data.sqlite');
+const dbPath = getDatabasePath();
 let repo;
 try {
   repo = new InviteeRepository(dbPath);

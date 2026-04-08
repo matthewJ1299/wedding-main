@@ -65,9 +65,14 @@ Create a `.env.production` file in the backend root with:
 NODE_ENV=production
 PORT=3001
 DATABASE_PATH=./data.sqlite
-EMAIL_USER=your-production-email@gmail.com
-EMAIL_PASS=your-production-app-password
+SMTP_HOST=smtp.your-provider.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=
 ORIGIN_URL=https://matthewandsydney.co.za
+FRONTEND_URL=https://matthewandsydney.co.za
 ADMIN_EMAIL=matthew.j@live.com
 JWT_SECRET=your-super-secret-jwt-key-change-this
 MAX_FILE_SIZE=10485760
@@ -184,7 +189,7 @@ Regularly backup:
 
 1. **CORS Errors**: Ensure `ORIGIN_URL` matches your frontend domain
 2. **Database Permissions**: Check file permissions for SQLite database
-3. **Email Issues**: Verify Gmail app password and SMTP settings
+3. **Email Issues**: Verify `SMTP_HOST` / port / TLS (`SMTP_SECURE`) and credentials (`SMTP_USER` / `SMTP_PASS`)
 4. **Upload Failures**: Ensure `uploads/` directory exists and is writable
 
 ### Debug Mode

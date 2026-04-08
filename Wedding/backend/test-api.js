@@ -1,9 +1,9 @@
 // Test script to verify all invitee CRUD operations
-import path from 'path';
 import { randomUUID } from 'crypto';
 import InviteeRepository from './repositories/InviteeRepository.js';
+import { getDatabasePath } from './src/utils/paths.js';
 
-const dbPath = path.join(process.cwd(), 'data.sqlite');
+const dbPath = getDatabasePath();
 
 async function testInviteeCRUD() {
   console.log('🧪 Starting Invitee CRUD Tests...\n');

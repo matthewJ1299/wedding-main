@@ -25,13 +25,13 @@
     "winston": "^3.19.0"
   },
   "devDependencies": {
-    "@types/node": "^18.17.0",
-    "@types/react": "^18.2.15",
+    "@types/node": "18.19.130",
+    "@types/react": "18.3.28",
     "@types/react-dom": "^18.2.7",
     "critters": "^0.0.23",
     "eslint": "^8.45.0",
     "eslint-config-next": "15.5.3",
-    "typescript": "^5.1.6"
+    "typescript": "5.9.3"
   },
   "engines": {
     "node": ">=22.5.0"

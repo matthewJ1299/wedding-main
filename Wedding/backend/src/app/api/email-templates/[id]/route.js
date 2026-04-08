@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import path from 'path';
 import EmailTemplateRepository from '../../../../../repositories/EmailTemplateRepository.js';
+import { getDatabasePath } from '../../../../utils/paths.js';
 
 export const runtime = 'nodejs';
 
-const dbPath = path.join(process.cwd(), 'data.sqlite');
+const dbPath = getDatabasePath();
 const repo = new EmailTemplateRepository(dbPath);
 
 function withCors(response) {

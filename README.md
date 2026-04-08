@@ -30,7 +30,7 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
 ### Prerequisites
 - Node.js 22.5+ (required for the backend API; uses built-in `node:sqlite`)
 - npm or yarn
-- Gmail account for email functionality
+- SMTP server (or relay) for email, or run without SMTP to log messages only in development
 
 ### Development Setup
 
@@ -57,7 +57,7 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
    cp .env.example .env.local
    
    # Edit with your configuration
-   # - Email credentials (Gmail app password)
+   # - SMTP settings (SMTP_HOST, etc.; see Configuration)
    # - Admin email address
    # - Database settings
    ```
@@ -144,20 +144,45 @@ You can still override at build time (e.g. `npm run build:cpanel` sets the same 
 NODE_ENV=development
 PORT=3001
 DATABASE_PATH=./data.sqlite
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-app-password
+UPLOAD_DIR=./uploads
 ORIGIN_URL=http://localhost:3000
+FRONTEND_URL=http://localhost:3000
 ADMIN_EMAIL=admin@example.com
 JWT_SECRET=your-secret-key
+
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=
 ```
+
+`EMAIL_USER` / `EMAIL_PASS` are still accepted as aliases for `SMTP_USER` / `SMTP_PASS` if you prefer those names.
 
 ### Email Configuration
 
-1. Enable 2-factor authentication on your Gmail account
-2. Generate an app password for the application
-3. Use the app password in `EMAIL_PASS` environment variable
+Configure generic SMTP via `SMTP_HOST`, `SMTP_PORT`, and `SMTP_SECURE` (`true` for implicit TLS on port 465, usually `false` for STARTTLS on 587). Set `SMTP_USER` and `SMTP_PASS` when your server requires authentication. Optional `SMTP_FROM` sets the **From** header (defaults to `SMTP_USER`, then `ADMIN_EMAIL`). If `SMTP_HOST` is not set, outbound mail is not sent; the backend logs the payload instead.
 
 ## Deployment
+
+### Docker (full stack)
+
+From the repository root (`wedding-main/`), with Docker installed:
+
+1. Copy `.env.docker.example` to `.env` and set SMTP, secrets, and public URLs if not using the localhost defaults.
+2. Run:
+
+   ```bash
+   docker compose up --build
+   ```
+
+3. **Frontend:** http://localhost:8080  
+   **Backend API:** http://localhost:3001 (health: http://localhost:3001/health or http://localhost:3001/api/health)
+
+The compose file mounts a named volume at `/data` in the backend container for SQLite (`DATABASE_PATH=/data/data.sqlite`), uploads (`UPLOAD_DIR=/data/uploads`), and backups (`BACKUP_DIR=/data/backups`). The static site image is built with `REACT_APP_API_URL` / `REACT_APP_SITE_URL` build args so the browser calls the correct API origin.
+
+For Coolify or another platform, use the same Dockerfiles under `Wedding/backend` and `Wedding/frontend`, pass the same environment variables, and attach persistent storage to `/data` on the backend service.
 
 ### Production URLs
 

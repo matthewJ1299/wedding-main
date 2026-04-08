@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import path from 'path';
 import { randomUUID } from 'crypto';
 import fs from 'fs';
 import PhotoRepository from '../../../../repositories/PhotoRepository.js';
+import { getDatabasePath, getUploadsDir } from '../../../utils/paths.js';
 
 export const runtime = 'nodejs';
 
-const dbPath = path.join(process.cwd(), 'data.sqlite');
+const dbPath = getDatabasePath();
 let repo;
 try {
   repo = new PhotoRepository(dbPath);
@@ -15,7 +15,7 @@ try {
 }
 
 // Ensure uploads directory exists
-const uploadsDir = path.join(process.cwd(), 'uploads');
+const uploadsDir = getUploadsDir();
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }

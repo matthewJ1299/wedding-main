@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import path from 'path';
 import { randomUUID } from 'crypto';
 import EmailTemplateRepository from '../../../../repositories/EmailTemplateRepository.js';
 import { DEFAULT_EMAIL_TEMPLATES } from '../../../seed/emailTemplates.js';
+import { getDatabasePath } from '../../../utils/paths.js';
 
 export const runtime = 'nodejs';
 
-const dbPath = path.join(process.cwd(), 'data.sqlite');
+const dbPath = getDatabasePath();
 let repo;
 try {
   repo = new EmailTemplateRepository(dbPath);

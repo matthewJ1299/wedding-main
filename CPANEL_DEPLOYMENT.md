@@ -104,8 +104,8 @@ The Next.js backend **must** have a production build output (the `.next` folder)
 ### 4. Email Configuration
 
 1. **SMTP Settings**
-   - Update the SMTP settings in the backend `.env` file
-   - For Gmail, use App Passwords instead of your regular password
+   - Set `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE` (`true` or `false`), and when required `SMTP_USER` / `SMTP_PASS` in the backend `.env` file (see `Wedding/backend/env.production.txt`)
+   - Optional: `SMTP_FROM` for the **From** address; `EMAIL_USER` / `EMAIL_PASS` are accepted as aliases for SMTP auth
    - Test email functionality using the admin panel
 
 ### 5. SSL Configuration

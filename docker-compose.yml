@@ -1,0 +1,41 @@
+services:
+  backend:
+    build:
+      context: ./Wedding/backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_PATH: /data/data.sqlite
+      UPLOAD_DIR: /data/uploads
+      BACKUP_DIR: /data/backups
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8080}
+      ORIGIN_URL: ${ORIGIN_URL:-http://localhost:8080}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      SESSION_SECRET: ${SESSION_SECRET:-change-me-in-production}
+    volumes:
+      - wedding_data:/data
+
+  frontend:
+    build:
+      context: ./Wedding/frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:3001}
+        REACT_APP_SITE_URL: ${REACT_APP_SITE_URL:-http://localhost:8080}
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  wedding_data:

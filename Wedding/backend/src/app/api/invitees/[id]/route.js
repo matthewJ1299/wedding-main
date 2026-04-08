@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import path from 'path';
 import InviteeRepository from '../../../../../repositories/InviteeRepository.js';
+import { getDatabasePath } from '../../../../utils/paths.js';
 
 export const runtime = 'nodejs';
 
-const dbPath = path.join(process.cwd(), 'data.sqlite');
+const dbPath = getDatabasePath();
 let repo;
 try {
   repo = new InviteeRepository(dbPath);
