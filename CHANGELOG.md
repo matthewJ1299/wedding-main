@@ -2,7 +2,7 @@
 
 ## 2026-04-08
 
-- **Docker Compose / Coolify**: Default `docker-compose.yml` no longer publishes host ports `8080`/`3001` (uses `expose` only) so Coolify and other hosts do not hit `port is already allocated` when 8080 is taken. Local testing: `docker compose -f docker-compose.yml -f docker-compose.local.yml up --build`.
+- **Docker Compose / Coolify**: Default `docker-compose.yml` no longer publishes host ports `8080`/`3001` (uses `expose` only) so Coolify and other hosts do not hit `port is already allocated` when 8080 is taken. Local testing: `docker compose -f docker-compose.yml -f docker-compose.local.yml up --build`. Compose defaults `FRONTEND_URL` / `ORIGIN_URL` / `REACT_APP_*` to `https://matthewandsydney.co.za` and `https://api.matthewandsydney.co.za`; `docker-compose.local.yml` overrides to localhost for laptop builds.
 
 - **SMTP / Docker**: Replaced Gmail-only nodemailer with generic SMTP (`SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, optional `SMTP_FROM`) in `Wedding/backend/src/emailModule.js`; `EMAIL_USER` / `EMAIL_PASS` remain aliases for auth. Added `Wedding/backend/src/utils/paths.js` (`getDatabasePath`, `getUploadsDir`), wired API routes + `dbBackup` + `test-api`, fixed duplicate `environment` key in `/api/health`, added repo-root `docker-compose.yml`, `Wedding/backend/Dockerfile` + `docker-entrypoint.sh`, `Wedding/frontend/Dockerfile` + `nginx.conf`, and `.env.docker.example`.
 

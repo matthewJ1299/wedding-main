@@ -1,7 +1,7 @@
-# Default stack: no host port bindings. Suited for Coolify / Traefik / platform proxies
-# (avoids "Bind for 0.0.0.0:8080 failed: port is already allocated" when 8080 is in use).
+# Default stack: no host port bindings (Coolify / Traefik friendly).
+# Production public URLs are the defaults below; override any value via `.env` or your platform UI.
 #
-# Local dev with localhost URLs: docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
+# Local laptop: docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
 
 services:
   backend:
@@ -16,8 +16,8 @@ services:
       DATABASE_PATH: /data/data.sqlite
       UPLOAD_DIR: /data/uploads
       BACKUP_DIR: /data/backups
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8080}
-      ORIGIN_URL: ${ORIGIN_URL:-http://localhost:8080}
+      FRONTEND_URL: ${FRONTEND_URL:-https://matthewandsydney.co.za}
+      ORIGIN_URL: ${ORIGIN_URL:-https://matthewandsydney.co.za}
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_SECURE: ${SMTP_SECURE:-false}
@@ -35,8 +35,8 @@ services:
       context: ./Wedding/frontend
       dockerfile: Dockerfile
       args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:3001}
-        REACT_APP_SITE_URL: ${REACT_APP_SITE_URL:-http://localhost:8080}
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-https://api.matthewandsydney.co.za}
+        REACT_APP_SITE_URL: ${REACT_APP_SITE_URL:-https://matthewandsydney.co.za}
     expose:
       - "80"
     depends_on:

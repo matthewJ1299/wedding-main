@@ -170,7 +170,7 @@ Configure generic SMTP via `SMTP_HOST`, `SMTP_PORT`, and `SMTP_SECURE` (`true` f
 
 From the repository root (`wedding-main/`), with Docker installed:
 
-1. Copy `.env.docker.example` to `.env` and set SMTP, secrets, and public URLs if not using the localhost defaults.
+1. Optional: copy `.env.docker.example` to `.env` and set SMTP and secrets. `docker-compose.yml` already defaults to `https://matthewandsydney.co.za` and `https://api.matthewandsydney.co.za` for CORS and CRA build args (override via `.env` or Coolify if needed).
 2. Run one of:
 
    - **Coolify / production-style proxy (no host ports):** avoids conflicts when something else already uses 8080 or 3001 on the server.
