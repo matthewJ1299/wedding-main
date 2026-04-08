@@ -1,13 +1,11 @@
 // ThemeRepository.js
-// Repository pattern for Theme entity using better-sqlite3
-// Follows SOLID, DRY, YAGNI principles
+// Repository pattern for Theme entity using Node's built-in node:sqlite
 
-const Database = require('better-sqlite3');
+import { openDatabaseSync } from '../src/utils/openDatabaseSync.js';
 
 class ThemeRepository {
   constructor(dbPath) {
-    this.db = new Database(dbPath);
-    this.db.pragma('journal_mode = WAL');
+    this.db = openDatabaseSync(dbPath);
     this._initTable();
   }
 
@@ -54,4 +52,4 @@ class ThemeRepository {
   }
 }
 
-module.exports = ThemeRepository;
+export default ThemeRepository;

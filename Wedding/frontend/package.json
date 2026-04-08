@@ -29,7 +29,7 @@
     "start:basic": "node simple-start.js",
     "build": "react-scripts build",
     "build:production": "GENERATE_SOURCEMAP=false react-scripts build",
-    "build:cpanel": "GENERATE_SOURCEMAP=false REACT_APP_API_URL=https://matthewandsydneyapi.co.za REACT_APP_SITE_URL=https://matthewandsydney.co.za react-scripts build",
+    "build:cpanel": "GENERATE_SOURCEMAP=false REACT_APP_API_URL=https://api.matthewandsydney.co.za REACT_APP_SITE_URL=https://matthewandsydney.co.za react-scripts build",
     "build:analyze": "npm run build && npx serve -s build",
     "test": "react-scripts test",
     "test:coverage": "react-scripts test --coverage --watchAll=false",

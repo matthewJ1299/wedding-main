@@ -2,62 +2,57 @@
 
 This guide will help you deploy the wedding application to cPanel hosting with the following URLs:
 - Frontend: https://matthewandsydney.co.za
-- Backend API: https://matthewandsydneyapi.co.za
+- Backend API: https://api.matthewandsydney.co.za
 
 ## Prerequisites
 
-1. cPanel hosting account with Node.js support
+1. cPanel hosting account with **Node.js 22.5 or newer** for the backend (required for built-in `node:sqlite`). The backend uses `next.config.mjs` (not `next.config.ts`) so Next can load config on typical hosts; select the newest **22.x** (or **24.x** if available) in **Setup Node.js App**, not Node 18.
 2. DNS configured for both hostnames:
    - `matthewandsydney.co.za` (frontend / public site)
-   - `matthewandsydneyapi.co.za` (backend API)
+   - `api.matthewandsydney.co.za` (backend API)
 3. SSL certificates for both domains
 4. Access to cPanel File Manager or FTP
 
 ## Deployment Steps
 
-### 1. Backend Deployment
+### 1. Backend deployment (local build, then FTP)
 
-1. **Upload Backend Files**
-   - Upload the entire `Wedding/backend/` folder to your backend domain's public_html directory
-   - **Do NOT upload `node_modules`** - we will install dependencies on cPanel
+The Next.js backend **must** have a production build output (the `.next` folder). The repo scripts used to delete `.next` when packaging; that is fixed. Use one of the flows below.
 
-2. **Set Environment Variables**
-   - Copy `env.production.txt` to `.env` in the backend root directory
-   - Update the following values in `.env`:
-     ```
-     NODE_ENV=production
-     PORT=3001
-     SMTP_USER=your-actual-email@gmail.com
-     SMTP_PASS=your-actual-app-password
-     JWT_SECRET=your-unique-jwt-secret-key
-     SESSION_SECRET=your-unique-session-secret-key
-     FRONTEND_URL=https://matthewandsydney.co.za
-     ORIGIN_URL=https://matthewandsydney.co.za
-     DATABASE_PATH=./data.sqlite
-     UPLOAD_DIR=./uploads
-     ```
+#### Recommended: `deployment/backend` package from your PC
 
-3. **Install Dependencies on cPanel**
-   - In cPanel Terminal or via SSH, navigate to the backend directory
-   - Run: `npm install`
-   - This will install all dependencies including dev dependencies needed for building
+1. From the **repository root** (`wedding-main`), run:
+   - **Windows:** `build-production.bat`
+   - **macOS/Linux:** `./build-production.sh`
+2. That script runs `npm run build` inside `Wedding/backend`, then copies the result to `deployment/backend/` and **removes only `node_modules`** from the copy (the **`.next` folder is kept**).
+3. FTP (or upload) the **full** contents of `deployment/backend/` to your API app directory on the server.
+   - **Critical:** Include the **`.next`** directory. Some FTP clients hide dot-folders; enable “show hidden files” or sync `.next` explicitly. Without `.next`, `node server.js` cannot serve the API.
+4. On the server (SSH or cPanel Terminal), in that app directory:
+   - `npm ci --omit=dev` **or** `npm install --omit=dev`
+   - Production only: you do **not** need devDependencies to **run** the app if `.next` was built on your machine.
+5. **Environment:** copy `env.production.txt` to `.env` and set real secrets and SMTP. At minimum:
+   ```
+   NODE_ENV=production
+   PORT=3001
+   FRONTEND_URL=https://matthewandsydney.co.za
+   ORIGIN_URL=https://matthewandsydney.co.za
+   DB_PATH=./data.sqlite
+   ```
+   Use `DATABASE_PATH` instead of `DB_PATH` if you need an absolute path to `data.sqlite`.
 
-4. **Build the Backend (if needed)**
-   - If your backend uses Next.js build process, run: `npm run build`
-   - This step may not be required if you're using `server.js` directly
-
-5. **Start the Backend Service**
+6. **Start the Backend Service**
    - Use cPanel's Node.js Selector to create a new application
    - Set the application root to your backend directory
-   - Set the application URL to `matthewandsydneyapi.co.za`
+   - Set the application URL to `api.matthewandsydney.co.za`
    - Set the application startup file to `server.js`
-   - Set Node.js version to 18.x or higher
-   - Set the startup command to: `npm run start:cpanel`
-   - Start the application
+   - Set Node.js version to 22.5 or higher (required for built-in `node:sqlite`)
+   - If your host does not allow a custom startup command, startup file only is fine: this `server.js` defaults `NODE_ENV` to `production` when unset.
+   - Start/restart the application
 
-6. **Configure .htaccess**
-   - The `.htaccess` file is already configured for the backend
-   - It will proxy requests to the Node.js server running on port 3001
+7. **Configure .htaccess**
+   - Use `Wedding/backend/.htaccess` in the API document root. It proxies all non-file traffic to Node on port 3001.
+   - **Do not** add a separate `RewriteRule` for `OPTIONS` that returns `R=200` without proxying; CORS preflight must reach Node so Express can respond with `204` and CORS headers.
+   - CORS response headers come from the Node app only (Apache does not duplicate them, to avoid invalid double `Access-Control-Allow-Origin` values). After updates, re-upload `.htaccess` via FTP.
 
 ### 2. Frontend Deployment
 
@@ -66,9 +61,10 @@ This guide will help you deploy the wedding application to cPanel hosting with t
    - **Do NOT upload `node_modules`** - we will install dependencies on cPanel
 
 2. **Set Environment Variables**
-   - Create a `.env` file in the frontend root directory with:
+   - This repository includes `Wedding/frontend/.env.production` with the production API and site URLs. Create React App loads that file automatically when you run `npm run build` (no extra `.env` needed for a standard deploy).
+   - Alternatively, create a `.env` or `.env.production` in the frontend root with:
      ```
-     REACT_APP_API_URL=https://matthewandsydneyapi.co.za
+     REACT_APP_API_URL=https://api.matthewandsydney.co.za
      REACT_APP_SITE_URL=https://matthewandsydney.co.za
      GENERATE_SOURCEMAP=false
      ```
@@ -81,18 +77,19 @@ This guide will help you deploy the wedding application to cPanel hosting with t
 4. **Build the Frontend on cPanel**
    - While still in the frontend directory, run: `npm run build`
    - This will create a `build` folder with production files
-   - The build process will use the environment variables from the `.env` file
+   - The build process will use variables from `.env.production` (or `.env`) in the frontend root
 
 5. **Move Build Files to Root**
    - Move all contents from the `build` folder to the `public_html` root directory
    - **CRITICAL**: Ensure the `.htaccess` file is in the root of `public_html` (same directory as `index.html`)
-   - The `.htaccess` file must be uploaded from `Wedding/frontend/.htaccess` or created with the correct SPA routing rules
+   - **`npm run build` copies `.htaccess` from `Wedding/frontend/public/.htaccess` into `build/`** (Create React App copies everything under `public/`). Upload the full `build` output so `/admin` and other client routes work; do not omit hidden files.
+   - If you deploy without rebuilding, you can still upload `Wedding/frontend/.htaccess` manually (same rules as `public/.htaccess`).
    - You can optionally remove the source files and `node_modules` after building to save space
    - **Verify**: The `.htaccess` file should be at the same level as `index.html` in your `public_html` directory
 
 6. **Verify Environment Variables**
-   - The build process should have used the correct API URL from the `.env` file
-   - Verify that all API calls point to `https://matthewandsydneyapi.co.za`
+   - The build process should have baked in the correct API URL from `.env.production` (or your `.env`)
+   - Verify that all API calls point to `https://api.matthewandsydney.co.za`
 
 ### 3. Database Setup
 
@@ -121,7 +118,7 @@ This guide will help you deploy the wedding application to cPanel hosting with t
 ### 6. Testing
 
 1. **Health Check**
-   - Visit `https://matthewandsydneyapi.co.za/health`
+   - Visit `https://api.matthewandsydney.co.za/health`
    - Should return a JSON response with server status
 
 2. **Frontend Access**
@@ -153,16 +150,16 @@ This guide will help you deploy the wedding application to cPanel hosting with t
    - If `npm run build:cpanel` doesn't work, use `npm run build` instead
    - Ensure environment variables are set in `.env` file before building
    - For frontend, the `.env` file must be in the frontend root directory before running `npm run build`
-   - If build fails, check Node.js version (should be 18.x or higher)
+   - If build fails, check Node.js version (should be 22.5 or higher)
    - Some cPanel environments may require additional build tools - contact your hosting provider if builds fail
 
 2. **CORS Errors**
-   - Verify the `FRONTEND_URL` environment variable in the backend `.env` file
-   - Check that the frontend domain is correctly configured in CORS settings
-   - Ensure the backend is using the correct frontend URL in production
+   - Verify `FRONTEND_URL` and `ORIGIN_URL` in the backend `.env` match the public site (e.g. `https://matthewandsydney.co.za`, including `https` and no trailing slash unless you use that consistently).
+   - If the browser reports CORS on a **500** response, fix the underlying server error (check Node logs); the app ships CORS headers on `/api` before rate limiting and on many error paths, but the real issue is often SQLite path/permissions or Node version.
+   - Redeploy backend after changing `server.js` or `cors-origin.cjs` (`npm run build` in the backend folder, then restart the Node app).
 
 3. **Node.js Application Not Starting**
-   - Check the Node.js version (should be 18.x or higher)
+   - Check the Node.js version (should be 22.5 or higher)
    - Verify all dependencies are installed with `npm install`
    - Check the application logs in cPanel
    - Ensure the startup command in Node.js Selector is set to `npm run start:cpanel`

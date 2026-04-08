@@ -7,12 +7,12 @@ This guide provides step-by-step instructions for deploying the wedding site to 
 - cPanel hosting account with Node.js support
 - Domain configured for both frontend and API subdomain
 - SSL certificates installed
-- Node.js version 18+ support
+- Node.js version 22.5+ support on the backend (built-in SQLite module)
 
 ## Deployment Architecture
 
 - **Frontend**: `matthewandsydney.co.za` (Static React build)
-- **Backend API**: `matthewandsydneyapi.co.za` (Node.js application)
+- **Backend API**: `api.matthewandsydney.co.za` (Node.js application)
 
 ## Frontend Deployment
 
@@ -28,15 +28,15 @@ npm run build
 
 1. Access your cPanel file manager
 2. Navigate to `public_html` (or your domain's root directory)
-3. Upload the entire `build` folder contents
-4. Upload the `.htaccess` file from `Wedding/frontend/.htaccess`
+3. Upload the entire `build` folder contents (include hidden files: **`build` includes `.htaccess`** from `public/` for SPA routes such as `/admin`)
+4. If `.htaccess` is missing after upload, copy `Wedding/frontend/.htaccess` to the same folder as `index.html`
 
 ### 3. Environment Configuration
 
 Create a `.env.production` file in the frontend root with:
 
 ```env
-REACT_APP_API_URL=https://matthewandsydneyapi.co.za
+REACT_APP_API_URL=https://api.matthewandsydney.co.za
 REACT_APP_SITE_URL=https://matthewandsydney.co.za
 GENERATE_SOURCEMAP=false
 ```
@@ -53,7 +53,7 @@ npm run build
 
 ### 2. Upload Backend Files
 
-1. Create a subdomain directory for your API (e.g., `matthewandsydneyapi.co.za`)
+1. Create a subdomain directory for your API (e.g., `api.matthewandsydney.co.za`)
 2. Upload all backend files except `node_modules`
 3. Upload the `.htaccess` file from `Wedding/backend/.htaccess`
 
@@ -102,14 +102,14 @@ The SQLite database will be created automatically on first run. Ensure the backe
 ### 2. Seed Initial Data (Optional)
 
 ```bash
-curl -X POST https://matthewandsydneyapi.co.za/api/seed
+curl -X POST https://api.matthewandsydney.co.za/api/seed
 ```
 
 ## SSL Configuration
 
 Ensure SSL certificates are installed for both domains:
 - `matthewandsydney.co.za`
-- `matthewandsydneyapi.co.za`
+- `api.matthewandsydney.co.za`
 
 ## File Permissions
 
@@ -145,7 +145,7 @@ pm2 startup
 Monitor the application health:
 
 ```bash
-curl https://matthewandsydneyapi.co.za/api/health
+curl https://api.matthewandsydney.co.za/api/health
 ```
 
 ### Logs

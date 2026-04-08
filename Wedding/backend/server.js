@@ -7,66 +7,12 @@
 
 const express = require('express');
 const next = require('next');
-const path = require('path');
 const compression = require('compression');
 const helmet = require('helmet');
+const { allowedOriginFromExpress } = require('./cors-origin.cjs');
 
-// Try to load better-sqlite3, fallback to sqlite3
-let Database;
-let dbType = 'unknown';
-
-try {
-  Database = require('better-sqlite3');
-  dbType = 'better-sqlite3';
-  console.log('✅ Using better-sqlite3');
-} catch (error) {
-  try {
-    const sqlite3 = require('sqlite3').verbose();
-    Database = class {
-      constructor(dbPath) {
-        this.db = new sqlite3.Database(dbPath);
-        this.dbPath = dbPath;
-      }
-      
-      prepare(sql) {
-        return {
-          run: (params) => new Promise((resolve, reject) => {
-            this.db.run(sql, params, function(err) {
-              if (err) reject(err);
-              else resolve({ lastInsertRowid: this.lastID, changes: this.changes });
-            });
-          }),
-          get: (params) => new Promise((resolve, reject) => {
-            this.db.get(sql, params, (err, row) => {
-              if (err) reject(err);
-              else resolve(row);
-            });
-          }),
-          all: (params) => new Promise((resolve, reject) => {
-            this.db.all(sql, params, (err, rows) => {
-              if (err) reject(err);
-              else resolve(rows);
-            });
-          })
-        };
-      }
-      
-      close() {
-        return new Promise((resolve, reject) => {
-          this.db.close((err) => {
-            if (err) reject(err);
-            else resolve();
-          });
-        });
-      }
-    };
-    dbType = 'sqlite3';
-    console.log('✅ Using sqlite3 fallback');
-  } catch (fallbackError) {
-    console.error('❌ No SQLite database available');
-    process.exit(1);
-  }
-}
+// API routes use Node's built-in node:sqlite (see repositories / openDatabaseSync)
+const dbType = 'node:sqlite';
 
 // Rate limiting fallback
 let rateLimit;
@@ -80,13 +26,29 @@ try {
   };
 }
 
-const dev = process.env.NODE_ENV !== 'production';
+// cPanel "startup file only" deployments may launch server.js without NODE_ENV.
+// Default to production so Next does not run in dev mode on the live server.
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = 'production';
+  console.log('NODE_ENV not set; defaulting to production.');
+}
+const dev = process.env.NODE_ENV === 'development';
 const hostname = 'localhost';
 const port = process.env.PORT || 3001;
 
 // Create Next.js app
 const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
+
+function applyCors(res, req) {
+  const origin = allowedOriginFromExpress(req);
+  res.setHeader('Vary', 'Origin');
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Max-Age', '600');
+}
 
 app.prepare().then(() => {
   const server = express();
@@ -113,31 +75,26 @@ app.prepare().then(() => {
   server.use(express.json({ limit: '10mb' }));
   server.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Rate limiting middleware
+  // CORS before rate limiting so 429 and error paths still expose CORS headers to the browser
+  server.use('/api', (req, res, next) => {
+    applyCors(res, req);
+    if (req.method === 'OPTIONS') {
+      return res.sendStatus(204);
+    }
+    next();
+  });
+
   const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // limit each IP to 100 requests per windowMs
-    message: 'Too many requests from this IP, please try again later.'
+    message: 'Too many requests from this IP, please try again later.',
+    handler: (req, res, next, options) => {
+      applyCors(res, req);
+      res.status(options.statusCode).json({ error: options.message });
+    }
   });
-  
-  server.use('/api', limiter);
 
-  // CORS middleware for production
-  if (!dev) {
-    server.use((req, res, next) => {
-      const origin = process.env.FRONTEND_URL || 'https://matthewandsydney.co.za';
-      res.header('Access-Control-Allow-Origin', origin);
-      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      res.header('Access-Control-Allow-Credentials', 'true');
-      
-      if (req.method === 'OPTIONS') {
-        res.sendStatus(200);
-      } else {
-        next();
-      }
-    });
-  }
+  server.use('/api', limiter);
 
   // Request logging middleware
   server.use((req, res, next) => {
@@ -160,18 +117,30 @@ app.prepare().then(() => {
   // API routes are handled by Next.js API routes
   // All other routes are handled by Next.js
   server.all('*', (req, res) => {
-    return handle(req, res);
+    return Promise.resolve(handle(req, res)).catch((err) => {
+      console.error('Next.js handle error:', err);
+      if (!res.headersSent) {
+        applyCors(res, req);
+        res.status(500).json({
+          error: 'Internal Server Error',
+          message: dev ? err.message : 'Something went wrong'
+        });
+      }
+    });
   });
 
   // Error handling middleware
   server.use((err, req, res, next) => {
     console.error('Error:', err.message);
     console.error('Stack:', err.stack);
-    
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: dev ? err.message : 'Something went wrong'
-    });
+
+    if (!res.headersSent) {
+      applyCors(res, req);
+      res.status(500).json({
+        error: 'Internal Server Error',
+        message: dev ? err.message : 'Something went wrong'
+      });
+    }
   });
 
   // Start server

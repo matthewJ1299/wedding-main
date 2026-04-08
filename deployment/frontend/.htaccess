@@ -1,35 +1,22 @@
-# Frontend .htaccess for React SPA deployment on cPanel
-# Enable rewrite engine
-RewriteEngine On
+# Same as Wedding/frontend/public/.htaccess — deployment bundle copy.
 
-# Handle Angular and React Router
-# If an existing asset or directory is requested go to it as it is
-RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
-RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# If the requested resource doesn't exist, use index.html
-RewriteRule ^ /index.html [L]
+RewriteRule . /index.html [L]
 
-# Security headers
 <IfModule mod_headers.c>
-    # Prevent clickjacking
     Header always append X-Frame-Options SAMEORIGIN
-    
-    # Prevent MIME type sniffing
     Header always set X-Content-Type-Options nosniff
-    
-    # Enable XSS protection
     Header always set X-XSS-Protection "1; mode=block"
-    
-    # Referrer policy
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    
-    # Content Security Policy (adjust as needed)
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://matthewandsydneyapi.co.za;"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://api.matthewandsydney.co.za;"
 </IfModule>
 
-# Compression
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/html
@@ -42,7 +29,6 @@ RewriteRule ^ /index.html [L]
     AddOutputFilterByType DEFLATE application/x-javascript
 </IfModule>
 
-# Cache control
 <IfModule mod_expires.c>
     ExpiresActive on
     ExpiresByType text/css "access plus 1 year"
@@ -57,13 +43,11 @@ RewriteRule ^ /index.html [L]
     ExpiresByType font/woff2 "access plus 1 year"
 </IfModule>
 
-# Prevent access to sensitive files
 <FilesMatch "\.(env|log|ini)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
 
-# Prevent access to source maps in production
 <FilesMatch "\.map$">
     Order allow,deny
     Deny from all

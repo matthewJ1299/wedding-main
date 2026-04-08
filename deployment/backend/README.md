@@ -1,36 +1,20 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Wedding backend (Next.js + Express)
 
-## Getting Started
+## Requirements
 
-First, run the development server:
+- **Node.js 22.5+** (built-in [`node:sqlite`](https://nodejs.org/api/sqlite.html); no native `better-sqlite3` package)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Local build, then FTP (typical cPanel flow)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. On your machine, from `Wedding/backend`:
+   - `npm install`
+   - `npm run build` (produces **`.next`** — required)
+2. Upload the app folder to the server **including** `.next`, `server.js`, `cors-origin.cjs`, `package.json`, `package-lock.json`, `next.config.mjs`, `public/`, `repositories/`, `src/`, etc.
+3. **Do not** omit `.next`. If you use the repo’s `build-production.bat` / `build-production.sh`, the packaged `deployment/backend/` already contains `.next` and omits only `node_modules`.
+4. On the server: `npm ci --omit=dev` (or `npm install --omit=dev`).
+5. Configure `.env` (see `env.production.txt` in `Wedding/backend`).
+6. Start with `npm run start:cpanel` or your process manager (see [CPANEL_DEPLOYMENT.md](../../CPANEL_DEPLOYMENT.md)).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Why `npm run build` matters
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`node server.js` loads the compiled Next app from **`.next`**. Uploading only source without a local (or server-side) `npm run build` will fail at runtime.

@@ -19,7 +19,7 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
 - **Analytics**: View RSVP statistics and summaries
 
 ### Technical Features
-- **Modern Stack**: React 19, Node.js, SQLite
+- **Modern Stack**: React 19, Node.js 22.5+ (backend), SQLite via built-in `node:sqlite`
 - **Production Ready**: cPanel deployment configuration
 - **Security**: Input validation, CORS protection, secure authentication
 - **Monitoring**: Health checks, structured logging, error tracking
@@ -28,7 +28,7 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
 ## Quick Start
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 22.5+ (required for the backend API; uses built-in `node:sqlite`)
 - npm or yarn
 - Gmail account for email functionality
 
@@ -118,12 +118,26 @@ Wedding/
 
 ### Environment Variables
 
-#### Frontend (.env.local)
+#### Frontend (local development: `.env.local`)
+
+Use localhost URLs for `npm start`:
+
 ```env
 REACT_APP_API_URL=http://localhost:3001
 REACT_APP_SITE_URL=http://localhost:3000
 REACT_APP_ADMIN_EMAIL=admin@example.com
 ```
+
+#### Frontend (production build: `.env.production`)
+
+Create React App loads `Wedding/frontend/.env.production` when you run `npm run build`. This repo includes production public URLs so the bundle calls the live API (required for CSP `connect-src` on cPanel):
+
+```env
+REACT_APP_API_URL=https://api.matthewandsydney.co.za
+REACT_APP_SITE_URL=https://matthewandsydney.co.za
+```
+
+You can still override at build time (e.g. `npm run build:cpanel` sets the same variables inline).
 
 #### Backend (.env.local)
 ```env
@@ -148,13 +162,15 @@ JWT_SECRET=your-secret-key
 ### Production URLs
 
 - **Frontend (public site)**: `https://matthewandsydney.co.za`
-- **Backend API**: `https://matthewandsydneyapi.co.za`
+- **Backend API**: `https://api.matthewandsydney.co.za`
 
-Set `REACT_APP_SITE_URL` and `REACT_APP_API_URL` on the frontend build, and `FRONTEND_URL` plus `ORIGIN_URL` on the backend so CORS matches the browser origin. Full steps: [DEPLOYMENT.md](DEPLOYMENT.md), [CPANEL_DEPLOYMENT.md](CPANEL_DEPLOYMENT.md), [DEPLOYMENT_QUICK_REFERENCE.md](DEPLOYMENT_QUICK_REFERENCE.md).
+Ensure the frontend build uses the production URLs (via `Wedding/frontend/.env.production` or `build:cpanel`), and set `FRONTEND_URL` plus `ORIGIN_URL` on the backend so CORS matches the browser origin. Shared allow-origin rules live in `Wedding/backend/cors-origin.cjs` (used by Express `server.js` and `/api/invitees`). Full steps: [DEPLOYMENT.md](DEPLOYMENT.md), [CPANEL_DEPLOYMENT.md](CPANEL_DEPLOYMENT.md), [DEPLOYMENT_QUICK_REFERENCE.md](DEPLOYMENT_QUICK_REFERENCE.md).
 
 ### Production Deployment
 
 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to cPanel hosting.
+
+**Backend (FTP from your PC):** run `npm run build` in `Wedding/backend` so the **`.next`** folder exists, upload it with the rest of the app, then on the server run `npm ci --omit=dev` (or use `build-production.bat` / `build-production.sh`, which build the backend and stage `deployment/backend/` without stripping `.next`). See [CPANEL_DEPLOYMENT.md](CPANEL_DEPLOYMENT.md).
 
 ### Key Deployment Steps
 
@@ -169,9 +185,9 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to cPane
    - Set up SSL certificates
 
 3. **Deploy to hosting**
-   - Upload frontend build to web root
+   - Upload the full frontend `build` folder to the site web root (include hidden files: `Wedding/frontend/public/.htaccess` is copied into `build/` for Apache SPA routing so `/admin` works)
    - Deploy backend to API subdomain
-   - Configure .htaccess files
+   - Configure backend `.htaccess` if required by your host
 
 4. **Initialize database**
    - Database created automatically

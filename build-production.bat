@@ -29,7 +29,7 @@ if not exist "node_modules" (
 REM Build with production environment variables
 echo ✅ Building frontend with production URLs...
 set GENERATE_SOURCEMAP=false
-set REACT_APP_API_URL=https://matthewandsydneyapi.co.za
+set REACT_APP_API_URL=https://api.matthewandsydney.co.za
 set REACT_APP_SITE_URL=https://matthewandsydney.co.za
 npm run build
 
@@ -47,19 +47,35 @@ copy .htaccess ..\..\deployment\frontend\
 
 cd ..\..
 
-REM Prepare Backend
+REM Prepare Backend (Next.js must be built locally; .next is required on the server)
 echo 🔨 Preparing backend for production...
+rd /s /q deployment\backend 2>nul
+mkdir deployment\backend
+
 cd Wedding\backend
 
-REM Copy backend files
-echo 📦 Copying backend files...
-xcopy /E /I . ..\..\deployment\backend\
+if not exist "node_modules" (
+    echo Installing backend dependencies...
+    call npm install
+)
+
+echo Building backend ^(Next.js production^)...
+call npm run build
+
+if %errorlevel% neq 0 (
+    echo Backend build failed
+    exit /b 1
+)
+
+echo Backend build completed successfully
+
+echo 📦 Copying backend files to deployment\backend...
+xcopy /E /I /H /Y . ..\..\deployment\backend\
 
 cd ..\..\deployment\backend
 
-REM Remove development files
+REM Drop node_modules from the deployment copy only; reinstall on the server: npm ci --omit=dev
 if exist "node_modules" rmdir /S /Q "node_modules"
-if exist ".next" rmdir /S /Q ".next"
 if exist "build" rmdir /S /Q "build"
 
 REM Copy environment file
@@ -89,18 +105,18 @@ echo.
 echo 📋 Next steps:
 echo 1. Upload the contents of 'deployment\frontend\' to your frontend domain's public_html
 echo 2. Upload the contents of 'deployment\backend\' to your backend domain's public_html
-echo 3. Set up Node.js application in cPanel for the backend (Node.js 18+)
-echo 4. Configure environment variables in the backend .env file
-echo 5. Test the deployment using the URLs:
+echo    ^(must include the .next folder from the local build^)
+echo 3. On the server: cd to the app folder, run: npm ci --omit=dev   ^(or npm install --omit=dev^)
+echo 4. Set up Node.js application in cPanel for the backend (Node.js 22.5+)
+echo 5. Configure environment variables in the backend .env file
+echo 6. Test the deployment using the URLs:
 echo    - Frontend: https://matthewandsydney.co.za
-echo    - Backend: https://matthewandsydneyapi.co.za/health
+echo    - Backend: https://api.matthewandsydney.co.za/health
 echo.
-echo 🔧 Optimizations for Node.js 18:
-echo    - Uses better-sqlite3@8.7.0 (more stable for Node.js 18)
-echo    - Fallback to sqlite3 if better-sqlite3 fails to compile
-echo    - Compatible Next.js 13.5.6
-echo    - Optimized dependencies for Node.js 18
+echo Backend notes:
+echo    - SQLite via built-in node:sqlite (no better-sqlite3 npm package)
+echo    - Requires Node.js 22.5 or newer on the server
 echo.
-echo 📖 See CPANEL_DEPLOYMENT.md for detailed deployment instructions
+echo See CPANEL_DEPLOYMENT.md for detailed deployment instructions
 
 pause

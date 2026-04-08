@@ -2,14 +2,14 @@
 
 ## Deployment URLs
 - **Frontend**: https://matthewandsydney.co.za
-- **Backend API**: https://matthewandsydneyapi.co.za
+- **Backend API**: https://api.matthewandsydney.co.za
 
 ## Environment Variables
 
 ### Frontend (.env.production)
 ```
 REACT_APP_SITE_URL=https://matthewandsydney.co.za
-REACT_APP_API_URL=https://matthewandsydneyapi.co.za
+REACT_APP_API_URL=https://api.matthewandsydney.co.za
 REACT_APP_ADMIN_EMAIL=admin@matthewandsydney.co.za
 GENERATE_SOURCEMAP=false
 NODE_ENV=production
@@ -26,6 +26,7 @@ SMTP_SECURE=false
 SMTP_USER=your-email@gmail.com
 SMTP_PASS=your-app-password
 FRONTEND_URL=https://matthewandsydney.co.za
+ORIGIN_URL=https://matthewandsydney.co.za
 ADMIN_EMAIL=admin@matthewandsydney.co.za
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 SESSION_SECRET=your-super-secret-session-key-change-this-in-production
@@ -44,13 +45,24 @@ npm run build:cpanel
 
 # Or manually with environment variables
 GENERATE_SOURCEMAP=false \
-REACT_APP_API_URL=https://matthewandsydneyapi.co.za \
+REACT_APP_API_URL=https://api.matthewandsydney.co.za \
 REACT_APP_SITE_URL=https://matthewandsydney.co.za \
 npm run build
 ```
 
 ### Backend
 ```bash
+# From Wedding/backend — required before FTP (creates .next)
+npm install
+npm run build
+
+# Package for FTP (from repo root): runs backend build + copies to deployment/backend/
+# Windows: build-production.bat
+# macOS/Linux: ./build-production.sh
+
+# On the server, after upload (no devDependencies needed if .next was built locally)
+npm ci --omit=dev
+
 # Production start
 npm run start:cpanel
 
@@ -68,7 +80,7 @@ NODE_ENV=production PORT=3001 node server.js
 6. **Test**: Visit both URLs to verify deployment
 
 ## Health Check Endpoints
-- Backend health: https://matthewandsydneyapi.co.za/health
+- Backend health: https://api.matthewandsydney.co.za/health
 - Frontend: https://matthewandsydney.co.za
 
 ## Important Files Created

@@ -1,5 +1,12 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Build and dependencies
+
+- **Node.js 22.5+** is required: SQLite access uses the built-in [`node:sqlite`](https://nodejs.org/api/sqlite.html) module (`DatabaseSync`), not an npm database driver. No C++ build tools are needed for SQLite.
+- Install dependencies with `npm install` in this folder.
+- Shared code lives under `src/utils/` and `repositories/` at the backend root (next to `src/`). API routes under `src/app/api/.../[id]/` need one more `../` in imports than routes directly under `src/app/api/<name>/`.
+- Default dev port is **3001** (see `package.json` scripts).
+
 ## Getting Started
 
 First, run the development server:

@@ -1,13 +1,11 @@
 // InviteeRepository.js
-// Repository pattern for Invitee entity using better-sqlite3
-// Follows SOLID, DRY, YAGNI principles
+// Repository pattern for Invitee entity using Node's built-in node:sqlite
 
-import Database from 'better-sqlite3';
+import { openDatabaseSync } from '../src/utils/openDatabaseSync.js';
 
 class InviteeRepository {
   constructor(dbPath) {
-    this.db = new Database(dbPath);
-    this.db.pragma('journal_mode = WAL');
+    this.db = openDatabaseSync(dbPath);
     this._initTable();
   }
 

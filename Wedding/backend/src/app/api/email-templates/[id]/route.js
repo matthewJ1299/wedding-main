@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import path from 'path';
-import EmailTemplateRepository from '../../../../repositories/EmailTemplateRepository.js';
+import EmailTemplateRepository from '../../../../../repositories/EmailTemplateRepository.js';
 
 export const runtime = 'nodejs';
 

@@ -45,7 +45,7 @@ Use this checklist to ensure your wedding site is properly configured for produc
 
 ### Domain Configuration
 - [ ] Frontend domain: `matthewandsydney.co.za`
-- [ ] API domain: `matthewandsydneyapi.co.za`
+- [ ] API domain: `api.matthewandsydney.co.za`
 - [ ] DNS records configured correctly
 - [ ] SSL certificates installed for both domains
 - [ ] CORS configuration matches domains

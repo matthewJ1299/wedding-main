@@ -2,9 +2,9 @@
 # Enable rewrite engine
 RewriteEngine On
 
-# Handle CORS preflight requests
-RewriteCond %{REQUEST_METHOD} OPTIONS
-RewriteRule ^(.*)$ $1 [R=200,L]
+# Do NOT intercept OPTIONS here. Browsers send a CORS preflight (OPTIONS) that must reach
+# Node on port 3001; Express (server.js) answers with 204 and CORS headers for /api.
+# A broken pattern like RewriteRule ... [R=200,L] for OPTIONS stops the proxy and breaks POST/PUT.
 
 # Proxy all requests to Node.js server
 # This assumes your Node.js app is running on port 3001
@@ -12,20 +12,13 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ http://localhost:3001/$1 [P,L]
 
-# Security headers
+# Security headers (CORS is set only by the Node app to avoid duplicate / conflicting headers)
 <IfModule mod_headers.c>
-    # CORS headers
-    Header always set Access-Control-Allow-Origin "https://matthewandsydney.co.za"
-    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
-    Header always set Access-Control-Allow-Credentials "true"
-    
-    # Security headers
     Header always set X-Frame-Options DENY
     Header always set X-Content-Type-Options nosniff
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    
+
     # Remove server signature
     Header unset Server
     Header unset X-Powered-By

@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## cPanel (Apache) static hosting
+
+React Router uses paths such as `/admin` and `/login`. On Apache, those requests must fall back to `index.html`. The file `public/.htaccess` contains the rewrite rules and is **copied into `build/`** when you run `npm run build`. Upload the full `build` output to `public_html` (include hidden files so `.htaccess` is present). Full steps: [CPANEL_DEPLOYMENT.md](../../CPANEL_DEPLOYMENT.md) in the repo root.
+
 ## Available Scripts
 
 In the project directory, you can run:
