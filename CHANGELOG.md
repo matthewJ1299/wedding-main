@@ -2,6 +2,8 @@
 
 ## 2026-04-08
 
+- **Landing notice (Coolify)**: Build-time `REACT_APP_SHOW_LANDING_POPUP` (`true` / `false`) and optional `REACT_APP_LANDING_POPUP_MESSAGE` drive a red MUI dialog on load (`LandingNoticeDialog`). Wired through `docker-compose.yml`, `docker-compose.local.yml`, frontend `Dockerfile`, and `.env.production`.
+
 - **CORS / API subdomain (Coolify)**: Helmet’s default `Cross-Origin-Resource-Policy: same-origin` blocked cross-subdomain browser access from `matthewandsydney.co.za` to `api.matthewandsydney.co.za`; `server.js` now sets `{ policy: 'cross-origin' }`. Applied CORS headers for all `/api` requests before Next handles them (so 404/500 still include `Access-Control-Allow-Origin`), `trust proxy`, and `listen(..., '0.0.0.0')` for Docker. Mirrored in `deployment/backend/server.js`.
 
 - **Docker Compose / Coolify**: Default `docker-compose.yml` no longer publishes host ports `8080`/`3001` (uses `expose` only) so Coolify and other hosts do not hit `port is already allocated` when 8080 is taken. Local testing: `docker compose -f docker-compose.yml -f docker-compose.local.yml up --build`. Compose defaults `FRONTEND_URL` / `ORIGIN_URL` / `REACT_APP_*` to `https://matthewandsydney.co.za` and `https://api.matthewandsydney.co.za`; `docker-compose.local.yml` overrides to localhost for laptop builds.

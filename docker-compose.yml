@@ -37,6 +37,8 @@ services:
       args:
         REACT_APP_API_URL: ${REACT_APP_API_URL:-https://api.matthewandsydney.co.za}
         REACT_APP_SITE_URL: ${REACT_APP_SITE_URL:-https://matthewandsydney.co.za}
+        REACT_APP_SHOW_LANDING_POPUP: ${REACT_APP_SHOW_LANDING_POPUP:-false}
+        REACT_APP_LANDING_POPUP_MESSAGE: ${REACT_APP_LANDING_POPUP_MESSAGE:-}
     expose:
       - "80"
     depends_on:

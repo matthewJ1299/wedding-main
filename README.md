@@ -135,9 +135,11 @@ Create React App loads `Wedding/frontend/.env.production` when you run `npm run 
 ```env
 REACT_APP_API_URL=https://api.matthewandsydney.co.za
 REACT_APP_SITE_URL=https://matthewandsydney.co.za
+REACT_APP_SHOW_LANDING_POPUP=false
+# REACT_APP_LANDING_POPUP_MESSAGE=optional custom text
 ```
 
-You can still override at build time (e.g. `npm run build:cpanel` sets the same variables inline).
+`REACT_APP_SHOW_LANDING_POPUP=true` (build-time only) shows a red notice dialog on first paint; use in Coolify on the **frontend** service and **rebuild** the image. You can still override at build time (e.g. `npm run build:cpanel` sets API/site URLs inline).
 
 #### Backend (.env.local)
 ```env
