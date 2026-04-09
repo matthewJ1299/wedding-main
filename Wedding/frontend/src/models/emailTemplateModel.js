@@ -158,14 +158,23 @@ The Happy Couple`,
  * @returns {string} - Populated template content
  */
 export const populateTemplate = (content, values) => {
+  if (!content) return content;
+  if (!values) return content;
+
+  const escapeRegExp = (str) => String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
   let populatedContent = content;
-  
-  Object.keys(values).forEach(key => {
-    const variablePlaceholder = `{${key}}`;
-    const value = values[key] || '';
-    populatedContent = populatedContent.replace(new RegExp(variablePlaceholder, 'g'), value);
+
+  Object.keys(values).forEach((key) => {
+    const value = values[key] ?? '';
+    const safeKey = escapeRegExp(key);
+
+    // Supports both `{var}` (legacy) and `{{var}}` / `{{ var }}` placeholder styles
+    populatedContent = populatedContent
+      .replace(new RegExp(`\\{${safeKey}\\}`, 'g'), String(value))
+      .replace(new RegExp(`\\{\\{\\s*${safeKey}\\s*\\}\\}`, 'g'), String(value));
   });
-  
+
   return populatedContent;
 };
 

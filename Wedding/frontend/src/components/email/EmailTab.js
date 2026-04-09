@@ -4,6 +4,7 @@ import { useInvitees } from '../../contexts/InviteeContext';
 import { useEmailTemplates } from '../../contexts/EmailTemplateContext';
 import { sendEmail } from '../../services/emailService';
 import { trackEmail, EMAIL_EVENTS, generateTrackingPixel } from '../../services/emailTrackingService';
+import { APP_URLS } from '../../utils/constants';
 import EmailTemplateManager from '../../components/email/EmailTemplateManager';
 import EmailPreview from '../../components/email/EmailPreview';
 import EmailStats from '../../components/email/EmailStats';
@@ -46,14 +47,29 @@ const EmailTab = () => {
 
   const toRecipientData = (inv) => {
     if (!inv) return null;
+    const siteUrl = (APP_URLS.SITE_URL || '').replace(/\/+$/, '');
+    const invitationLink = inv.id ? `${siteUrl}/invitation/${inv.id}` : '';
+    const rsvpLink = inv.id ? `${siteUrl}/rsvp/${inv.id}` : '';
     return {
+      // Template variable values (supports `{var}` and `{{var}}` placeholders)
       guestName: inv.name || '',
       guestPartner: inv.partner || '',
       email: inv.email || '',
       phone: inv.phone || '',
       rsvp: inv.rsvp || 'pending',
+      rsvpLink,
+      invitationLink,
+
+      // Aliases (common template naming)
+      name: inv.name || '',
+      partner: inv.partner || '',
     };
   };
+
+  const previewRecipientData = useMemo(
+    () => toRecipientData(previewInvitee),
+    [previewInvitee]
+  );
 
   // Handle sending an email
   const handleSendEmail = async (emailData) => {
@@ -272,7 +288,7 @@ const EmailTab = () => {
 
                 <EmailPreview 
                   template={selectedTemplate}
-                  recipientData={toRecipientData(previewInvitee)}
+                  recipientData={previewRecipientData}
                   onSend={handleSendEmail}
                 />
               </>

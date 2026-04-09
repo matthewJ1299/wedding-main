@@ -56,6 +56,11 @@ The system consists of several components:
    - Plain text content
 6. Use variables like `{guestName}` to personalize templates
 
+**Variable placeholder formats**
+
+- `{guestName}` style is supported
+- `{{guestName}}` (Handlebars-style) is also supported, including whitespace like `{{ guestName }}`
+
 ### Available Template Variables
 
 - `{guestName}`: Guest's name
@@ -65,6 +70,12 @@ The system consists of several components:
 - `{eventAddress}`: Complete venue address
 - `{rsvpLink}`: Link to RSVP page
 - `{websiteLink}`: Link to wedding website
+
+**Common aliases**
+
+- `{name}` / `{{name}}`: Alias for guest name
+- `{partner}` / `{{partner}}`: Alias for partner name
+- `{invitationLink}` / `{{invitationLink}}`: Link to the guest’s invitation page
 
 ### Sending Emails
 
