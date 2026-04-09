@@ -87,7 +87,7 @@ const EmailPreview = ({ template, recipientData, onSend }) => {
     
     if (onSend) {
       onSend({
-        to: recipientData?.email || '',
+        to: previewData?.email || '',
         subject: previewContent.subject,
         text: previewContent.text,
         html: previewContent.html
@@ -178,7 +178,7 @@ const EmailPreview = ({ template, recipientData, onSend }) => {
           <OutlinedInput
             id="recipient-email"
             type="email"
-            value={recipientData?.email || ''}
+            value={previewData?.email || ''}
             onChange={(e) => handleVariableChange('email', e.target.value)}
             endAdornment={
               <InputAdornment position="end">
@@ -194,7 +194,7 @@ const EmailPreview = ({ template, recipientData, onSend }) => {
         <Button 
           variant="contained" 
           color="primary" 
-          disabled={!recipientData?.email || loading}
+          disabled={!previewData?.email || loading}
           onClick={handleSendEmail}
           startIcon={loading && <CircularProgress size={16} color="inherit" />}
         >
@@ -218,7 +218,7 @@ const EmailPreview = ({ template, recipientData, onSend }) => {
               <strong>From:</strong> Your Wedding &lt;wedding@example.com&gt;
             </Typography>
             <Typography variant="body2">
-              <strong>To:</strong> {recipientData?.email || 'recipient@example.com'}
+              <strong>To:</strong> {previewData?.email || 'recipient@example.com'}
             </Typography>
             <Typography variant="body2">
               <strong>Subject:</strong> {previewContent.subject}

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-04-09
+
+- **Admin email groups**: The Admin “Email → Send Email” tab now supports sending to recipient groups (All / Accepted / Declined / Pending) and lets you optionally choose an invitee to preview template personalization before sending.
+
+- **Invitee table robustness**: Invitee rows now render empty strings for missing fields to prevent visual/header misalignment when data is incomplete.
+
 ## 2026-04-08
 
 - **Landing notice (Coolify)**: Build-time `REACT_APP_SHOW_LANDING_POPUP` (`true` / `false`) and optional `REACT_APP_LANDING_POPUP_MESSAGE` drive a red MUI dialog on load (`LandingNoticeDialog`). Wired through `docker-compose.yml`, `docker-compose.local.yml`, frontend `Dockerfile`, and `.env.production`.

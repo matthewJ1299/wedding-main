@@ -31,6 +31,8 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 	const [page, setPage] = useState(0);
 	const [pageSize, setPageSize] = useState(10);
 
+	const asText = (value) => (value === null || value === undefined ? '' : String(value));
+
 	// Start editing an invitee
 	const startEdit = (invitee) => {
 		setEditId(invitee.id);
@@ -250,21 +252,21 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 												<React.Fragment>
 													<TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 														<PersonIcon sx={{ fontSize: '1rem', color: '#ff6b9d' }} />
-														<span style={{ fontWeight: '500' }}>{invitee.name}</span>
+														<span style={{ fontWeight: '500' }}>{asText(invitee.name)}</span>
 														{idx === 0 && <Chip label="Partner 1" size="small" sx={{ bgcolor: '#ff6b9d', color: 'white', fontSize: '0.7rem' }} />}
 														{idx === 1 && <Chip label="Partner 2" size="small" sx={{ bgcolor: '#c44569', color: 'white', fontSize: '0.7rem' }} />}
 													</TableCell>
 													<TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 														<FavoriteIcon sx={{ fontSize: '0.8rem', color: '#ff6b9d' }} />
-														<span style={{ fontStyle: 'italic', color: '#666' }}>{invitee.partner}</span>
+														<span style={{ fontStyle: 'italic', color: '#666' }}>{asText(invitee.partner)}</span>
 													</TableCell>
-													<TableCell>{invitee.email}</TableCell>
-													<TableCell>{invitee.phone}</TableCell>
+													<TableCell>{asText(invitee.email)}</TableCell>
+													<TableCell>{asText(invitee.phone)}</TableCell>
 													<TableCell>{formatStatus(invitee.rsvp)}</TableCell>
 													<TableCell>
 														{invitee.plusOneName ? (
 															<span style={{ color: '#2e7d32', fontWeight: 'bold' }}>
-																{invitee.plusOneName}
+																{asText(invitee.plusOneName)}
 															</span>
 														) : (
 															<span style={{ color: '#666', fontStyle: 'italic' }}>
@@ -329,26 +331,26 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 										<React.Fragment>
 											<TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 												<PersonIcon sx={{ fontSize: '1rem', color: '#6c757d' }} />
-												<span style={{ fontWeight: '500' }}>{group[0].name}</span>
+												<span style={{ fontWeight: '500' }}>{asText(group[0].name)}</span>
 												<Chip label="Single" size="small" sx={{ bgcolor: '#6c757d', color: 'white', fontSize: '0.7rem' }} />
 											</TableCell>
 											<TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 												{group[0].partner ? (
 													<>
 														<FavoriteIcon sx={{ fontSize: '0.8rem', color: '#ff6b9d' }} />
-														<span style={{ fontStyle: 'italic', color: '#666' }}>{group[0].partner}</span>
+														<span style={{ fontStyle: 'italic', color: '#666' }}>{asText(group[0].partner)}</span>
 													</>
 												) : (
 													<span style={{ color: '#999', fontStyle: 'italic' }}>No partner</span>
 												)}
 											</TableCell>
-											<TableCell>{group[0].email}</TableCell>
-											<TableCell>{group[0].phone}</TableCell>
+											<TableCell>{asText(group[0].email)}</TableCell>
+											<TableCell>{asText(group[0].phone)}</TableCell>
 											<TableCell>{formatStatus(group[0].rsvp)}</TableCell>
 											<TableCell>
 												{group[0].plusOneName ? (
 													<span style={{ color: '#2e7d32', fontWeight: 'bold' }}>
-														{group[0].plusOneName}
+														{asText(group[0].plusOneName)}
 													</span>
 												) : (
 													<span style={{ color: '#666', fontStyle: 'italic' }}>

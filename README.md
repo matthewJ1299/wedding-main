@@ -15,7 +15,7 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
 - **Guest Management**: Add, edit, and manage invitees
 - **RSVP Tracking**: Monitor responses and guest details
 - **Photo Moderation**: Approve/reject uploaded photos
-- **Email Templates**: Customize email communications
+- **Email Templates**: Customize email communications and send to recipient groups (All/Accepted/Declined/Pending)
 - **Analytics**: View RSVP statistics and summaries
 
 ### Technical Features

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, Typography, Tabs, Tab, Paper, Divider, Alert } from '@mui/material';
+import React, { useMemo, useState } from 'react';
+import { Box, Typography, Tabs, Tab, Paper, Divider, Alert, FormControl, InputLabel, Select, MenuItem, Autocomplete, TextField, Button } from '@mui/material';
 import { useInvitees } from '../../contexts/InviteeContext';
 import { useEmailTemplates } from '../../contexts/EmailTemplateContext';
 import { sendEmail } from '../../services/emailService';
@@ -17,22 +17,42 @@ const EmailTab = () => {
   const { invitees } = useInvitees();
   const { selectedTemplate, prepareTemplate } = useEmailTemplates();
   const [emailTab, setEmailTab] = useState(0);
-  const [recipientStatus] = useState('all');
   const [notification, setNotification] = useState({ show: false, message: '', severity: 'info' });
-  const [selectedRecipient] = useState(null);
-
-  // Filter invitees based on status
-  const getFilteredInvitees = () => {
-    let recipients = invitees;
-    if (recipientStatus !== 'all') {
-      recipients = invitees.filter(inv => (inv.rsvp || 'pending').toLowerCase() === recipientStatus);
-    }
-    return recipients.filter(inv => inv.email && isValidEmail(inv.email));
-  };
+  const [recipientGroup, setRecipientGroup] = useState('all');
+  const [previewInvitee, setPreviewInvitee] = useState(null);
+  const [bulkSending, setBulkSending] = useState(false);
 
   // Check if email is valid
   const isValidEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const recipientGroups = useMemo(() => ([
+    { value: 'all', label: 'All invitees (valid email)' },
+    { value: 'accepted', label: 'Accepted (valid email)' },
+    { value: 'declined', label: 'Declined (valid email)' },
+    { value: 'pending', label: 'Pending / No response (valid email)' },
+  ]), []);
+
+  const validInvitees = useMemo(
+    () => invitees.filter((inv) => inv?.email && isValidEmail(inv.email)),
+    [invitees]
+  );
+
+  const groupRecipients = useMemo(() => {
+    if (recipientGroup === 'all') return validInvitees;
+    return validInvitees.filter((inv) => (inv.rsvp || 'pending').toLowerCase() === recipientGroup);
+  }, [recipientGroup, validInvitees]);
+
+  const toRecipientData = (inv) => {
+    if (!inv) return null;
+    return {
+      guestName: inv.name || '',
+      guestPartner: inv.partner || '',
+      email: inv.email || '',
+      phone: inv.phone || '',
+      rsvp: inv.rsvp || 'pending',
+    };
   };
 
   // Handle sending an email
@@ -62,7 +82,7 @@ const EmailTab = () => {
         event: EMAIL_EVENTS.SENT,
         metadata: {
           trackingId,
-          recipientId: selectedRecipient?.id
+          recipientId: previewInvitee?.id
         }
       });
       
@@ -97,12 +117,7 @@ const EmailTab = () => {
     }
   };
 
-  // Send email to all filtered recipients
-  // This function is defined for future use in the bulk email sending feature
-  // eslint-disable-next-line no-unused-vars
-  const handleBulkSend = async () => {
-    const recipients = getFilteredInvitees();
-    
+  const handleSendToGroup = async () => {
     if (!selectedTemplate) {
       setNotification({
         show: true,
@@ -111,48 +126,69 @@ const EmailTab = () => {
       });
       return;
     }
-    
-    if (recipients.length === 0) {
+
+    if (groupRecipients.length === 0) {
       setNotification({
         show: true,
-        message: 'No valid recipients found',
+        message: 'No valid recipients found for this group',
         severity: 'warning'
       });
       return;
     }
-    
+
+    setBulkSending(true);
     let successCount = 0;
     let failCount = 0;
-    
-    for (const recipient of recipients) {
+
+    for (const recipient of groupRecipients) {
       try {
-        // Prepare template for this recipient
-        const preparedTemplate = prepareTemplate(selectedTemplate.id, {
-          guestName: recipient.name,
-          guestPartner: recipient.partner,
-          email: recipient.email,
-          // Add other variables as needed
-        });
-        
-        // Send email
+        const preparedTemplate = prepareTemplate(selectedTemplate.id, toRecipientData(recipient));
+        const trackingId = `email_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const trackedHtml = preparedTemplate?.html
+          ? `${preparedTemplate.html}${generateTrackingPixel(trackingId)}`
+          : preparedTemplate?.html;
+
         await sendEmail({
           to: recipient.email,
           subject: preparedTemplate.subject,
           text: preparedTemplate.text,
-          html: preparedTemplate.html
+          html: trackedHtml
         });
-        
-        // Track success
+
+        trackEmail({
+          to: recipient.email,
+          subject: preparedTemplate.subject,
+          templateId: selectedTemplate?.id,
+          event: EMAIL_EVENTS.SENT,
+          metadata: {
+            trackingId,
+            recipientId: recipient.id,
+            recipientGroup
+          }
+        });
+
         successCount++;
       } catch (error) {
         console.error(`Error sending to ${recipient.email}:`, error);
         failCount++;
+        trackEmail({
+          to: recipient.email,
+          subject: selectedTemplate?.subject,
+          templateId: selectedTemplate?.id,
+          event: EMAIL_EVENTS.FAILED,
+          metadata: {
+            error: error.message,
+            recipientId: recipient.id,
+            recipientGroup
+          }
+        });
       }
     }
-    
+
+    setBulkSending(false);
     setNotification({
       show: true,
-      message: `Sent ${successCount} emails successfully. ${failCount > 0 ? `Failed: ${failCount}` : ''}`,
+      message: `Group send complete. Sent ${successCount}. Failed ${failCount}.`,
       severity: failCount > 0 ? 'warning' : 'success'
     });
   };
@@ -194,11 +230,52 @@ const EmailTab = () => {
                 Select a template from the Templates tab to continue
               </Alert>
             ) : (
-              <EmailPreview 
-                template={selectedTemplate}
-                recipientData={selectedRecipient}
-                onSend={handleSendEmail}
-              />
+              <>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3 }}>
+                  <FormControl size="small" fullWidth>
+                    <InputLabel id="recipient-group-label">Recipient group</InputLabel>
+                    <Select
+                      labelId="recipient-group-label"
+                      value={recipientGroup}
+                      label="Recipient group"
+                      onChange={(e) => setRecipientGroup(e.target.value)}
+                    >
+                      {recipientGroups.map((g) => (
+                        <MenuItem key={g.value} value={g.value}>{g.label}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <Autocomplete
+                    options={validInvitees}
+                    value={previewInvitee}
+                    onChange={(_, value) => setPreviewInvitee(value)}
+                    getOptionLabel={(option) => `${option.name || 'Unnamed'} — ${option.email || ''}`}
+                    renderInput={(params) => (
+                      <TextField {...params} size="small" label="Preview as (optional)" />
+                    )}
+                  />
+
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      Group recipients: {groupRecipients.length}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      onClick={handleSendToGroup}
+                      disabled={bulkSending || groupRecipients.length === 0}
+                    >
+                      {bulkSending ? 'Sending...' : 'Send to group'}
+                    </Button>
+                  </Box>
+                </Box>
+
+                <EmailPreview 
+                  template={selectedTemplate}
+                  recipientData={toRecipientData(previewInvitee)}
+                  onSend={handleSendEmail}
+                />
+              </>
             )}
           </Paper>
         </Box>

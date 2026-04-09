@@ -70,9 +70,10 @@ The system consists of several components:
 
 1. Navigate to Admin > Email > Send Email
 2. Select a template
-3. Fill in recipient details
-4. Preview the email
-5. Send to individual guests or use bulk sending options
+3. Choose a **recipient group** (All, Accepted, Declined, Pending/No response)
+4. (Optional) Choose a **Preview as** invitee to see personalization variables populated
+5. Preview the email
+6. Send to an individual recipient (using the recipient email field), or click **Send to group** to send to everyone in the selected group
 
 ### Tracking Statistics
 
