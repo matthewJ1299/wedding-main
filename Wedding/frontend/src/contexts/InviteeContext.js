@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { DUMMY_INVITEES } from '../models/inviteeModel';
+import { useLocation } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import { fetchInvitees, createInvitee, updateInviteeApi, deleteInvitee, seedInvitees } from '../services/inviteeService';
 
 /**
@@ -17,22 +18,34 @@ const InviteeContext = createContext({
  */
 export const InviteeProvider = ({ children }) => {
   const [invitees, setInvitees] = useState([]);
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
+
+  const pathname = location?.pathname || '/';
+  const isAdminRoute = pathname.startsWith('/admin');
+  const isInviteeFlowRoute =
+    pathname.startsWith('/invitation') ||
+    pathname.startsWith('/rsvp') ||
+    pathname.startsWith('/edit-details');
+  const shouldLoadInvitees = isAdminRoute || isInviteeFlowRoute;
 
   // Load from API, seed on first run
   useEffect(() => {
+    if (!shouldLoadInvitees) return;
     (async () => {
       try {
         let list = await fetchInvitees();
-        if (!list || list.length === 0) {
+        if (isAdminRoute && isAuthenticated && (!list || list.length === 0)) {
           await seedInvitees();
           list = await fetchInvitees();
         }
         setInvitees(list);
       } catch (e) {
         console.error('Failed to load invitees from API, falling back to dummy', e);
+        setInvitees([]);
       }
     })();
-  }, []);
+  }, [isAdminRoute, isAuthenticated, shouldLoadInvitees]);
 
   /**
    * Add a new invitee to the list

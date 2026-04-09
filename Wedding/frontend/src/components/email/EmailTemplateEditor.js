@@ -91,6 +91,31 @@ const EmailTemplateEditor = ({ initialHtml = '', initialText = '', onChange }) =
       updateContent();
     }
   };
+
+  const looksLikeHtml = (text) => {
+    if (!text) return false;
+    const t = String(text).trim();
+    if (t.startsWith('<!DOCTYPE') || t.startsWith('<html') || t.startsWith('<?xml')) return true;
+    // Common email-template fragments people paste
+    return /<table[\s>]|<body[\s>]|<head[\s>]|<div[\s>]/i.test(t);
+  };
+
+  const handleEditorPaste = (e) => {
+    try {
+      const text = e.clipboardData?.getData('text/plain') ?? '';
+      if (!looksLikeHtml(text)) return;
+
+      // If the user pastes raw HTML into the WYSIWYG editor, treat it as HTML
+      // instead of inserting it as literal text nodes.
+      e.preventDefault();
+      if (editorRef.current) {
+        editorRef.current.innerHTML = text;
+        updateContent();
+      }
+    } catch (_) {
+      // If anything goes wrong, let the browser handle paste normally.
+    }
+  };
   
   return (
     <Box sx={{ mb: 3 }}>
@@ -195,6 +220,7 @@ const EmailTemplateEditor = ({ initialHtml = '', initialText = '', onChange }) =
             ref={editorRef}
             contentEditable
             suppressContentEditableWarning
+            onPaste={handleEditorPaste}
             onInput={updateContent}
             onBlur={updateContent}
             sx={{

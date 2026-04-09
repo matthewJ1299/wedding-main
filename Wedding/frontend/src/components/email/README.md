@@ -23,6 +23,10 @@ The system consists of several components:
 
 ## Key Files
 
+### Static invitation HTML (copy/paste source)
+
+- `Wedding/invite.html` at the repo root is valid **email-oriented HTML** (table layout, no scripts, UTF-8). Preview in a browser or paste into Admin > Email template HTML. Use the same merge fields as other templates, e.g. `{guestName}` and `{websiteLink}`. Images use absolute Canva CDN URLs; for production longevity, mirror assets to your own HTTPS host and update `img` `src` values.
+
 ### Models
 - `models/emailTemplateModel.js`: Defines template structure and provides helper functions
 
