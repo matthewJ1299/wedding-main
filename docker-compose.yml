@@ -4,6 +4,20 @@
 # Local laptop: docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
 
 services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-wedding}
+      POSTGRES_USER: ${POSTGRES_USER:-wedding}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wedding}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
   backend:
     build:
       context: ./Wedding/backend
@@ -13,9 +27,9 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
-      DATABASE_PATH: /data/data.sqlite
       UPLOAD_DIR: /data/uploads
       BACKUP_DIR: /data/backups
+      DATABASE_URL: ${DATABASE_URL:-postgres://wedding:wedding@postgres:5432/wedding}
       FRONTEND_URL: ${FRONTEND_URL:-https://matthewandsydney.co.za}
       ORIGIN_URL: ${ORIGIN_URL:-https://matthewandsydney.co.za}
       SMTP_HOST: ${SMTP_HOST:-}
@@ -29,6 +43,9 @@ services:
       SESSION_SECRET: ${SESSION_SECRET:-change-me-in-production}
     volumes:
       - wedding_data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   frontend:
     build:
@@ -45,4 +62,5 @@ services:
       - backend
 
 volumes:
+  postgres_data:
   wedding_data:

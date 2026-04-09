@@ -43,14 +43,6 @@ env.test.txt
 next-env.d.ts
 .vercel
 
-# Database files
-*.sqlite
-*.sqlite-shm
-*.sqlite-wal
-*.db
-*.db-shm
-*.db-wal
-
 # Upload directories
 uploads/
 upload/

@@ -1,11 +1,23 @@
 import { NextResponse } from 'next/server';
 import InviteeRepository from '../../../../repositories/InviteeRepository.js';
-import { getDatabasePath } from '../../../utils/paths.js';
+import { getDb } from '../../../db/database.js';
 
 export const runtime = 'nodejs';
 
-const dbPath = getDatabasePath();
-const repo = new InviteeRepository(dbPath);
+let inviteeRepo;
+let inviteeRepoTried;
+function getInviteeRepo() {
+  if (!inviteeRepoTried) {
+    inviteeRepoTried = true;
+    try {
+      inviteeRepo = new InviteeRepository(getDb());
+    } catch (error) {
+      console.error('Failed to initialize InviteeRepository:', error);
+      inviteeRepo = null;
+    }
+  }
+  return inviteeRepo;
+}
 
 function withCors(response) {
   const origin = process.env.ORIGIN_URL || 'http://localhost:3000';
@@ -22,32 +34,33 @@ export async function OPTIONS() {
 
 export async function GET(request) {
   try {
+    const repo = getInviteeRepo();
+    if (!repo) {
+      return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
+    }
     const { searchParams } = new URL(request.url);
     const inviteeId = searchParams.get('inviteeId');
     const changesParam = searchParams.get('changes');
-    
+
     if (!inviteeId || !changesParam) {
-      return withCors(NextResponse.json({ 
-        error: 'Missing required parameters: inviteeId and changes' 
-      }, { status: 400 }));
+      return withCors(
+        NextResponse.json(
+          { error: 'Missing required parameters: inviteeId and changes' },
+          { status: 400 }
+        )
+      );
     }
 
-    // Parse the changes from the URL parameter
     const changes = JSON.parse(decodeURIComponent(changesParam));
-    
-    // Get the current invitee
-    const currentInvitee = repo.getById(inviteeId);
+
+    const currentInvitee = await repo.getById(inviteeId);
     if (!currentInvitee) {
-      return withCors(NextResponse.json({ 
-        error: 'Invitee not found' 
-      }, { status: 404 }));
+      return withCors(NextResponse.json({ error: 'Invitee not found' }, { status: 404 }));
     }
 
-    // Apply the approved changes
-    repo.update(inviteeId, changes);
-    const updatedInvitee = repo.getById(inviteeId);
-    
-    // Return a simple HTML page confirming the approval
+    await repo.update(inviteeId, changes);
+    const updatedInvitee = await repo.getById(inviteeId);
+
     const html = `
       <!DOCTYPE html>
       <html>
@@ -75,54 +88,53 @@ export async function GET(request) {
       </body>
       </html>
     `;
-    
+
     return new Response(html, {
       headers: {
         'Content-Type': 'text/html',
         'Access-Control-Allow-Origin': process.env.ORIGIN_URL || 'http://localhost:3000',
       },
     });
-    
   } catch (err) {
     console.error('Error approving invitee changes via GET:', err);
-    return withCors(NextResponse.json({ 
-      error: err.message 
-    }, { status: 500 }));
+    return withCors(NextResponse.json({ error: err.message }, { status: 500 }));
   }
 }
 
 export async function POST(request) {
   try {
+    const repo = getInviteeRepo();
+    if (!repo) {
+      return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
+    }
     const { inviteeId, changes } = await request.json();
-    
+
     if (!inviteeId || !changes) {
-      return withCors(NextResponse.json({ 
-        error: 'Missing required fields: inviteeId and changes' 
-      }, { status: 400 }));
+      return withCors(
+        NextResponse.json(
+          { error: 'Missing required fields: inviteeId and changes' },
+          { status: 400 }
+        )
+      );
     }
 
-    // Get the current invitee
-    const currentInvitee = repo.getById(inviteeId);
+    const currentInvitee = await repo.getById(inviteeId);
     if (!currentInvitee) {
-      return withCors(NextResponse.json({ 
-        error: 'Invitee not found' 
-      }, { status: 404 }));
+      return withCors(NextResponse.json({ error: 'Invitee not found' }, { status: 404 }));
     }
 
-    // Apply the approved changes
-    repo.update(inviteeId, changes);
-    const updatedInvitee = repo.getById(inviteeId);
-    
-    return withCors(NextResponse.json({ 
-      success: true, 
-      message: 'Invitee details updated successfully',
-      invitee: updatedInvitee
-    }));
-    
+    await repo.update(inviteeId, changes);
+    const updatedInvitee = await repo.getById(inviteeId);
+
+    return withCors(
+      NextResponse.json({
+        success: true,
+        message: 'Invitee details updated successfully',
+        invitee: updatedInvitee,
+      })
+    );
   } catch (err) {
     console.error('Error approving invitee changes:', err);
-    return withCors(NextResponse.json({ 
-      error: err.message 
-    }, { status: 500 }));
+    return withCors(NextResponse.json({ error: err.message }, { status: 500 }));
   }
 }

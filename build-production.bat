@@ -114,7 +114,8 @@ echo    - Frontend: https://matthewandsydney.co.za
 echo    - Backend: https://api.matthewandsydney.co.za/health
 echo.
 echo Backend notes:
-echo    - SQLite via built-in node:sqlite (no better-sqlite3 npm package)
+echo    - PostgreSQL via DATABASE_URL and npm package pg
+echo    - Run npm run migrate on the server after deploy
 echo    - Requires Node.js 22.5 or newer on the server
 echo.
 echo See CPANEL_DEPLOYMENT.md for detailed deployment instructions

@@ -20,6 +20,7 @@ import AdminPage from './AdminPage';
 import GalleryPage from './GalleryPage';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import LandingNoticeDialog from '../components/common/LandingNoticeDialog';
+import ToastHost from '../notifications/ToastHost';
 
 function App() {
 	const location = useLocation();
@@ -63,6 +64,7 @@ function App() {
 						<EmailTemplateProvider>
 							<CustomThemeProvider>
 								<ThemeProvider theme={muiTheme}>
+									<ToastHost />
 									<LandingNoticeDialog />
 									<Box
 										className="page-container"

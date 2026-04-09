@@ -1,21 +1,29 @@
 import { NextResponse } from 'next/server';
-import path from 'path';
 import { randomUUID } from 'crypto';
 import fs from 'fs';
+import path from 'path';
 import PhotoRepository from '../../../../repositories/PhotoRepository.js';
+import { getDb } from '../../../db/database.js';
+import { getUploadsDir } from '../../../utils/paths.js';
 
 export const runtime = 'nodejs';
 
-const dbPath = path.join(process.cwd(), 'data.sqlite');
-let repo;
-try {
-  repo = new PhotoRepository(dbPath);
-} catch (error) {
-  console.error('Failed to initialize PhotoRepository:', error);
+let photoRepo;
+let photoRepoTried;
+function getPhotoRepo() {
+  if (!photoRepoTried) {
+    photoRepoTried = true;
+    try {
+      photoRepo = new PhotoRepository(getDb());
+    } catch (error) {
+      console.error('Failed to initialize PhotoRepository:', error);
+      photoRepo = null;
+    }
+  }
+  return photoRepo;
 }
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(process.cwd(), 'uploads');
+const uploadsDir = getUploadsDir();
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
@@ -35,23 +43,23 @@ export async function OPTIONS() {
 
 export async function GET(request) {
   try {
+    const repo = getPhotoRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
     }
-    
-    // Get query parameters
+
     const url = new URL(request.url);
     const approved = url.searchParams.get('approved');
-    
+
     let photos;
     if (approved === 'true') {
-      photos = repo.getApproved();
+      photos = await repo.getApproved();
     } else if (approved === 'false') {
-      photos = repo.getPending();
+      photos = await repo.getPending();
     } else {
-      photos = repo.getAll();
+      photos = await repo.getAll();
     }
-    
+
     return withCors(NextResponse.json(photos));
   } catch (error) {
     console.error('Error in GET /api/photos:', error);
@@ -61,6 +69,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    const repo = getPhotoRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
     }
@@ -74,33 +83,29 @@ export async function POST(request) {
       return withCors(NextResponse.json({ error: 'No file provided' }, { status: 400 }));
     }
 
-    // Validate file type
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      return withCors(NextResponse.json({ 
-        error: 'Invalid file type. Only JPEG, PNG, and WebP images are allowed.' 
-      }, { status: 400 }));
+      return withCors(
+        NextResponse.json(
+          { error: 'Invalid file type. Only JPEG, PNG, and WebP images are allowed.' },
+          { status: 400 }
+        )
+      );
     }
 
-    // Validate file size (10MB max)
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
-      return withCors(NextResponse.json({ 
-        error: 'File too large. Maximum size is 10MB.' 
-      }, { status: 400 }));
+      return withCors(NextResponse.json({ error: 'File too large. Maximum size is 10MB.' }, { status: 400 }));
     }
 
-    // Generate unique filename
     const fileId = randomUUID();
     const fileExtension = path.extname(file.name);
     const filename = `${fileId}${fileExtension}`;
     const filePath = path.join(uploadsDir, filename);
 
-    // Save file to disk
     const buffer = await file.arrayBuffer();
     fs.writeFileSync(filePath, Buffer.from(buffer));
 
-    // Create photo record
     const photo = {
       id: fileId,
       filename,
@@ -111,10 +116,10 @@ export async function POST(request) {
       uploaderEmail: uploaderEmail || null,
       approved: false,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
-    repo.create(photo);
+    await repo.create(photo);
 
     return withCors(NextResponse.json(photo, { status: 201 }));
   } catch (error) {
@@ -122,6 +127,3 @@ export async function POST(request) {
     return withCors(NextResponse.json({ error: error.message }, { status: 500 }));
   }
 }
-
-
-

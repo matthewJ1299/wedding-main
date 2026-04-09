@@ -1,3 +1,6 @@
+import { NextResponse } from 'next/server';
+import { sendEmail } from '../../../emailModule.js';
+
 function withCors(response) {
   const origin = process.env.ORIGIN_URL || 'http://localhost:3000';
   response.headers.set('Access-Control-Allow-Origin', origin);
@@ -5,6 +8,7 @@ function withCors(response) {
   response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
   return response;
 }
+
 export async function GET() {
   return withCors(NextResponse.json({ error: 'Method Not Allowed' }, { status: 405 }));
 }
@@ -12,10 +16,6 @@ export async function GET() {
 export async function OPTIONS() {
   return withCors(NextResponse.json({}));
 }
-
-import { NextResponse } from 'next/server';
-import { sendEmail } from '../../../emailModule.js';
-
 
 export async function POST(request) {
   try {
@@ -29,5 +29,4 @@ export async function POST(request) {
   } catch (err) {
     return withCors(NextResponse.json({ error: err.message }, { status: 500 }));
   }
-// ...existing code...
 }

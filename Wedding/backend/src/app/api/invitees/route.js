@@ -2,19 +2,26 @@ import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { createRequire } from 'module';
 import InviteeRepository from '../../../../repositories/InviteeRepository.js';
-import { getDatabasePath } from '../../../utils/paths.js';
+import { getDb } from '../../../db/database.js';
 
 const require = createRequire(import.meta.url);
 const { allowedOriginFromNextRequest } = require('../../../../cors-origin.cjs');
 
 export const runtime = 'nodejs';
 
-const dbPath = getDatabasePath();
-let repo;
-try {
-  repo = new InviteeRepository(dbPath);
-} catch (error) {
-  console.error('Failed to initialize InviteeRepository:', error);
+let inviteeRepo;
+let inviteeRepoTried;
+function getInviteeRepo() {
+  if (!inviteeRepoTried) {
+    inviteeRepoTried = true;
+    try {
+      inviteeRepo = new InviteeRepository(getDb());
+    } catch (error) {
+      console.error('Failed to initialize InviteeRepository:', error);
+      inviteeRepo = null;
+    }
+  }
+  return inviteeRepo;
 }
 
 function withCors(response, request) {
@@ -34,10 +41,11 @@ export async function OPTIONS(request) {
 
 export async function GET(request) {
   try {
+    const repo = getInviteeRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }), request);
     }
-    const invitees = repo.getAll();
+    const invitees = await repo.getAll();
     return withCors(NextResponse.json(invitees), request);
   } catch (error) {
     console.error('Error in GET /api/invitees:', error);
@@ -47,6 +55,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    const repo = getInviteeRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }), request);
     }
@@ -64,12 +73,10 @@ export async function POST(request) {
       plusOneEmail: body.plusOneEmail ?? null,
       plusOnePhone: body.plusOnePhone ?? null,
     };
-    repo.create(newInvitee);
+    await repo.create(newInvitee);
     return withCors(NextResponse.json(newInvitee, { status: 201 }), request);
   } catch (err) {
     console.error('Error in POST /api/invitees:', err);
     return withCors(NextResponse.json({ error: err.message }, { status: 500 }), request);
   }
 }
-
-

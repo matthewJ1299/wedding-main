@@ -15,13 +15,12 @@ Use this checklist to ensure your wedding site is properly configured for produc
 ### Security
 - [ ] Default admin password changed
 - [ ] Environment files not committed to version control
-- [ ] Database file permissions set correctly (755)
+- [ ] `DATABASE_URL` set and Postgres reachable from the app
 - [ ] Upload directory permissions set correctly (755)
 - [ ] SSL certificates installed for both domains
 - [ ] HTTPS redirects configured
 
 ### File Permissions
-- [ ] `data.sqlite` - 755 (read/write for app, read for web)
 - [ ] `uploads/` directory - 755 (read/write for app, read for web)
 - [ ] `logs/` directory - 755 (read/write for app)
 - [ ] `backups/` directory - 755 (read/write for app)
@@ -29,8 +28,7 @@ Use this checklist to ensure your wedding site is properly configured for produc
 - [ ] `.htaccess` files uploaded and configured
 
 ### Database Setup
-- [ ] SQLite database initialized
-- [ ] Database file created successfully
+- [ ] PostgreSQL provisioned and migrations applied (`npm run migrate`)
 - [ ] Initial data seeded (if needed)
 - [ ] Backup strategy implemented
 - [ ] Database file not web-accessible

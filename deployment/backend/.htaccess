@@ -39,7 +39,7 @@ RewriteRule ^(.*)$ http://localhost:3001/$1 [P,L]
 </IfModule>
 
 # Prevent access to sensitive files
-<FilesMatch "\.(env|log|ini|sqlite|sqlite-shm|sqlite-wal)$">
+<FilesMatch "\.(env|log|ini)$">
     Order allow,deny
     Deny from all
 </FilesMatch>

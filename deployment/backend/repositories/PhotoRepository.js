@@ -1,111 +1,150 @@
-// PhotoRepository.js
-// Repository pattern for Photo entity using Node's built-in node:sqlite
+// PhotoRepository.js — PostgreSQL via IDb-compatible adapter
 
-import { openDatabaseSync } from '../src/utils/openDatabaseSync.js';
+/** @typedef {import('../src/db/IDb.js').IDb} IDb */
 
 class PhotoRepository {
-  constructor(dbPath) {
-    this.db = openDatabaseSync(dbPath);
-    this._initTable();
+  /** @param {IDb} db */
+  constructor(db) {
+    this.db = db;
   }
 
-  _initTable() {
-    this.db.prepare(`CREATE TABLE IF NOT EXISTS photos (
-      id TEXT PRIMARY KEY,
-      filename TEXT NOT NULL,
-      originalName TEXT NOT NULL,
-      mimeType TEXT NOT NULL,
-      size INTEGER NOT NULL,
-      uploaderName TEXT,
-      uploaderEmail TEXT,
-      approved INTEGER DEFAULT 0,
-      createdAt TEXT NOT NULL,
-      updatedAt TEXT NOT NULL
-    )`).run();
-  }
-
-  create(photo) {
-    const stmt = this.db.prepare(`INSERT INTO photos (id, filename, originalName, mimeType, size, uploaderName, uploaderEmail, approved, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    return stmt.run(
-      photo.id,
-      photo.filename,
-      photo.originalName,
-      photo.mimeType,
-      photo.size,
-      photo.uploaderName ?? null,
-      photo.uploaderEmail ?? null,
-      photo.approved ? 1 : 0,
-      photo.createdAt,
-      photo.updatedAt
+  /**
+   * @param {object} photo
+   * @returns {Promise<void>}
+   */
+  async create(photo) {
+    await this.db.query(
+      `INSERT INTO photos (id, filename, "originalName", "mimeType", size, "uploaderName", "uploaderEmail", approved, "createdAt", "updatedAt")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::timestamptz, $10::timestamptz)`,
+      [
+        photo.id,
+        photo.filename,
+        photo.originalName,
+        photo.mimeType,
+        photo.size,
+        photo.uploaderName ?? null,
+        photo.uploaderEmail ?? null,
+        photo.approved === true,
+        photo.createdAt,
+        photo.updatedAt,
+      ]
     );
   }
 
-  getById(id) {
-    return this.db.prepare(`SELECT * FROM photos WHERE id = ?`).get(id);
+  /**
+   * @param {string} id
+   * @returns {Promise<object | null>}
+   */
+  async getById(id) {
+    const r = await this.db.query('SELECT * FROM photos WHERE id = $1', [id]);
+    return r.rows[0] ?? null;
   }
 
-  getAll() {
-    return this.db.prepare(`SELECT * FROM photos ORDER BY createdAt DESC`).all();
+  /**
+   * @returns {Promise<object[]>}
+   */
+  async getAll() {
+    const r = await this.db.query('SELECT * FROM photos ORDER BY "createdAt" DESC');
+    return r.rows;
   }
 
-  getApproved() {
-    return this.db.prepare(`SELECT * FROM photos WHERE approved = 1 ORDER BY createdAt DESC`).all();
+  /**
+   * @returns {Promise<object[]>}
+   */
+  async getApproved() {
+    const r = await this.db.query(
+      'SELECT * FROM photos WHERE approved = true ORDER BY "createdAt" DESC'
+    );
+    return r.rows;
   }
 
-  getPending() {
-    return this.db.prepare(`SELECT * FROM photos WHERE approved = 0 ORDER BY createdAt DESC`).all();
+  /**
+   * @returns {Promise<object[]>}
+   */
+  async getPending() {
+    const r = await this.db.query(
+      'SELECT * FROM photos WHERE approved = false ORDER BY "createdAt" DESC'
+    );
+    return r.rows;
   }
 
-  update(id, updates) {
-    const photo = this.getById(id);
+  /**
+   * @param {string} id
+   * @param {object} updates
+   * @returns {Promise<import('pg').QueryResult | null>}
+   */
+  async update(id, updates) {
+    const photo = await this.getById(id);
     if (!photo) return null;
-    
-    const stmt = this.db.prepare(`UPDATE photos SET filename = ?, originalName = ?, mimeType = ?, size = ?, uploaderName = ?, uploaderEmail = ?, approved = ?, updatedAt = ? WHERE id = ?`);
-    return stmt.run(
-      updates.filename ?? photo.filename,
-      updates.originalName ?? photo.originalName,
-      updates.mimeType ?? photo.mimeType,
-      updates.size !== undefined ? updates.size : photo.size,
-      updates.uploaderName !== undefined ? updates.uploaderName : photo.uploaderName,
-      updates.uploaderEmail !== undefined ? updates.uploaderEmail : photo.uploaderEmail,
-      updates.approved !== undefined ? (updates.approved ? 1 : 0) : photo.approved,
-      updates.updatedAt ?? photo.updatedAt,
-      id
+
+    return this.db.query(
+      `UPDATE photos SET filename = $1, "originalName" = $2, "mimeType" = $3, size = $4,
+       "uploaderName" = $5, "uploaderEmail" = $6, approved = $7, "updatedAt" = $8::timestamptz WHERE id = $9`,
+      [
+        updates.filename ?? photo.filename,
+        updates.originalName ?? photo.originalName,
+        updates.mimeType ?? photo.mimeType,
+        updates.size !== undefined ? updates.size : photo.size,
+        updates.uploaderName !== undefined ? updates.uploaderName : photo.uploaderName,
+        updates.uploaderEmail !== undefined ? updates.uploaderEmail : photo.uploaderEmail,
+        updates.approved !== undefined ? updates.approved === true : photo.approved === true,
+        updates.updatedAt ?? photo.updatedAt,
+        id,
+      ]
     );
   }
 
-  delete(id) {
-    return this.db.prepare(`DELETE FROM photos WHERE id = ?`).run(id);
+  /**
+   * @param {string} id
+   * @returns {Promise<import('pg').QueryResult>}
+   */
+  async delete(id) {
+    return this.db.query('DELETE FROM photos WHERE id = $1', [id]);
   }
 
-  approve(id) {
-    const photo = this.getById(id);
+  /**
+   * @param {string} id
+   * @returns {Promise<import('pg').QueryResult | null>}
+   */
+  async approve(id) {
+    const photo = await this.getById(id);
     if (!photo) return null;
-    
-    const stmt = this.db.prepare(`UPDATE photos SET approved = 1, updatedAt = ? WHERE id = ?`);
-    return stmt.run(new Date().toISOString(), id);
+    return this.db.query(
+      'UPDATE photos SET approved = true, "updatedAt" = $1::timestamptz WHERE id = $2',
+      [new Date().toISOString(), id]
+    );
   }
 
-  reject(id) {
-    const photo = this.getById(id);
+  /**
+   * @param {string} id
+   * @returns {Promise<import('pg').QueryResult | null>}
+   */
+  async reject(id) {
+    const photo = await this.getById(id);
     if (!photo) return null;
-    
-    const stmt = this.db.prepare(`UPDATE photos SET approved = 0, updatedAt = ? WHERE id = ?`);
-    return stmt.run(new Date().toISOString(), id);
+    return this.db.query(
+      'UPDATE photos SET approved = false, "updatedAt" = $1::timestamptz WHERE id = $2',
+      [new Date().toISOString(), id]
+    );
   }
 
-  getStats() {
-    const total = this.db.prepare(`SELECT COUNT(*) as count FROM photos`).get();
-    const approved = this.db.prepare(`SELECT COUNT(*) as count FROM photos WHERE approved = 1`).get();
-    const pending = this.db.prepare(`SELECT COUNT(*) as count FROM photos WHERE approved = 0`).get();
-    
+  /**
+   * @returns {Promise<{ total: number, approved: number, pending: number }>}
+   */
+  async getStats() {
+    const total = await this.db.query('SELECT COUNT(*)::int AS count FROM photos');
+    const approved = await this.db.query(
+      'SELECT COUNT(*)::int AS count FROM photos WHERE approved = true'
+    );
+    const pending = await this.db.query(
+      'SELECT COUNT(*)::int AS count FROM photos WHERE approved = false'
+    );
     return {
-      total: total.count,
-      approved: approved.count,
-      pending: pending.count
+      total: total.rows[0].count,
+      approved: approved.rows[0].count,
+      pending: pending.rows[0].count,
     };
   }
 }
 
 export default PhotoRepository;
-

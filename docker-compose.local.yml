@@ -1,7 +1,14 @@
 # Laptop testing: publish host ports + localhost URLs for CORS and CRA build args.
 # Usage: docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
+#
+# Backend container must use hostname `postgres` (see base docker-compose.yml DATABASE_URL).
+# Postgres is also published on localhost:5432 for running the backend outside Docker (npm run dev).
 
 services:
+  postgres:
+    ports:
+      - "5432:5432"
+
   backend:
     ports:
       - "3001:3001"

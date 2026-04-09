@@ -6,12 +6,13 @@ This guide will help you deploy the wedding application to cPanel hosting with t
 
 ## Prerequisites
 
-1. cPanel hosting account with **Node.js 22.5 or newer** for the backend (required for built-in `node:sqlite`). The backend uses `next.config.mjs` (not `next.config.ts`) so Next can load config on typical hosts; select the newest **22.x** (or **24.x** if available) in **Setup Node.js App**, not Node 18.
-2. DNS configured for both hostnames:
+1. cPanel hosting account with **Node.js 22.5 or newer** for the backend. The backend uses `next.config.mjs` (not `next.config.ts`) so Next can load config on typical hosts; select the newest **22.x** (or **24.x** if available) in **Setup Node.js App**, not Node 18.
+2. A **PostgreSQL** database reachable from the internet or from your host (many cPanel plans do not include Postgres; use a managed provider such as Neon, Supabase, AWS RDS, etc., and put the connection string in **`DATABASE_URL`**).
+3. DNS configured for both hostnames:
    - `matthewandsydney.co.za` (frontend / public site)
    - `api.matthewandsydney.co.za` (backend API)
-3. SSL certificates for both domains
-4. Access to cPanel File Manager or FTP
+4. SSL certificates for both domains
+5. Access to cPanel File Manager or FTP
 
 ## Deployment Steps
 
@@ -36,16 +37,16 @@ The Next.js backend **must** have a production build output (the `.next` folder)
    PORT=3001
    FRONTEND_URL=https://matthewandsydney.co.za
    ORIGIN_URL=https://matthewandsydney.co.za
-   DB_PATH=./data.sqlite
+   DATABASE_URL=postgres://USER:PASSWORD@HOST:5432/DBNAME
    ```
-   Use `DATABASE_PATH` instead of `DB_PATH` if you need an absolute path to `data.sqlite`.
+   After install, run **`npm run migrate`** once in the backend directory so tables exist.
 
 6. **Start the Backend Service**
    - Use cPanel's Node.js Selector to create a new application
    - Set the application root to your backend directory
    - Set the application URL to `api.matthewandsydney.co.za`
    - Set the application startup file to `server.js`
-   - Set Node.js version to 22.5 or higher (required for built-in `node:sqlite`)
+   - Set Node.js version to 22.5 or higher
    - If your host does not allow a custom startup command, startup file only is fine: this `server.js` defaults `NODE_ENV` to `production` when unset.
    - Start/restart the application
 
@@ -93,13 +94,13 @@ The Next.js backend **must** have a production build output (the `.next` folder)
 
 ### 3. Database Setup
 
-1. **Initialize Database**
-   - The SQLite database will be created automatically when the backend starts
-   - If you need to seed initial data, access the `/api/seed` endpoint after deployment
+1. **PostgreSQL**
+   - Ensure `DATABASE_URL` in `.env` points at your Postgres instance
+   - Run `npm run migrate` in the backend directory after each deploy that changes `migrations/`
+   - Optional seed: `POST https://api.matthewandsydney.co.za/api/seed`
 
 2. **Database Backup**
-   - The `data.sqlite` file will be created in the backend directory
-   - Set up regular backups using cPanel's backup tools
+   - Prefer your provider’s automated backups; optionally use `npm run backup:db` where `pg_dump` is available
 
 ### 4. Email Configuration
 
@@ -171,9 +172,9 @@ The Next.js backend **must** have a production build output (the `.next` folder)
    - Ensure you have sufficient disk space for node_modules
 
 5. **Database Issues**
-   - Ensure the backend directory has write permissions
-   - Check that SQLite is supported on your hosting
-   - Verify the `data.sqlite` file can be created in the backend directory
+   - Confirm `DATABASE_URL` is correct and the server can reach Postgres (firewall / SSL mode)
+   - Run `npm run migrate` after deploy; check logs for migration errors
+   - Ensure `uploads/` and `backups/` directories are writable if you use local file storage
 
 6. **File Upload Issues**
    - Verify the `uploads` directory exists and has write permissions

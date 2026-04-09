@@ -64,7 +64,7 @@ Create a `.env.production` file in the backend root with:
 ```env
 NODE_ENV=production
 PORT=3001
-DATABASE_PATH=./data.sqlite
+DATABASE_URL=postgres://USER:PASSWORD@HOST:5432/DBNAME
 SMTP_HOST=smtp.your-provider.com
 SMTP_PORT=587
 SMTP_SECURE=false
@@ -96,13 +96,19 @@ npm run start:production
 
 ## Database Setup
 
-### 1. Initialize Database
+### 1. PostgreSQL
 
-The SQLite database will be created automatically on first run. Ensure the backend has write permissions to create:
-- `data.sqlite` (main database)
+Provision a PostgreSQL database (managed service, Docker, or your host if offered). Set **`DATABASE_URL`** on the backend. After deploying code, run migrations once:
+
+```bash
+cd /path/to/backend
+npm run migrate
+```
+
+Ensure the app user can create/write data and that these paths exist (or can be created):
 - `uploads/` directory (for photo uploads)
 - `logs/` directory (for application logs)
-- `backups/` directory (for database backups)
+- `backups/` directory (for `pg_dump` output, if you use `npm run backup:db`)
 
 ### 2. Seed Initial Data (Optional)
 
@@ -121,8 +127,7 @@ Ensure SSL certificates are installed for both domains:
 Set appropriate file permissions:
 
 ```bash
-# Database and uploads directory
-chmod 755 data.sqlite
+# Uploads and runtime directories
 chmod 755 uploads/
 chmod 755 logs/
 chmod 755 backups/
@@ -179,7 +184,7 @@ npm run backup:db cleanup 10
 ### File Backups
 
 Regularly backup:
-- `data.sqlite` (database)
+- PostgreSQL DSN (`DATABASE_URL`) and migration state in the database
 - `uploads/` (photo uploads)
 - Environment files
 

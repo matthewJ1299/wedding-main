@@ -1,15 +1,22 @@
 import { NextResponse } from 'next/server';
 import InviteeRepository from '../../../../../repositories/InviteeRepository.js';
-import { getDatabasePath } from '../../../../utils/paths.js';
+import { getDb } from '../../../../db/database.js';
 
 export const runtime = 'nodejs';
 
-const dbPath = getDatabasePath();
-let repo;
-try {
-  repo = new InviteeRepository(dbPath);
-} catch (error) {
-  console.error('Failed to initialize InviteeRepository:', error);
+let inviteeRepo;
+let inviteeRepoTried;
+function getInviteeRepo() {
+  if (!inviteeRepoTried) {
+    inviteeRepoTried = true;
+    try {
+      inviteeRepo = new InviteeRepository(getDb());
+    } catch (error) {
+      console.error('Failed to initialize InviteeRepository:', error);
+      inviteeRepo = null;
+    }
+  }
+  return inviteeRepo;
 }
 
 function withCors(response) {
@@ -27,11 +34,12 @@ export async function OPTIONS() {
 
 export async function GET(_, { params }) {
   try {
+    const repo = getInviteeRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
     }
     const { id } = await params;
-    const invitee = repo.getById(id);
+    const invitee = await repo.getById(id);
     if (!invitee) return withCors(NextResponse.json({ error: 'Not found' }, { status: 404 }));
     return withCors(NextResponse.json(invitee));
   } catch (error) {
@@ -42,17 +50,17 @@ export async function GET(_, { params }) {
 
 export async function PUT(request, { params }) {
   try {
+    const repo = getInviteeRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
     }
     const { id } = await params;
     const updates = await request.json();
     console.log('PUT /api/invitees/[id] - ID:', id, 'Updates:', updates);
-    
-    // Validate and sanitize the updates object
+
     const allowedFields = ['name', 'partner', 'email', 'phone', 'rsvp', 'inviteCode', 'allowPlusOne', 'plusOneName', 'plusOneEmail', 'plusOnePhone', 'mealSelection', 'songRequest'];
     const sanitizedUpdates = {};
-    
+
     for (const [key, value] of Object.entries(updates)) {
       if (allowedFields.includes(key)) {
         if (key === 'allowPlusOne') {
@@ -64,15 +72,15 @@ export async function PUT(request, { params }) {
         }
       }
     }
-    
+
     console.log('PUT /api/invitees/[id] - Sanitized updates:', sanitizedUpdates);
-    
-    const result = repo.update(id, sanitizedUpdates);
+
+    const result = await repo.update(id, sanitizedUpdates);
     if (!result) {
       return withCors(NextResponse.json({ error: 'Invitee not found' }, { status: 404 }));
     }
-    
-    const updated = repo.getById(id);
+
+    const updated = await repo.getById(id);
     console.log('PUT /api/invitees/[id] - Updated invitee:', updated);
     return withCors(NextResponse.json(updated));
   } catch (err) {
@@ -83,16 +91,15 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(_, { params }) {
   try {
+    const repo = getInviteeRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
     }
     const { id } = await params;
-    repo.delete(id);
+    await repo.delete(id);
     return withCors(NextResponse.json({ success: true }));
   } catch (err) {
     console.error('Error in DELETE /api/invitees/[id]:', err);
     return withCors(NextResponse.json({ error: err.message }, { status: 500 }));
   }
 }
-
-

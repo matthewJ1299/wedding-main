@@ -1,16 +1,25 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
+import path from 'path';
 import PhotoRepository from '../../../../../repositories/PhotoRepository.js';
-import { getDatabasePath, getUploadsDir } from '../../../../utils/paths.js';
+import { getDb } from '../../../../db/database.js';
+import { getUploadsDir } from '../../../../utils/paths.js';
 
 export const runtime = 'nodejs';
 
-const dbPath = getDatabasePath();
-let repo;
-try {
-  repo = new PhotoRepository(dbPath);
-} catch (error) {
-  console.error('Failed to initialize PhotoRepository:', error);
+let photoRepo;
+let photoRepoTried;
+function getPhotoRepo() {
+  if (!photoRepoTried) {
+    photoRepoTried = true;
+    try {
+      photoRepo = new PhotoRepository(getDb());
+    } catch (error) {
+      console.error('Failed to initialize PhotoRepository:', error);
+      photoRepo = null;
+    }
+  }
+  return photoRepo;
 }
 
 const uploadsDir = getUploadsDir();
@@ -30,26 +39,26 @@ export async function OPTIONS() {
 
 export async function GET(_, { params }) {
   try {
+    const repo = getPhotoRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
     }
 
     const { id } = await params;
-    const photo = repo.getById(id);
+    const photo = await repo.getById(id);
 
     if (!photo) {
       return withCors(NextResponse.json({ error: 'Photo not found' }, { status: 404 }));
     }
 
-    // Serve the image file
     const filePath = path.join(uploadsDir, photo.filename);
-    
+
     if (!fs.existsSync(filePath)) {
       return withCors(NextResponse.json({ error: 'Photo file not found' }, { status: 404 }));
     }
 
     const fileBuffer = fs.readFileSync(filePath);
-    
+
     return new NextResponse(fileBuffer, {
       headers: {
         'Content-Type': photo.mimeType,
@@ -65,6 +74,7 @@ export async function GET(_, { params }) {
 
 export async function PUT(request, { params }) {
   try {
+    const repo = getPhotoRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
     }
@@ -72,10 +82,9 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const updates = await request.json();
 
-    // Validate and sanitize the updates object
     const allowedFields = ['uploaderName', 'uploaderEmail', 'approved'];
     const sanitizedUpdates = {};
-    
+
     for (const [key, value] of Object.entries(updates)) {
       if (allowedFields.includes(key)) {
         if (key === 'approved') {
@@ -90,12 +99,12 @@ export async function PUT(request, { params }) {
 
     sanitizedUpdates.updatedAt = new Date().toISOString();
 
-    const result = repo.update(id, sanitizedUpdates);
+    const result = await repo.update(id, sanitizedUpdates);
     if (!result) {
       return withCors(NextResponse.json({ error: 'Photo not found' }, { status: 404 }));
     }
 
-    const updated = repo.getById(id);
+    const updated = await repo.getById(id);
     return withCors(NextResponse.json(updated));
   } catch (error) {
     console.error('Error in PUT /api/photos/[id]:', error);
@@ -105,25 +114,24 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(_, { params }) {
   try {
+    const repo = getPhotoRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
     }
 
     const { id } = await params;
-    const photo = repo.getById(id);
+    const photo = await repo.getById(id);
 
     if (!photo) {
       return withCors(NextResponse.json({ error: 'Photo not found' }, { status: 404 }));
     }
 
-    // Delete file from disk
     const filePath = path.join(uploadsDir, photo.filename);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
 
-    // Delete from database
-    repo.delete(id);
+    await repo.delete(id);
 
     return withCors(NextResponse.json({ success: true, message: 'Photo deleted successfully' }));
   } catch (error) {
@@ -131,4 +139,3 @@ export async function DELETE(_, { params }) {
     return withCors(NextResponse.json({ error: error.message }, { status: 500 }));
   }
 }
-

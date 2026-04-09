@@ -19,7 +19,7 @@ NODE_ENV=production
 ```
 NODE_ENV=production
 PORT=3001
-DB_PATH=./data.sqlite
+DATABASE_URL=postgres://USER:PASSWORD@HOST:5432/DBNAME
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false

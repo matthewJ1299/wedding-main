@@ -11,8 +11,8 @@ const compression = require('compression');
 const helmet = require('helmet');
 const { allowedOriginFromExpress } = require('./cors-origin.cjs');
 
-// API routes use Node's built-in node:sqlite (see repositories / openDatabaseSync)
-const dbType = 'node:sqlite';
+// API routes use PostgreSQL via `pg` (see repositories / src/db).
+const dbType = 'postgres';
 
 // Rate limiting fallback
 let rateLimit;

@@ -2,16 +2,23 @@ import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import EmailTemplateRepository from '../../../../repositories/EmailTemplateRepository.js';
 import { DEFAULT_EMAIL_TEMPLATES } from '../../../seed/emailTemplates.js';
-import { getDatabasePath } from '../../../utils/paths.js';
+import { getDb } from '../../../db/database.js';
 
 export const runtime = 'nodejs';
 
-const dbPath = getDatabasePath();
-let repo;
-try {
-  repo = new EmailTemplateRepository(dbPath);
-} catch (error) {
-  console.error('Failed to initialize EmailTemplateRepository:', error);
+let templateRepo;
+let templateRepoTried;
+function getTemplateRepo() {
+  if (!templateRepoTried) {
+    templateRepoTried = true;
+    try {
+      templateRepo = new EmailTemplateRepository(getDb());
+    } catch (error) {
+      console.error('Failed to initialize EmailTemplateRepository:', error);
+      templateRepo = null;
+    }
+  }
+  return templateRepo;
 }
 
 function withCors(response) {
@@ -28,20 +35,20 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
+    const repo = getTemplateRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
     }
-    let templates = repo.getAll();
+    let templates = await repo.getAll();
     if (!templates || templates.length === 0) {
-      // auto-seed
-      DEFAULT_EMAIL_TEMPLATES.forEach((t) => {
+      for (const t of DEFAULT_EMAIL_TEMPLATES) {
         try {
-          repo.create(t);
+          await repo.create(t);
         } catch (error) {
           console.error('Error seeding template:', error);
         }
-      });
-      templates = repo.getAll();
+      }
+      templates = await repo.getAll();
     }
     return withCors(NextResponse.json(templates));
   } catch (error) {
@@ -52,6 +59,7 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+    const repo = getTemplateRepo();
     if (!repo) {
       return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
     }
@@ -63,12 +71,10 @@ export async function POST(request) {
       text: body.text ?? '',
       html: body.html ?? '',
     };
-    repo.create(tpl);
+    await repo.create(tpl);
     return withCors(NextResponse.json(tpl, { status: 201 }));
   } catch (err) {
     console.error('Error in POST /api/email-templates:', err);
     return withCors(NextResponse.json({ error: err.message }, { status: 500 }));
   }
 }
-
-

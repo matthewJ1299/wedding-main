@@ -19,7 +19,7 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
 - **Analytics**: View RSVP statistics and summaries
 
 ### Technical Features
-- **Modern Stack**: React 19, Node.js 22.5+ (backend), SQLite via built-in `node:sqlite`
+- **Modern Stack**: React 19, Node.js 22.5+ (backend), PostgreSQL via `pg` and `DATABASE_URL`
 - **Production Ready**: cPanel deployment configuration
 - **Security**: Input validation, CORS protection, secure authentication
 - **Monitoring**: Health checks, structured logging, error tracking
@@ -28,7 +28,8 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
 ## Quick Start
 
 ### Prerequisites
-- Node.js 22.5+ (required for the backend API; uses built-in `node:sqlite`)
+- Node.js 22.5+ (backend / Next.js 15)
+- PostgreSQL 16+ (or compatible) for API data; local URL example: `postgres://wedding:wedding@localhost:5432/wedding`
 - npm or yarn
 - SMTP server (or relay) for email, or run without SMTP to log messages only in development
 
@@ -59,13 +60,17 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
    # Edit with your configuration
    # - SMTP settings (SMTP_HOST, etc.; see Configuration)
    # - Admin email address
-   # - Database settings
+   # - DATABASE_URL for PostgreSQL
    ```
 
-4. **Start development servers**
+4. **Start PostgreSQL** (example: `docker run -e POSTGRES_PASSWORD=wedding -e POSTGRES_USER=wedding -e POSTGRES_DB=wedding -p 5432:5432 -d postgres:17-alpine`)
+
+5. **Start development servers**
    ```bash
-   # Backend (Terminal 1)
+   # Backend (Terminal 1) — set DATABASE_URL in `.env.local` or the shell
    cd Wedding/backend
+   set DATABASE_URL=postgres://wedding:wedding@localhost:5432/wedding
+   npm run migrate
    npm run dev
    
    # Frontend (Terminal 2)
@@ -73,7 +78,7 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
    npm start
    ```
 
-5. **Access the application**
+6. **Access the application**
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:3001
    - Admin: http://localhost:3000/login (default password: weddingadmin)
@@ -102,13 +107,14 @@ Wedding/
 │   ├── src/
 │   │   ├── app/
 │   │   │   └── api/         # API routes
+│   │   ├── db/              # Postgres adapter + migration runner
 │   │   ├── utils/           # Utility functions
 │   │   └── seed/            # Database seeding
+│   ├── migrations/          # PostgreSQL schema (SQL)
 │   ├── repositories/        # Data access layer
 │   ├── uploads/             # File uploads
 │   ├── logs/                # Application logs
-│   ├── backups/             # Database backups
-│   └── data.sqlite          # SQLite database
+│   └── backups/             # Database backups (pg_dump)
 ├── .htaccess                # Apache configuration
 ├── server.js                # Production server wrapper
 └── package.json             # Dependencies and scripts
@@ -145,7 +151,7 @@ REACT_APP_SHOW_LANDING_POPUP=false
 ```env
 NODE_ENV=development
 PORT=3001
-DATABASE_PATH=./data.sqlite
+DATABASE_URL=postgres://wedding:wedding@localhost:5432/wedding
 UPLOAD_DIR=./uploads
 ORIGIN_URL=http://localhost:3000
 FRONTEND_URL=http://localhost:3000
@@ -189,7 +195,9 @@ From the repository root (`wedding-main/`), with Docker installed:
 
 3. **With `docker-compose.local.yml`:** frontend http://localhost:8080, API http://localhost:3001 (health: `/health` or `/api/health`). **Without it:** open the app only via your reverse proxy / Coolify domains (containers expose ports 80 and 3001 internally only).
 
-The compose file mounts a named volume at `/data` in the backend container for SQLite (`DATABASE_PATH=/data/data.sqlite`), uploads (`UPLOAD_DIR=/data/uploads`), and backups (`BACKUP_DIR=/data/backups`). The static site image is built with `REACT_APP_API_URL` / `REACT_APP_SITE_URL` build args so the browser calls the correct API origin.
+Compose runs a **`postgres`** service (with a `postgres_data` volume) and sets **`DATABASE_URL`** on the backend to reach it on the Docker network. The backend also mounts **`wedding_data`** at `/data` for uploads (`UPLOAD_DIR=/data/uploads`) and backups (`BACKUP_DIR=/data/backups`). The static site image is built with `REACT_APP_API_URL` / `REACT_APP_SITE_URL` build args so the browser calls the correct API origin.
+
+**Architecture notes:** API routes use repository classes backed by a `PostgresDb` adapter (`src/db/`). The React app centralizes HTTP in `src/services/apiFetch.js` (logging + success/error toasts via `src/notifications/ToastHost.js`).
 
 **Coolify:** attach domains in the UI to the **frontend** (container port **80**) and **backend** (container port **3001**). Do not rely on publishing host ports 8080/3001; the default `docker-compose.yml` is built for that. If you ever see `Bind for 0.0.0.0:8080 failed: port is already allocated`, you are using a compose file that publishes 8080 on the host; use the repo default or remove host `ports` for Coolify.
 
@@ -287,22 +295,22 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to cPane
 ### Database Backups
 ```bash
 # Create backup
-npm run backup:db create
+npm run backup:db -- create
 
 # List backups
-npm run backup:db list
+npm run backup:db -- list
 
-# Restore backup
-npm run backup:db restore backup_name.sqlite
+# Restore backup (npm passes args after `--`)
+npm run backup:db -- restore backup_name.sql
 
 # Cleanup old backups
-npm run backup:db cleanup 10
+npm run backup:db -- cleanup 10
 ```
 
 ### File Backups
 - Regular backup of `uploads/` directory
 - Backup of configuration files
-- Backup of database file
+- Backup of database (SQL dumps) and volume snapshots if you use Docker Postgres
 
 ## Monitoring and Logs
 

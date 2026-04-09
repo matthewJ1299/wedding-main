@@ -1,99 +1,109 @@
-// InviteeRepository.js
-// Repository pattern for Invitee entity using Node's built-in node:sqlite
+// InviteeRepository.js — PostgreSQL via IDb-compatible adapter
 
-import { openDatabaseSync } from '../src/utils/openDatabaseSync.js';
+/** @typedef {import('../src/db/IDb.js').IDb} IDb */
+
+const INVITEE_COLUMNS = new Set([
+  'name',
+  'partner',
+  'email',
+  'phone',
+  'rsvp',
+  'inviteCode',
+  'allowPlusOne',
+  'plusOneName',
+  'mealSelection',
+  'songRequest',
+]);
 
 class InviteeRepository {
-  constructor(dbPath) {
-    this.db = openDatabaseSync(dbPath);
-    this._initTable();
+  /** @param {IDb} db */
+  constructor(db) {
+    this.db = db;
   }
 
-  _initTable() {
-    this.db.prepare(`CREATE TABLE IF NOT EXISTS invitees (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      partner TEXT,
-      email TEXT,
-      phone TEXT,
-      rsvp TEXT,
-      inviteCode TEXT,
-      allowPlusOne INTEGER DEFAULT 0,
-      plusOneName TEXT,
-      plusOneEmail TEXT,
-      plusOnePhone TEXT,
-      mealSelection TEXT,
-      songRequest TEXT
-    )`).run();
-
-    const migrations = [
-      { column: 'plusOneName', sql: 'ALTER TABLE invitees ADD COLUMN plusOneName TEXT' },
-      { column: 'plusOneEmail', sql: 'ALTER TABLE invitees ADD COLUMN plusOneEmail TEXT' },
-      { column: 'plusOnePhone', sql: 'ALTER TABLE invitees ADD COLUMN plusOnePhone TEXT' },
-      { column: 'mealSelection', sql: 'ALTER TABLE invitees ADD COLUMN mealSelection TEXT' },
-      { column: 'songRequest', sql: 'ALTER TABLE invitees ADD COLUMN songRequest TEXT' },
-    ];
-    migrations.forEach(({ sql }) => {
-      try {
-        this.db.prepare(sql).run();
-      } catch (error) {
-        if (!error.message.includes('duplicate column name')) {
-          console.error('Migration error:', error);
-        }
-      }
-    });
-  }
-
-  create(invitee) {
-    const stmt = this.db.prepare(`INSERT INTO invitees (id, name, partner, email, phone, rsvp, inviteCode, allowPlusOne, plusOneName, plusOneEmail, plusOnePhone, mealSelection, songRequest) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    return stmt.run(
-      invitee.id,
-      invitee.name,
-      invitee.partner ?? '',
-      invitee.email ?? '',
-      invitee.phone ?? '',
-      invitee.rsvp ?? null,
-      invitee.inviteCode ?? null,
-      invitee.allowPlusOne ? 1 : 0,
-      invitee.plusOneName ?? null,
-      invitee.plusOneEmail ?? null,
-      invitee.plusOnePhone ?? null,
-      invitee.mealSelection ?? null,
-      invitee.songRequest ?? null
+  /**
+   * @param {object} invitee
+   * @returns {Promise<void>}
+   */
+  async create(invitee) {
+    await this.db.query(
+      `INSERT INTO invitees (id, name, partner, email, phone, rsvp, "inviteCode", "allowPlusOne", "plusOneName", "mealSelection", "songRequest")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [
+        invitee.id,
+        invitee.name,
+        invitee.partner ?? '',
+        invitee.email ?? '',
+        invitee.phone ?? '',
+        invitee.rsvp ?? null,
+        invitee.inviteCode ?? null,
+        invitee.allowPlusOne === true,
+        invitee.plusOneName ?? null,
+        invitee.mealSelection ?? null,
+        invitee.songRequest ?? null,
+      ]
     );
   }
 
-  getById(id) {
-    return this.db.prepare(`SELECT * FROM invitees WHERE id = ?`).get(id);
+  /**
+   * @param {string} id
+   * @returns {Promise<object | null>}
+   */
+  async getById(id) {
+    const r = await this.db.query('SELECT * FROM invitees WHERE id = $1', [id]);
+    return r.rows[0] ?? null;
   }
 
-  getAll() {
-    return this.db.prepare(`SELECT * FROM invitees`).all();
+  /**
+   * @returns {Promise<object[]>}
+   */
+  async getAll() {
+    const r = await this.db.query('SELECT * FROM invitees');
+    return r.rows;
   }
 
-  update(id, updates) {
-    const invitee = this.getById(id);
+  /**
+   * @param {string} id
+   * @param {object} updates
+   * @returns {Promise<import('pg').QueryResult | null>}
+   */
+  async update(id, updates) {
+    const invitee = await this.getById(id);
     if (!invitee) return null;
-    const stmt = this.db.prepare(`UPDATE invitees SET name = ?, partner = ?, email = ?, phone = ?, rsvp = ?, inviteCode = ?, allowPlusOne = ?, plusOneName = ?, plusOneEmail = ?, plusOnePhone = ?, mealSelection = ?, songRequest = ? WHERE id = ?`);
-    return stmt.run(
-      updates.name ?? invitee.name,
-      updates.partner ?? invitee.partner,
-      updates.email ?? invitee.email,
-      updates.phone ?? invitee.phone,
-      updates.rsvp !== undefined ? updates.rsvp : invitee.rsvp,
-      updates.inviteCode !== undefined ? updates.inviteCode : invitee.inviteCode,
-      updates.allowPlusOne !== undefined ? (updates.allowPlusOne ? 1 : 0) : invitee.allowPlusOne,
-      updates.plusOneName !== undefined ? updates.plusOneName : invitee.plusOneName,
-      updates.plusOneEmail !== undefined ? updates.plusOneEmail : invitee.plusOneEmail,
-      updates.plusOnePhone !== undefined ? updates.plusOnePhone : invitee.plusOnePhone,
-      updates.mealSelection !== undefined ? updates.mealSelection : (invitee.mealSelection ?? null),
-      updates.songRequest !== undefined ? updates.songRequest : (invitee.songRequest ?? null),
-      id
+
+    const merged = { ...invitee };
+    for (const [key, value] of Object.entries(updates)) {
+      if (INVITEE_COLUMNS.has(key)) {
+        if (key === 'allowPlusOne') merged[key] = Boolean(value);
+        else merged[key] = value;
+      }
+    }
+
+    return this.db.query(
+      `UPDATE invitees SET name = $1, partner = $2, email = $3, phone = $4, rsvp = $5, "inviteCode" = $6,
+       "allowPlusOne" = $7, "plusOneName" = $8, "mealSelection" = $9, "songRequest" = $10 WHERE id = $11`,
+      [
+        merged.name,
+        merged.partner,
+        merged.email,
+        merged.phone,
+        merged.rsvp,
+        merged.inviteCode,
+        merged.allowPlusOne === true,
+        merged.plusOneName,
+        merged.mealSelection ?? null,
+        merged.songRequest ?? null,
+        id,
+      ]
     );
   }
 
-  delete(id) {
-    return this.db.prepare(`DELETE FROM invitees WHERE id = ?`).run(id);
+  /**
+   * @param {string} id
+   * @returns {Promise<import('pg').QueryResult>}
+   */
+  async delete(id) {
+    return this.db.query('DELETE FROM invitees WHERE id = $1', [id]);
   }
 }
 

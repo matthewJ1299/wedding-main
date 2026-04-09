@@ -4,9 +4,9 @@ These folders hold production-oriented copies of the frontend and backend for up
 
 ## Backend (`deployment/backend/`)
 
-- **SQLite**: The app uses Node.js built-in [`node:sqlite`](https://nodejs.org/api/sqlite.html) (`DatabaseSync`). The `better-sqlite3` and `sqlite3` npm packages are not used.
-- **Node.js**: Use **22.5 or newer** on the server so `node:sqlite` is available and stable.
-- Install dependencies with `npm install` in the backend directory, configure `.env`, then start via your process manager or cPanel Node selector (see [CPANEL_DEPLOYMENT.md](../CPANEL_DEPLOYMENT.md)).
+- **PostgreSQL**: The API uses the `pg` driver and **`DATABASE_URL`**. Apply SQL migrations (`npm run migrate` in that folder, or run the same scripts as `Wedding/backend`) before handling traffic.
+- **Node.js**: Use **22.5 or newer** for the Next.js 15 runtime used in `Wedding/backend`.
+- Install dependencies with `npm ci` or `npm install`, set `DATABASE_URL` and other vars in `.env`, then start via your process manager or cPanel Node selector (see [CPANEL_DEPLOYMENT.md](../CPANEL_DEPLOYMENT.md)).
 
 ## Frontend (`deployment/frontend/`)
 

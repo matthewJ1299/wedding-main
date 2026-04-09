@@ -2,12 +2,24 @@ import { NextResponse } from 'next/server';
 import { DUMMY_INVITEES } from '../../../seed/invitees.js';
 import { randomUUID } from 'crypto';
 import InviteeRepository from '../../../../repositories/InviteeRepository.js';
-import { getDatabasePath } from '../../../utils/paths.js';
+import { getDb } from '../../../db/database.js';
 
 export const runtime = 'nodejs';
 
-const dbPath = getDatabasePath();
-const repo = new InviteeRepository(dbPath);
+let inviteeRepo;
+let inviteeRepoTried;
+function getInviteeRepo() {
+  if (!inviteeRepoTried) {
+    inviteeRepoTried = true;
+    try {
+      inviteeRepo = new InviteeRepository(getDb());
+    } catch (error) {
+      console.error('Failed to initialize InviteeRepository:', error);
+      inviteeRepo = null;
+    }
+  }
+  return inviteeRepo;
+}
 
 function withCors(response) {
   const origin = process.env.ORIGIN_URL || 'http://localhost:3000';
@@ -23,13 +35,17 @@ export async function OPTIONS() {
 
 export async function POST() {
   try {
-    const existing = repo.getAll();
+    const repo = getInviteeRepo();
+    if (!repo) {
+      return withCors(NextResponse.json({ error: 'Database not initialized' }, { status: 500 }));
+    }
+    const existing = await repo.getAll();
     if (existing && existing.length > 0) {
       return withCors(NextResponse.json({ seeded: false, reason: 'Already has data' }));
     }
-    DUMMY_INVITEES.forEach((i) => {
+    for (const i of DUMMY_INVITEES) {
       const id = i.id || randomUUID();
-      repo.create({
+      await repo.create({
         id,
         name: (i.name || '').trim(),
         partner: (i.partner || '').trim(),
@@ -40,11 +56,9 @@ export async function POST() {
         allowPlusOne: !!i.allowPlusOne,
         plusOneName: i.plusOneName ?? null,
       });
-    });
+    }
     return withCors(NextResponse.json({ seeded: true }));
   } catch (err) {
     return withCors(NextResponse.json({ error: err.message }, { status: 500 }));
   }
 }
-
-

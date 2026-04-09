@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-04-09 (database + admin API UX)
+
+- **PostgreSQL**: Replaced SQLite (`node:sqlite` / `data.sqlite`) with PostgreSQL via `pg`, `DATABASE_URL`, and versioned SQL migrations (`Wedding/backend/migrations`, applied by `src/db/run-migrations.mjs` from Docker entrypoint). Docker Compose now includes a `postgres` service and a `postgres_data` volume; backend depends on DB health checks.
+- **Backups**: `npm run backup:db` / `src/utils/dbBackup.js` now uses `pg_dump` / `psql` (PostgreSQL client tools; `postgresql-client` added to backend Docker image).
+- **Admin API toasts + logging**: All frontend HTTP calls go through `src/services/apiFetch.js` (console request logging) with global MUI toasts via `src/notifications/ToastHost.js` and `notificationBus.js`.
+
 ## 2026-04-09
 
 - **RSVP modal**: RSVP now opens in a modal (from the nav RSVP button and the floating RSVP button) instead of rendering the RSVP card below the hero image. The direct `/rsvp/:inviteCode` link still works and auto-opens the modal.
