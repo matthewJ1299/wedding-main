@@ -30,7 +30,6 @@ export const InviteeProvider = ({ children }) => {
         setInvitees(list);
       } catch (e) {
         console.error('Failed to load invitees from API, falling back to dummy', e);
-        setInvitees([...DUMMY_INVITEES]);
       }
     })();
   }, []);
