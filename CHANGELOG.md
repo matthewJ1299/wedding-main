@@ -4,6 +4,10 @@
 
 - **Admin email groups**: The Admin “Email → Send Email” tab now supports sending to recipient groups (All / Accepted / Declined / Pending) and lets you optionally choose an invitee to preview template personalization before sending.
 
+- **Email variable formatting**: Template placeholders now replace `{{var}}` before `{var}` to avoid leftover braces like `{Matthew}` when using Handlebars-style variables.
+
+- **NavBar RSVP gating**: The navigation bar now only shows the RSVP link when an invitee context/id is present (i.e., when accessed via an invite-specific link).
+
 - **Invitee table robustness**: Invitee rows now render empty strings for missing fields to prevent visual/header misalignment when data is incomplete.
 
 ## 2026-04-08

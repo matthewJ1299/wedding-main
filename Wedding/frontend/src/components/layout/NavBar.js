@@ -10,8 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useInviteeNavigation } from '../../contexts/InviteeNavigationContext';
 
-const links = [
-	{ to: '/rsvp', label: 'RSVP' },
+const baseLinks = [
 	{ to: '/gallery', label: 'Gallery' },
 ];
 
@@ -30,9 +29,14 @@ const NavBar = ({ title, isMobile }) => {
 		setMobileMenuAnchor(null);
 	};
 
+	const links = [
+		...(hasInviteeContext ? [{ to: `/rsvp/${inviteeId}`, label: 'RSVP' }] : []),
+		...baseLinks,
+	];
+
 	const allLinks = [
 		...links,
-		...(hasInviteeContext ? [{ to: `/edit-details/${inviteeId}`, label: 'Edit Details' }] : [])
+		...(hasInviteeContext ? [{ to: `/edit-details/${inviteeId}`, label: 'Edit Details' }] : []),
 	];
 
 	return (

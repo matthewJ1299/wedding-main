@@ -171,8 +171,9 @@ export const populateTemplate = (content, values) => {
 
     // Supports both `{var}` (legacy) and `{{var}}` / `{{ var }}` placeholder styles
     populatedContent = populatedContent
-      .replace(new RegExp(`\\{${safeKey}\\}`, 'g'), String(value))
-      .replace(new RegExp(`\\{\\{\\s*${safeKey}\\s*\\}\\}`, 'g'), String(value));
+      // IMPORTANT: replace `{{var}}` first; otherwise `{var}` replacement inside will leave `{value}`
+      .replace(new RegExp(`\\{\\{\\s*${safeKey}\\s*\\}\\}`, 'g'), String(value))
+      .replace(new RegExp(`\\{${safeKey}\\}`, 'g'), String(value));
   });
 
   return populatedContent;
