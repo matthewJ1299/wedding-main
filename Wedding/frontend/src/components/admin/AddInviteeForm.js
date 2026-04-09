@@ -24,11 +24,15 @@ const isValidEmail = (email) => {
 const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
   const [name, setName] = useState('');
   const [partner, setPartner] = useState('');
+  const [partnerEmail, setPartnerEmail] = useState('');
+  const [partnerPhone, setPartnerPhone] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [success, setSuccess] = useState('');
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
+  const [partnerEmailError, setPartnerEmailError] = useState('');
+  const [partnerPhoneError, setPartnerPhoneError] = useState('');
   const [allowPlusOne, setAllowPlusOne] = useState(false);
   const { invitees } = useInvitees();
 
@@ -60,17 +64,67 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
       setPhoneError('');
     }
 
-    // Add invitee and reset form
-    await addInvitee({ 
-      name: name.trim(), 
-      partner: partner.trim(), 
-      email: email.trim(), 
-      phone: phone.trim(), 
+    const trimmedPartnerName = (partner || '').trim();
+    const trimmedPartnerEmail = (partnerEmail || '').trim();
+    const trimmedPartnerPhone = (partnerPhone || '').trim();
+
+    if (allowPlusOne) {
+      if (!trimmedPartnerName) {
+        setSuccess('Partner name is required when allowing a plus one.');
+        return;
+      }
+
+      if (!trimmedPartnerEmail) {
+        setPartnerEmailError('Partner email is required.');
+        setSuccess('');
+        return;
+      }
+      if (!isValidEmail(trimmedPartnerEmail)) {
+        setPartnerEmailError('Invalid partner email address.');
+        setSuccess('');
+        return;
+      }
+      setPartnerEmailError('');
+
+      if (trimmedPartnerPhone && !/^\+?\d{1,15}$/.test(trimmedPartnerPhone)) {
+        setPartnerPhoneError('Invalid partner phone number. Use digits with optional + and max 15 digits.');
+        setSuccess('');
+        return;
+      }
+      setPartnerPhoneError('');
+    } else {
+      setPartnerEmailError('');
+      setPartnerPhoneError('');
+    }
+
+    // Create primary invitee (and partner invitee when applicable)
+    const primaryName = name.trim();
+    const primaryEmail = email.trim();
+    const primaryPhone = phone.trim();
+
+    await addInvitee({
+      name: primaryName,
+      partner: allowPlusOne ? trimmedPartnerName : '',
+      email: primaryEmail,
+      phone: primaryPhone,
       allowPlusOne,
     });
+
+    if (allowPlusOne) {
+      await addInvitee({
+        name: trimmedPartnerName,
+        partner: primaryName,
+        email: trimmedPartnerEmail,
+        phone: trimmedPartnerPhone,
+        allowPlusOne: false,
+      });
+    }
+
     setSuccess('Invitee added!');
     setName('');
     setPartner('');
+    setPartnerEmail('');
+    setPartnerPhone('');
     setEmail('');
     setPhone('');
     if (onAdded) onAdded();
@@ -110,24 +164,43 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
         />
         
         {allowPlusOne ? (
-          <Autocomplete
-            options={invitees.map(inv => inv.name)}
-            value={partner}
-            onChange={(_, newValue) => setPartner(newValue || '')}
-            inputValue={partner}
-            onInputChange={(_, newInputValue) => setPartner(newInputValue || '')}
-            freeSolo
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Partner / Plus One Name"
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                sx={{ m: 0 }}
-              />
-            )}
-          />
+          <>
+            <Autocomplete
+              options={invitees.map(inv => inv.name)}
+              value={partner}
+              onChange={(_, newValue) => setPartner(newValue || '')}
+              inputValue={partner}
+              onInputChange={(_, newInputValue) => setPartner(newInputValue || '')}
+              freeSolo
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Partner Name"
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  sx={{ m: 0 }}
+                />
+              )}
+            />
+            <TextInput
+              label="Partner Email"
+              value={partnerEmail}
+              onChange={e => setPartnerEmail(e.target.value)}
+              error={partnerEmailError}
+              required
+              fullWidth
+              sx={{ m: 0 }}
+            />
+            <TextInput
+              label="Partner Phone"
+              value={partnerPhone}
+              onChange={e => setPartnerPhone(e.target.value)}
+              error={partnerPhoneError}
+              fullWidth
+              sx={{ m: 0 }}
+            />
+          </>
         ) : null}
         
         <TextInput
@@ -159,6 +232,10 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
                   setAllowPlusOne(checked);
                   if (!checked) {
                     setPartner('');
+                    setPartnerEmail('');
+                    setPartnerPhone('');
+                    setPartnerEmailError('');
+                    setPartnerPhoneError('');
                   }
                 }}
                 color="primary"
