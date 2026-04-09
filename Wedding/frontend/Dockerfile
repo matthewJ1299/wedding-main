@@ -13,7 +13,7 @@ ENV REACT_APP_LANDING_POPUP_MESSAGE=$REACT_APP_LANDING_POPUP_MESSAGE
 ENV GENERATE_SOURCEMAP=false
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --include=dev
 
 COPY . .
 RUN npm run build
