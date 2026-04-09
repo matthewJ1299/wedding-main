@@ -250,15 +250,19 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 												</React.Fragment>
 											) : (
 												<React.Fragment>
-													<TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-														<PersonIcon sx={{ fontSize: '1rem', color: '#ff6b9d' }} />
-														<span style={{ fontWeight: '500' }}>{asText(invitee.name)}</span>
-														{idx === 0 && <Chip label="Partner 1" size="small" sx={{ bgcolor: '#ff6b9d', color: 'white', fontSize: '0.7rem' }} />}
-														{idx === 1 && <Chip label="Partner 2" size="small" sx={{ bgcolor: '#c44569', color: 'white', fontSize: '0.7rem' }} />}
+													<TableCell>
+														<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+															<PersonIcon sx={{ fontSize: '1rem', color: '#ff6b9d' }} />
+															<span style={{ fontWeight: '500' }}>{asText(invitee.name)}</span>
+															{idx === 0 && <Chip label="Partner 1" size="small" sx={{ bgcolor: '#ff6b9d', color: 'white', fontSize: '0.7rem' }} />}
+															{idx === 1 && <Chip label="Partner 2" size="small" sx={{ bgcolor: '#c44569', color: 'white', fontSize: '0.7rem' }} />}
+														</Box>
 													</TableCell>
-													<TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-														<FavoriteIcon sx={{ fontSize: '0.8rem', color: '#ff6b9d' }} />
-														<span style={{ fontStyle: 'italic', color: '#666' }}>{asText(invitee.partner)}</span>
+													<TableCell>
+														<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+															<FavoriteIcon sx={{ fontSize: '0.8rem', color: '#ff6b9d' }} />
+															<span style={{ fontStyle: 'italic', color: '#666' }}>{asText(invitee.partner)}</span>
+														</Box>
 													</TableCell>
 													<TableCell>{asText(invitee.email)}</TableCell>
 													<TableCell>{asText(invitee.phone)}</TableCell>
@@ -329,20 +333,24 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 										</React.Fragment>
 									) : (
 										<React.Fragment>
-											<TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-												<PersonIcon sx={{ fontSize: '1rem', color: '#6c757d' }} />
-												<span style={{ fontWeight: '500' }}>{asText(group[0].name)}</span>
-												<Chip label="Single" size="small" sx={{ bgcolor: '#6c757d', color: 'white', fontSize: '0.7rem' }} />
+											<TableCell>
+												<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+													<PersonIcon sx={{ fontSize: '1rem', color: '#6c757d' }} />
+													<span style={{ fontWeight: '500' }}>{asText(group[0].name)}</span>
+													<Chip label="Single" size="small" sx={{ bgcolor: '#6c757d', color: 'white', fontSize: '0.7rem' }} />
+												</Box>
 											</TableCell>
-											<TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-												{group[0].partner ? (
-													<>
-														<FavoriteIcon sx={{ fontSize: '0.8rem', color: '#ff6b9d' }} />
-														<span style={{ fontStyle: 'italic', color: '#666' }}>{asText(group[0].partner)}</span>
-													</>
-												) : (
-													<span style={{ color: '#999', fontStyle: 'italic' }}>No partner</span>
-												)}
+											<TableCell>
+												<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+													{group[0].partner ? (
+														<>
+															<FavoriteIcon sx={{ fontSize: '0.8rem', color: '#ff6b9d' }} />
+															<span style={{ fontStyle: 'italic', color: '#666' }}>{asText(group[0].partner)}</span>
+														</>
+													) : (
+														<span style={{ color: '#999', fontStyle: 'italic' }}>No partner</span>
+													)}
+												</Box>
 											</TableCell>
 											<TableCell>{asText(group[0].email)}</TableCell>
 											<TableCell>{asText(group[0].phone)}</TableCell>
