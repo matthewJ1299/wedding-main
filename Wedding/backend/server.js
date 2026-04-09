@@ -76,9 +76,10 @@ app.prepare().then(() => {
   // Compression middleware
   server.use(compression());
 
-  // Body parsing middleware
-  server.use(express.json({ limit: '10mb' }));
-  server.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  // NOTE:
+  // This server delegates request handling to Next.js (including /api route handlers).
+  // Express body parsers consume the incoming request stream; that breaks Next.js handlers
+  // that need to read the body (e.g. request.json()) and can surface as "body disturbed/locked".
 
   // CORS on every response (including Next 404/500) for /api once middleware has run
   server.use((req, res, next) => {
