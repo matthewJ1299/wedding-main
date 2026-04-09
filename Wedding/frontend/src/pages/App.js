@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import { AuthProvider } from '../contexts/AuthContext';
 import { InviteeProvider } from '../contexts/InviteeContext';
 import { InviteeNavigationProvider } from '../contexts/InviteeNavigationContext';
+import { RsvpModalProvider } from '../contexts/RsvpModalContext';
 import { ThemeProvider as CustomThemeProvider } from '../contexts/ThemeContext';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { EmailTemplateProvider } from '../contexts/EmailTemplateContext';
@@ -58,72 +59,74 @@ function App() {
 		<AuthProvider>
 			<InviteeProvider>
 				<InviteeNavigationProvider>
-					<EmailTemplateProvider>
-						<CustomThemeProvider>
-							<ThemeProvider theme={muiTheme}>
-								<LandingNoticeDialog />
-								<Box
-									className="page-container"
-									sx={{
-										overflowX: 'hidden',
-										overflowY: 'visible',
-										transition: 'background-color 0.3s, color 0.3s',
-										minHeight: '100vh',
-										width: '100%',
-										maxWidth: '100vw',
-										display: 'flex',
-										flexDirection: 'column',
-										alignItems: 'center',
-										justifyContent: 'flex-start',
-									}}
-								>
-									{showNavBar && <NavBar />}
-									<Box 
-										className="page-content"
-										sx={{ 
+					<RsvpModalProvider>
+						<EmailTemplateProvider>
+							<CustomThemeProvider>
+								<ThemeProvider theme={muiTheme}>
+									<LandingNoticeDialog />
+									<Box
+										className="page-container"
+										sx={{
+											overflowX: 'hidden',
+											overflowY: 'visible',
+											transition: 'background-color 0.3s, color 0.3s',
+											minHeight: '100vh',
 											width: '100%',
 											maxWidth: '100vw',
-											...(isFullBleed || isAdmin || isLogin
-												? { p: 0 }
-												: {
-													pt: { xs: 10, sm: 12, md: 13 },
-													pb: 4,
-													px: { xs: 2, sm: 3, md: 4 },
-												}
-											),
 											display: 'flex',
 											flexDirection: 'column',
 											alignItems: 'center',
 											justifyContent: 'flex-start',
-											overflowX: 'hidden',
-											overflowY: 'visible'
 										}}
 									>
-										<Routes>
-											<Route path="/" element={<HomePage />} />
-											<Route path="/gallery" element={<GalleryPage />} />
-											<Route path="/invitation/:inviteCode" element={<InvitationPage />} />
-											<Route path="/rsvp" element={<RSVPLandingPage />} />
-											<Route path="/rsvp/:inviteCode" element={<RSVPPage />} />
-											<Route path="/edit-details/:inviteeId" element={<EditDetailsPage />} />
-											<Route path="/login" element={<LoginPage />} />
-											<Route 
-												path="/admin" 
-												element={
-													<ProtectedRoute>
-														<AdminPage />
-													</ProtectedRoute>
-												} 
-											/>
-											<Route path="*" element={<Navigate to="/" replace />} />
-										</Routes>
+										{showNavBar && <NavBar />}
+										<Box 
+											className="page-content"
+											sx={{ 
+												width: '100%',
+												maxWidth: '100vw',
+												...(isFullBleed || isAdmin || isLogin
+													? { p: 0 }
+													: {
+														pt: { xs: 10, sm: 12, md: 13 },
+														pb: 4,
+														px: { xs: 2, sm: 3, md: 4 },
+													}
+												),
+												display: 'flex',
+												flexDirection: 'column',
+												alignItems: 'center',
+												justifyContent: 'flex-start',
+												overflowX: 'hidden',
+												overflowY: 'visible'
+											}}
+										>
+											<Routes>
+												<Route path="/" element={<HomePage />} />
+												<Route path="/gallery" element={<GalleryPage />} />
+												<Route path="/invitation/:inviteCode" element={<InvitationPage />} />
+												<Route path="/rsvp" element={<RSVPLandingPage />} />
+												<Route path="/rsvp/:inviteCode" element={<RSVPPage />} />
+												<Route path="/edit-details/:inviteeId" element={<EditDetailsPage />} />
+												<Route path="/login" element={<LoginPage />} />
+												<Route 
+													path="/admin" 
+													element={
+														<ProtectedRoute>
+															<AdminPage />
+														</ProtectedRoute>
+													} 
+												/>
+												<Route path="*" element={<Navigate to="/" replace />} />
+											</Routes>
+										</Box>
+										{!isAdmin && !isLogin && <RSVPButton />}
+										{/* Theme selector removed */}
 									</Box>
-									{!isAdmin && !isLogin && <RSVPButton />}
-									{/* Theme selector removed */}
-								</Box>
-							</ThemeProvider>
-						</CustomThemeProvider>
-					</EmailTemplateProvider>
+								</ThemeProvider>
+							</CustomThemeProvider>
+						</EmailTemplateProvider>
+					</RsvpModalProvider>
 				</InviteeNavigationProvider>
 			</InviteeProvider>
 		</AuthProvider>

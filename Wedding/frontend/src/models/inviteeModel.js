@@ -22,6 +22,9 @@ export const DUMMY_INVITEES = [
     phone: '123-456-7890',
     rsvp: null,
     allowPlusOne: true,
+    plusOneName: '',
+    plusOneEmail: '',
+    plusOnePhone: '',
   },
   {
     id: 'b2c3d4e5-f6a1-8901-bcde-f23456789012',
@@ -31,6 +34,9 @@ export const DUMMY_INVITEES = [
     phone: '123-456-7891',
     rsvp: null,
     allowPlusOne: false,
+    plusOneName: '',
+    plusOneEmail: '',
+    plusOnePhone: '',
   },
   {
     id: 'c3d4e5f6-a1b2-9012-cdef-345678901234',
@@ -40,6 +46,9 @@ export const DUMMY_INVITEES = [
     phone: '321-654-0987',
     rsvp: 'accepted',
     allowPlusOne: true,
+    plusOneName: '',
+    plusOneEmail: '',
+    plusOnePhone: '',
   },
   {
     id: 'd4e5f6a1-b2c3-0123-def4-456789012345',
@@ -49,6 +58,9 @@ export const DUMMY_INVITEES = [
     phone: '321-654-0988',
     rsvp: 'accepted',
     allowPlusOne: false,
+    plusOneName: '',
+    plusOneEmail: '',
+    plusOnePhone: '',
   },
   {
     id: 'e5f6a1b2-c3d4-1234-ef56-567890123456',
@@ -58,6 +70,9 @@ export const DUMMY_INVITEES = [
     phone: '555-555-5555',
     rsvp: null,
     allowPlusOne: true,
+    plusOneName: '',
+    plusOneEmail: '',
+    plusOnePhone: '',
   },
   {
     id: 'f6a1b2c3-d4e5-2345-f678-678901234567',
@@ -67,6 +82,9 @@ export const DUMMY_INVITEES = [
     phone: '555-555-5556',
     rsvp: null,
     allowPlusOne: false,
+    plusOneName: '',
+    plusOneEmail: '',
+    plusOnePhone: '',
   },
   // Singles (4 people)
   {
@@ -77,6 +95,9 @@ export const DUMMY_INVITEES = [
     phone: '234-567-8901',
     rsvp: 'accepted',
     allowPlusOne: true,
+    plusOneName: '',
+    plusOneEmail: '',
+    plusOnePhone: '',
   },
   {
     id: 'b8c9d0e1-f2a3-4567-bcde-890123456789',
@@ -86,6 +107,9 @@ export const DUMMY_INVITEES = [
     phone: '345-678-9012',
     rsvp: null,
     allowPlusOne: false,
+    plusOneName: '',
+    plusOneEmail: '',
+    plusOnePhone: '',
   },
   {
     id: 'c9d0e1f2-a3b4-5678-cdef-901234567890',
@@ -95,6 +119,9 @@ export const DUMMY_INVITEES = [
     phone: '456-789-0123',
     rsvp: null,
     allowPlusOne: true,
+    plusOneName: '',
+    plusOneEmail: '',
+    plusOnePhone: '',
   },
   {
     id: 'd0e1f2a3-b4c5-6789-def0-012345678901',
@@ -104,6 +131,9 @@ export const DUMMY_INVITEES = [
     phone: '567-890-1234',
     rsvp: null,
     allowPlusOne: false,
+    plusOneName: '',
+    plusOneEmail: '',
+    plusOnePhone: '',
   },
 ];
 

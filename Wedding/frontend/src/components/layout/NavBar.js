@@ -9,6 +9,7 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useInviteeNavigation } from '../../contexts/InviteeNavigationContext';
+import { useRsvpModal } from '../../contexts/RsvpModalContext';
 
 const baseLinks = [
 	{ to: '/gallery', label: 'Gallery' },
@@ -17,6 +18,7 @@ const baseLinks = [
 const NavBar = ({ title, isMobile }) => {
 	const location = useLocation();
 	const { inviteeId, hasInviteeContext } = useInviteeNavigation();
+	const { openRsvpModal } = useRsvpModal();
 	const displayTitle = title || 'Matt & Sydney';
 	const [mobileMenuAnchor, setMobileMenuAnchor] = React.useState(null);
 	const mobileMenuOpen = Boolean(mobileMenuAnchor);
@@ -30,11 +32,11 @@ const NavBar = ({ title, isMobile }) => {
 	};
 
 	const links = [
-		...(hasInviteeContext ? [{ to: `/rsvp/${inviteeId}`, label: 'RSVP' }] : []),
 		...baseLinks,
 	];
 
 	const allLinks = [
+		...(hasInviteeContext ? [{ to: `/rsvp/${inviteeId}`, label: 'RSVP', isRsvp: true }] : []),
 		...links,
 		...(hasInviteeContext ? [{ to: `/edit-details/${inviteeId}`, label: 'Edit Details' }] : []),
 	];
@@ -151,6 +153,32 @@ const NavBar = ({ title, isMobile }) => {
 					})}
 					{hasInviteeContext && (
 						<Typography
+							component="button"
+							type="button"
+							onClick={() => openRsvpModal({ inviteCode: inviteeId })}
+							sx={{
+								color: location.pathname.startsWith('/rsvp') ? 'var(--accent-color, #39834d)' : '#222',
+								background: 'transparent',
+								border: 'none',
+								padding: 0,
+								cursor: 'pointer',
+								textDecoration: 'none',
+								fontFamily: 'Cormorant Garamond, serif',
+								fontWeight: 400,
+								fontSize: '1.1rem',
+								transition: 'color 0.2s',
+								letterSpacing: 1,
+								whiteSpace: 'nowrap',
+								'&:hover': {
+									color: 'var(--accent-color, #39834d)'
+								}
+							}}
+						>
+							RSVP
+						</Typography>
+					)}
+					{hasInviteeContext && (
+						<Typography
 							component={Link}
 							to={`/edit-details/${inviteeId}`}
 							sx={{
@@ -221,9 +249,14 @@ const NavBar = ({ title, isMobile }) => {
 						return (
 							<MenuItem 
 								key={link.to}
-								component={Link} 
-								to={linkUrl} 
-								onClick={handleMobileMenuClose}
+								component={link.isRsvp ? 'button' : Link}
+								to={link.isRsvp ? undefined : linkUrl}
+								onClick={() => {
+									if (link.isRsvp) {
+										openRsvpModal({ inviteCode: inviteeId });
+									}
+									handleMobileMenuClose();
+								}}
 								sx={{ 
 									fontFamily: 'Cormorant Garamond, serif',
 									color: isActive ? 'var(--accent-color, #39834d)' : '#222'

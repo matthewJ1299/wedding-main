@@ -71,6 +71,7 @@ const AdminPage = () => {
 						/>
 						<InviteeTable
 							invitees={invitees}
+							addInvitee={addInvitee}
 							updateInvitee={updateInvitee}
 							removeInvitee={removeInvitee}
 							selectedInvitees={selectedInvitees}

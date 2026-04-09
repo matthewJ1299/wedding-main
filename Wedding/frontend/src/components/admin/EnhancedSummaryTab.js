@@ -62,7 +62,7 @@ const EnhancedSummaryTab = ({ invitees }) => {
    * Export guest list to CSV
    */
   const exportToCSV = () => {
-    const headers = ['Name', 'Partner', 'Email', 'Phone', 'RSVP Status', 'Plus One Allowed', 'Plus One Name', 'Invite Code'];
+    const headers = ['Name', 'Partner', 'Email', 'Phone', 'RSVP Status', 'Plus One Allowed', 'Plus One Name', 'Plus One Email', 'Plus One Phone', 'Invite Code'];
     const csvContent = [
       headers.join(','),
       ...invitees.map(invitee => [
@@ -73,6 +73,8 @@ const EnhancedSummaryTab = ({ invitees }) => {
         `"${invitee.rsvp || 'pending'}"`,
         `"${invitee.allowPlusOne ? 'Yes' : 'No'}"`,
         `"${invitee.plusOneName || ''}"`,
+        `"${invitee.plusOneEmail || ''}"`,
+        `"${invitee.plusOnePhone || ''}"`,
         `"${invitee.id}"`
       ].join(','))
     ].join('\n');

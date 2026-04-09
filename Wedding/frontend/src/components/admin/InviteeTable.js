@@ -10,6 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import DownloadIcon from '@mui/icons-material/Download';
+import AddIcon from '@mui/icons-material/Add';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
@@ -21,15 +22,21 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import PersonIcon from '@mui/icons-material/Person';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import AddInviteeForm from './AddInviteeForm';
 
 /**
  * Table component for managing invitees in the admin panel
  */
-const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
+const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) => {
 	const [editId, setEditId] = useState(null);
 	const [editData, setEditData] = useState({});
 	const [page, setPage] = useState(0);
 	const [pageSize, setPageSize] = useState(10);
+	const [addOpen, setAddOpen] = useState(false);
 
 	const asText = (value) => (value === null || value === undefined ? '' : String(value));
 
@@ -81,7 +88,7 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
       const s = (i.rsvp || 'pending').toLowerCase();
       return s === statusFilter;
     });
-    const header = ['name','partner','email','phone','rsvp','allowPlusOne'];
+    const header = ['name','partner','email','phone','rsvp','allowPlusOne','plusOneName','plusOneEmail','plusOnePhone'];
     const csv = [header.join(',')]
       .concat(
         rows.map((r) => header.map((h) => JSON.stringify(r[h] ?? '')).join(','))
@@ -144,7 +151,17 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 			</Box>
 
 			{/* Export actions */}
-			<Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mb: 1, width: '100%' }}>
+			<Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, mb: 1, width: '100%' }}>
+				<Button
+					size="small"
+					variant="contained"
+					startIcon={<AddIcon />}
+					onClick={() => setAddOpen(true)}
+					disabled={!addInvitee}
+				>
+					Add invitee
+				</Button>
+				<Box sx={{ display: 'flex', gap: 1 }}>
 				<Button size="small" variant="outlined" startIcon={<DownloadIcon />} onClick={handleMenuOpen}>
 					Export CSV
 				</Button>
@@ -154,7 +171,26 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 					<MenuItem onClick={() => handleExport('declined')}>Declined</MenuItem>
 					<MenuItem onClick={() => handleExport('pending')}>Pending</MenuItem>
 				</Menu>
+				</Box>
 			</Box>
+
+			<Dialog open={addOpen} onClose={() => setAddOpen(false)} fullWidth maxWidth="sm">
+				<DialogTitle>Add invitee</DialogTitle>
+				<DialogContent>
+					<Box sx={{ pt: 1 }}>
+						<AddInviteeForm
+							addInvitee={addInvitee}
+							hideTitle
+							onAdded={() => setAddOpen(false)}
+						/>
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button variant="outlined" onClick={() => setAddOpen(false)}>
+						Close
+					</Button>
+				</DialogActions>
+			</Dialog>
 			<TableContainer 
 				component={Paper} 
 				sx={{ 
@@ -175,6 +211,8 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Phone</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>RSVP</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Plus One Name</TableCell>
+							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Plus One Email</TableCell>
+							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Plus One Phone</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Invite Link</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Actions</TableCell>
 						</TableRow>
@@ -196,7 +234,7 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 											py: 1
 										}
 									}}>
-										<TableCell colSpan={8} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+										<TableCell colSpan={10} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
 											<FavoriteIcon sx={{ fontSize: '1.2rem' }} />
 											<span>Couple: {group[0].name} & {group[1].name}</span>
 											<FavoriteIcon sx={{ fontSize: '1.2rem' }} />
@@ -240,6 +278,12 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 														<TextField value={editData.plusOneName || ''} onChange={(e) => handleChange('plusOneName', e.target.value)} size="small" placeholder="Plus one name" />
 													</TableCell>
 													<TableCell>
+														<TextField value={editData.plusOneEmail || ''} onChange={(e) => handleChange('plusOneEmail', e.target.value.trimStart())} size="small" placeholder="Plus one email" />
+													</TableCell>
+													<TableCell>
+														<TextField value={editData.plusOnePhone || ''} onChange={(e) => handleChange('plusOnePhone', e.target.value.trimStart())} size="small" placeholder="Plus one phone" />
+													</TableCell>
+													<TableCell>
 														<Button component={Link} to={`/invitation/${editId || editData.id || ''}`}>View</Button>
 													</TableCell>
                                                   <TableCell>
@@ -278,6 +322,8 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 															</span>
 														)}
 													</TableCell>
+													<TableCell>{asText(invitee.plusOneEmail)}</TableCell>
+													<TableCell>{asText(invitee.plusOnePhone)}</TableCell>
 													<TableCell>
 														<Button component={Link} to={`/invitation/${invitee.id}`}>View</Button>
 													</TableCell>
@@ -323,6 +369,12 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 												<TextField value={editData.plusOneName || ''} onChange={(e) => handleChange('plusOneName', e.target.value)} size="small" placeholder="Plus one name" />
 											</TableCell>
 											<TableCell>
+												<TextField value={editData.plusOneEmail || ''} onChange={(e) => handleChange('plusOneEmail', e.target.value.trimStart())} size="small" placeholder="Plus one email" />
+											</TableCell>
+											<TableCell>
+												<TextField value={editData.plusOnePhone || ''} onChange={(e) => handleChange('plusOnePhone', e.target.value.trimStart())} size="small" placeholder="Plus one phone" />
+											</TableCell>
+											<TableCell>
 												<Button component={Link} to={`/invitation/${editId || editData.id || ''}`}>View</Button>
 											</TableCell>
                                             <TableCell>
@@ -366,6 +418,8 @@ const InviteeTable = ({ invitees, updateInvitee, removeInvitee }) => {
 													</span>
 												)}
 											</TableCell>
+											<TableCell>{asText(group[0].plusOneEmail)}</TableCell>
+											<TableCell>{asText(group[0].plusOnePhone)}</TableCell>
 											<TableCell>
 												<Button component={Link} to={`/invitation/${group[0].id}`}>View</Button>
 											</TableCell>

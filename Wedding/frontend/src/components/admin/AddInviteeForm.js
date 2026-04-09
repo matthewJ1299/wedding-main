@@ -21,14 +21,19 @@ const isValidEmail = (email) => {
 /**
  * Form component for adding new invitees
  */
-const AddInviteeForm = ({ addInvitee }) => {
+const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
   const [name, setName] = useState('');
   const [partner, setPartner] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [plusOneName, setPlusOneName] = useState('');
+  const [plusOneEmail, setPlusOneEmail] = useState('');
+  const [plusOnePhone, setPlusOnePhone] = useState('');
   const [success, setSuccess] = useState('');
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
+  const [plusOneEmailError, setPlusOneEmailError] = useState('');
+  const [plusOnePhoneError, setPlusOnePhoneError] = useState('');
   const [allowPlusOne, setAllowPlusOne] = useState(false);
   const { invitees } = useInvitees();
 
@@ -59,14 +64,47 @@ const AddInviteeForm = ({ addInvitee }) => {
     } else {
       setPhoneError('');
     }
+
+    const trimmedPlusOneName = (plusOneName || '').trim();
+    const trimmedPlusOneEmail = (plusOneEmail || '').trim();
+    const trimmedPlusOnePhone = (plusOnePhone || '').trim();
+
+    if (allowPlusOne && trimmedPlusOneEmail && !isValidEmail(trimmedPlusOneEmail)) {
+      setPlusOneEmailError('Invalid plus one email address.');
+      setSuccess('');
+      return;
+    } else {
+      setPlusOneEmailError('');
+    }
+
+    if (allowPlusOne && trimmedPlusOnePhone && !/^\+?\d{1,15}$/.test(trimmedPlusOnePhone)) {
+      setPlusOnePhoneError('Invalid plus one phone number. Use digits with optional + and max 15 digits.');
+      setSuccess('');
+      return;
+    } else {
+      setPlusOnePhoneError('');
+    }
     
     // Add invitee and reset form
-    await addInvitee({ name: name.trim(), partner: partner.trim(), email: email.trim(), phone: phone.trim(), allowPlusOne });
+    await addInvitee({ 
+      name: name.trim(), 
+      partner: partner.trim(), 
+      email: email.trim(), 
+      phone: phone.trim(), 
+      allowPlusOne,
+      plusOneName: allowPlusOne ? trimmedPlusOneName : '',
+      plusOneEmail: allowPlusOne ? trimmedPlusOneEmail : '',
+      plusOnePhone: allowPlusOne ? trimmedPlusOnePhone : '',
+    });
     setSuccess('Invitee added!');
     setName('');
     setPartner('');
     setEmail('');
     setPhone('');
+    setPlusOneName('');
+    setPlusOneEmail('');
+    setPlusOnePhone('');
+    if (onAdded) onAdded();
   };
 
   return (
@@ -79,16 +117,18 @@ const AddInviteeForm = ({ addInvitee }) => {
       alignItems: 'center',
       px: { xs: 1, sm: 0 }
     }}>
-      <Typography 
-        variant="h6" 
-        sx={{ 
-          mb: 3, 
-          textAlign: 'center',
-          fontSize: { xs: '1.1rem', sm: '1.25rem' }
-        }}
-      >
-        Add Invitee
-      </Typography>
+      {!hideTitle ? (
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            mb: 3, 
+            textAlign: 'center',
+            fontSize: { xs: '1.1rem', sm: '1.25rem' }
+          }}
+        >
+          Add Invitee
+        </Typography>
+      ) : null}
       
       <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
         <TextInput
@@ -148,6 +188,34 @@ const AddInviteeForm = ({ addInvitee }) => {
             label="Allow Plus One"
           />
         </Box>
+
+        {allowPlusOne ? (
+          <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
+            <TextInput
+              label="Plus One Name"
+              value={plusOneName}
+              onChange={e => setPlusOneName(e.target.value)}
+              fullWidth
+              sx={{ m: 0 }}
+            />
+            <TextInput
+              label="Plus One Email"
+              value={plusOneEmail}
+              onChange={e => setPlusOneEmail(e.target.value)}
+              error={plusOneEmailError}
+              fullWidth
+              sx={{ m: 0 }}
+            />
+            <TextInput
+              label="Plus One Phone"
+              value={plusOnePhone}
+              onChange={e => setPlusOnePhone(e.target.value)}
+              error={plusOnePhoneError}
+              fullWidth
+              sx={{ m: 0 }}
+            />
+          </Box>
+        ) : null}
         
         <Button 
           variant="contained" 

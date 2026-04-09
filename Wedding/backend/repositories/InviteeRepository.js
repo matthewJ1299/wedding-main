@@ -20,12 +20,16 @@ class InviteeRepository {
       inviteCode TEXT,
       allowPlusOne INTEGER DEFAULT 0,
       plusOneName TEXT,
+      plusOneEmail TEXT,
+      plusOnePhone TEXT,
       mealSelection TEXT,
       songRequest TEXT
     )`).run();
 
     const migrations = [
       { column: 'plusOneName', sql: 'ALTER TABLE invitees ADD COLUMN plusOneName TEXT' },
+      { column: 'plusOneEmail', sql: 'ALTER TABLE invitees ADD COLUMN plusOneEmail TEXT' },
+      { column: 'plusOnePhone', sql: 'ALTER TABLE invitees ADD COLUMN plusOnePhone TEXT' },
       { column: 'mealSelection', sql: 'ALTER TABLE invitees ADD COLUMN mealSelection TEXT' },
       { column: 'songRequest', sql: 'ALTER TABLE invitees ADD COLUMN songRequest TEXT' },
     ];
@@ -41,7 +45,7 @@ class InviteeRepository {
   }
 
   create(invitee) {
-    const stmt = this.db.prepare(`INSERT INTO invitees (id, name, partner, email, phone, rsvp, inviteCode, allowPlusOne, plusOneName, mealSelection, songRequest) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+    const stmt = this.db.prepare(`INSERT INTO invitees (id, name, partner, email, phone, rsvp, inviteCode, allowPlusOne, plusOneName, plusOneEmail, plusOnePhone, mealSelection, songRequest) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
     return stmt.run(
       invitee.id,
       invitee.name,
@@ -52,6 +56,8 @@ class InviteeRepository {
       invitee.inviteCode ?? null,
       invitee.allowPlusOne ? 1 : 0,
       invitee.plusOneName ?? null,
+      invitee.plusOneEmail ?? null,
+      invitee.plusOnePhone ?? null,
       invitee.mealSelection ?? null,
       invitee.songRequest ?? null
     );
@@ -68,7 +74,7 @@ class InviteeRepository {
   update(id, updates) {
     const invitee = this.getById(id);
     if (!invitee) return null;
-    const stmt = this.db.prepare(`UPDATE invitees SET name = ?, partner = ?, email = ?, phone = ?, rsvp = ?, inviteCode = ?, allowPlusOne = ?, plusOneName = ?, mealSelection = ?, songRequest = ? WHERE id = ?`);
+    const stmt = this.db.prepare(`UPDATE invitees SET name = ?, partner = ?, email = ?, phone = ?, rsvp = ?, inviteCode = ?, allowPlusOne = ?, plusOneName = ?, plusOneEmail = ?, plusOnePhone = ?, mealSelection = ?, songRequest = ? WHERE id = ?`);
     return stmt.run(
       updates.name ?? invitee.name,
       updates.partner ?? invitee.partner,
@@ -78,6 +84,8 @@ class InviteeRepository {
       updates.inviteCode !== undefined ? updates.inviteCode : invitee.inviteCode,
       updates.allowPlusOne !== undefined ? (updates.allowPlusOne ? 1 : 0) : invitee.allowPlusOne,
       updates.plusOneName !== undefined ? updates.plusOneName : invitee.plusOneName,
+      updates.plusOneEmail !== undefined ? updates.plusOneEmail : invitee.plusOneEmail,
+      updates.plusOnePhone !== undefined ? updates.plusOnePhone : invitee.plusOnePhone,
       updates.mealSelection !== undefined ? updates.mealSelection : (invitee.mealSelection ?? null),
       updates.songRequest !== undefined ? updates.songRequest : (invitee.songRequest ?? null),
       id

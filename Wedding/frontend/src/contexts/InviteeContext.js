@@ -46,6 +46,9 @@ export const InviteeProvider = ({ children }) => {
       partner: (invitee.partner || '').trim(),
       email: (invitee.email || '').trim(),
       phone: (invitee.phone || '').trim(),
+      plusOneName: (invitee.plusOneName || '').trim(),
+      plusOneEmail: (invitee.plusOneEmail || '').trim(),
+      plusOnePhone: (invitee.plusOnePhone || '').trim(),
     };
     const created = await createInvitee(trimmed);
     setInvitees((prev) => [...prev, created]);
@@ -62,6 +65,9 @@ export const InviteeProvider = ({ children }) => {
     if (trimmed.partner !== undefined) trimmed.partner = (trimmed.partner || '').trim();
     if (trimmed.email !== undefined) trimmed.email = (trimmed.email || '').trim();
     if (trimmed.phone !== undefined) trimmed.phone = (trimmed.phone || '').trim();
+    if (trimmed.plusOneName !== undefined) trimmed.plusOneName = (trimmed.plusOneName || '').trim();
+    if (trimmed.plusOneEmail !== undefined) trimmed.plusOneEmail = (trimmed.plusOneEmail || '').trim();
+    if (trimmed.plusOnePhone !== undefined) trimmed.plusOnePhone = (trimmed.plusOnePhone || '').trim();
     const updated = await updateInviteeApi(id, trimmed);
     setInvitees((prev) => prev.map((i) => (i.id === id ? updated : i)));
   };

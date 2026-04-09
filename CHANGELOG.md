@@ -2,6 +2,10 @@
 
 ## 2026-04-09
 
+- **RSVP modal**: RSVP now opens in a modal (from the nav RSVP button and the floating RSVP button) instead of rendering the RSVP card below the hero image. The direct `/rsvp/:inviteCode` link still works and auto-opens the modal.
+- **Invitees table add modal**: Added an “Add invitee” button on the Admin → Invitees table that opens the existing add-invitee fields inside a modal for quicker entry without switching tabs.
+- **Plus-one details (end-to-end)**: Plus one details now support **name + email + phone**. This is captured from Admin “Add invitee” and from the RSVP flow (when a plus one is allowed and not pre-defined as a partner), persisted in the backend, and visible/editable in the Admin invitees table and exports.
+
 - **Admin email groups**: The Admin “Email → Send Email” tab now supports sending to recipient groups (All / Accepted / Declined / Pending) and lets you optionally choose an invitee to preview template personalization before sending.
 
 - **Email variable formatting**: Template placeholders now replace `{{var}}` before `{var}` to avoid leftover braces like `{Matthew}` when using Handlebars-style variables.

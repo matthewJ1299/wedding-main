@@ -1,6 +1,6 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useInviteeNavigation } from '../../contexts/InviteeNavigationContext';
+import { useRsvpModal } from '../../contexts/RsvpModalContext';
 import Button from '../ui/Button';
 import Box from '@mui/material/Box';
 
@@ -9,14 +9,14 @@ import Box from '@mui/material/Box';
  */
 const RSVPButton = () => {
   const { inviteeId, hasInviteeContext } = useInviteeNavigation();
-  const navigate = useNavigate();
+  const { openRsvpModal } = useRsvpModal();
 
   if (!hasInviteeContext) {
     return null;
   }
 
   const handleRSVPClick = () => {
-    navigate(`/rsvp/${inviteeId}`);
+    openRsvpModal({ inviteCode: inviteeId });
   };
 
   return (

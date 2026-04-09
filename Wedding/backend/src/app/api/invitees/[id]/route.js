@@ -50,7 +50,7 @@ export async function PUT(request, { params }) {
     console.log('PUT /api/invitees/[id] - ID:', id, 'Updates:', updates);
     
     // Validate and sanitize the updates object
-    const allowedFields = ['name', 'partner', 'email', 'phone', 'rsvp', 'inviteCode', 'allowPlusOne', 'plusOneName', 'mealSelection', 'songRequest'];
+    const allowedFields = ['name', 'partner', 'email', 'phone', 'rsvp', 'inviteCode', 'allowPlusOne', 'plusOneName', 'plusOneEmail', 'plusOnePhone', 'mealSelection', 'songRequest'];
     const sanitizedUpdates = {};
     
     for (const [key, value] of Object.entries(updates)) {

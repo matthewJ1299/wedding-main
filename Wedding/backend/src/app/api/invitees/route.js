@@ -61,6 +61,8 @@ export async function POST(request) {
       inviteCode: body.inviteCode ?? null,
       allowPlusOne: !!body.allowPlusOne,
       plusOneName: body.plusOneName ?? null,
+      plusOneEmail: body.plusOneEmail ?? null,
+      plusOnePhone: body.plusOnePhone ?? null,
     };
     repo.create(newInvitee);
     return withCors(NextResponse.json(newInvitee, { status: 201 }), request);

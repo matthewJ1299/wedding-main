@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useInviteeNavigation } from '../../contexts/InviteeNavigationContext';
+import { useRsvpModal } from '../../contexts/RsvpModalContext';
 import heroPortraitImage from '../../assets/images/heroportrait.jpeg';
 const headerBannerImage = `${process.env.PUBLIC_URL || ''}/images/IMG-127.jpg`;
 
@@ -22,6 +23,7 @@ const SECTION_LINKS = [
 export default function HeaderNavigation() {
   const { pathname } = useLocation();
   const { inviteeId, hasInviteeContext } = useInviteeNavigation();
+  const { openRsvpModal } = useRsvpModal();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isStandalonePage = pathname.startsWith('/invitation') || pathname.startsWith('/rsvp');
 
@@ -46,6 +48,10 @@ export default function HeaderNavigation() {
   };
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
+  const handleRsvpClick = (e) => {
+    e.preventDefault();
+    openRsvpModal({ inviteCode: inviteeId });
+  };
 
   const NavLink = ({ sectionId, label, onNavigate }) => {
     const handleClick = (e) => {
@@ -76,9 +82,16 @@ export default function HeaderNavigation() {
       ))}
       {hasInviteeContext && (
         <Box component="div" sx={{ py: 1.5 }}>
-          <Link to={`/rsvp/${inviteeId}`} className="nav-link nav-link-rsvp" onClick={closeMobileMenu}>
+          <a
+            href="#rsvp"
+            className="nav-link nav-link-rsvp"
+            onClick={(e) => {
+              handleRsvpClick(e);
+              closeMobileMenu();
+            }}
+          >
             RSVP
-          </Link>
+          </a>
         </Box>
       )}
     </>
@@ -102,9 +115,9 @@ export default function HeaderNavigation() {
             <NavLink key={id} sectionId={id} label={label} />
           ))}
           {hasInviteeContext && (
-            <Link to={`/rsvp/${inviteeId}`} className="nav-link nav-link-rsvp">
+            <a href="#rsvp" className="nav-link nav-link-rsvp" onClick={handleRsvpClick}>
               RSVP
-            </Link>
+            </a>
           )}
         </Box>
         <IconButton
