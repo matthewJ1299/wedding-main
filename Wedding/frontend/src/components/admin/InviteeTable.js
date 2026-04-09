@@ -61,16 +61,40 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 	const grouped = [];
 	const usedIds = new Set();
 	invitees.forEach((inv) => {
-		if (inv.partner) {
-			const partner = invitees.find(
-				(i) => i.name.trim().toLowerCase() === inv.partner.trim().toLowerCase()
-			);
-			if (partner && !usedIds.has(inv.id) && !usedIds.has(partner.id)) {
-				grouped.push([inv, partner]);
-				usedIds.add(inv.id);
-				usedIds.add(partner.id);
-			}
+		if (usedIds.has(inv.id)) return;
+		const partnerName = (inv.partner || '').trim();
+		if (!partnerName) return;
+
+		const partner = invitees.find(
+			(i) =>
+				i.id !== inv.id &&
+				(i.name || '').trim().toLowerCase() === partnerName.toLowerCase() &&
+				!usedIds.has(i.id)
+		);
+
+		if (partner) {
+			grouped.push([inv, partner]);
+			usedIds.add(inv.id);
+			usedIds.add(partner.id);
+			return;
 		}
+
+		// If partner/plus-one exists but is not a standalone invitee record,
+		// render a linked second row so couples still show as a pair.
+		grouped.push([
+			inv,
+			{
+				id: `${inv.id}__linked_plus_one`,
+				name: partnerName,
+				partner: inv.name || '',
+				email: inv.plusOneEmail || '',
+				phone: inv.plusOnePhone || '',
+				rsvp: inv.rsvp || null,
+				isLinkedPlusOne: true,
+				linkedInviteeId: inv.id,
+			},
+		]);
+		usedIds.add(inv.id);
 	});
 	// Add singles
 	invitees.forEach((inv) => {
@@ -294,8 +318,13 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 														<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
 															<PersonIcon sx={{ fontSize: '1rem', color: '#ff6b9d' }} />
 															<span style={{ fontWeight: '500' }}>{asText(invitee.name)}</span>
-															{idx === 0 && <Chip label="Partner 1" size="small" sx={{ bgcolor: '#ff6b9d', color: 'white', fontSize: '0.7rem' }} />}
-															{idx === 1 && <Chip label="Partner 2" size="small" sx={{ bgcolor: '#c44569', color: 'white', fontSize: '0.7rem' }} />}
+															{invitee.isLinkedPlusOne ? (
+																<Chip label="Plus One" size="small" sx={{ bgcolor: '#c44569', color: 'white', fontSize: '0.7rem' }} />
+															) : idx === 0 ? (
+																<Chip label="Partner 1" size="small" sx={{ bgcolor: '#ff6b9d', color: 'white', fontSize: '0.7rem' }} />
+															) : (
+																<Chip label="Partner 2" size="small" sx={{ bgcolor: '#c44569', color: 'white', fontSize: '0.7rem' }} />
+															)}
 														</Box>
 													</TableCell>
 													<TableCell>
@@ -310,10 +339,18 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 													<TableCell>{asText(invitee.plusOneEmail)}</TableCell>
 													<TableCell>{asText(invitee.plusOnePhone)}</TableCell>
 													<TableCell>
-														<Button component={Link} to={`/invitation/${invitee.id}`}>View</Button>
+														{invitee.isLinkedPlusOne ? (
+															<span style={{ color: '#999', fontStyle: 'italic' }}>Linked</span>
+														) : (
+															<Button component={Link} to={`/invitation/${invitee.id}`}>View</Button>
+														)}
 													</TableCell>
 													<TableCell>
-														<Button onClick={() => startEdit(invitee)}>Edit</Button>
+														{invitee.isLinkedPlusOne ? (
+															<span style={{ color: '#999', fontStyle: 'italic' }}>Edit primary row</span>
+														) : (
+															<Button onClick={() => startEdit(invitee)}>Edit</Button>
+														)}
 													</TableCell>
 												</React.Fragment>
 											)}
