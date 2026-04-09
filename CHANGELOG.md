@@ -4,6 +4,7 @@
 
 - **RSVP modal**: RSVP now opens in a modal (from the nav RSVP button and the floating RSVP button) instead of rendering the RSVP card below the hero image. The direct `/rsvp/:inviteCode` link still works and auto-opens the modal.
 - **Partner = plus-one name**: Standardized naming so the “plus one” and “partner” are treated as the same person (stored in `partner`). Plus-one contact details are stored as `plusOneEmail` / `plusOnePhone`.
+- **Invitees table linked pairs**: Guests with a partner/plus-one now render as linked two-row couple blocks in the Invitees table (instead of incorrectly showing as “Single” when the second person is not a standalone invitee record).
 - **Invitees table add modal**: Added an “Add invitee” button on the Admin → Invitees table that opens the existing add-invitee fields inside a modal for quicker entry without switching tabs.
 - **Plus-one details (end-to-end)**: Plus one details now support **name + email + phone**. This is captured from Admin “Add invitee” and from the RSVP flow (when a plus one is allowed and not pre-defined as a partner), persisted in the backend, and visible/editable in the Admin invitees table and exports.
 

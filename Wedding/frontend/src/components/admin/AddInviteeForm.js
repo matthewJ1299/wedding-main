@@ -140,6 +140,8 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
           options={invitees.map(inv => inv.name)}
           value={partner}
           onChange={(_, newValue) => setPartner(newValue || '')}
+          inputValue={partner}
+          onInputChange={(_, newInputValue) => setPartner(newInputValue || '')}
           freeSolo
           renderInput={(params) => (
             <TextField
