@@ -6,6 +6,7 @@
 - **Partner = plus-one name**: Standardized naming so the “plus one” and “partner” are treated as the same person (stored in `partner`). Plus-one contact details are stored as `plusOneEmail` / `plusOnePhone`.
 - **Invitees table linked pairs**: Guests with a partner/plus-one now render as linked two-row couple blocks in the Invitees table (instead of incorrectly showing as “Single” when the second person is not a standalone invitee record).
 - **Couple RSVP sync + simplified table columns**: Removed plus-one email/phone columns from the Invitees table and aligned couple rows to a shared invite link. RSVP submissions now sync status to both linked partner records so one response updates the couple.
+- **Invitee modal plus-one UX**: The partner/plus-one name input in Add Invitee now appears only when “Allow Plus One” is checked, and is cleared automatically when unchecked.
 - **Invitees table add modal**: Added an “Add invitee” button on the Admin → Invitees table that opens the existing add-invitee fields inside a modal for quicker entry without switching tabs.
 - **Plus-one details (end-to-end)**: Plus one details now support **name + email + phone**. This is captured from Admin “Add invitee” and from the RSVP flow (when a plus one is allowed and not pre-defined as a partner), persisted in the backend, and visible/editable in the Admin invitees table and exports.
 

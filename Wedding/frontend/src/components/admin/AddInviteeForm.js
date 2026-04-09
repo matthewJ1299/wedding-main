@@ -109,24 +109,26 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
           sx={{ m: 0 }}
         />
         
-        <Autocomplete
-          options={invitees.map(inv => inv.name)}
-          value={partner}
-          onChange={(_, newValue) => setPartner(newValue || '')}
-          inputValue={partner}
-          onInputChange={(_, newInputValue) => setPartner(newInputValue || '')}
-          freeSolo
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={allowPlusOne ? 'Partner / Plus One Name' : 'Partner'}
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              sx={{ m: 0 }}
-            />
-          )}
-        />
+        {allowPlusOne ? (
+          <Autocomplete
+            options={invitees.map(inv => inv.name)}
+            value={partner}
+            onChange={(_, newValue) => setPartner(newValue || '')}
+            inputValue={partner}
+            onInputChange={(_, newInputValue) => setPartner(newInputValue || '')}
+            freeSolo
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Partner / Plus One Name"
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                sx={{ m: 0 }}
+              />
+            )}
+          />
+        ) : null}
         
         <TextInput
           label="Email"
@@ -152,7 +154,13 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
             control={
               <Checkbox
                 checked={allowPlusOne}
-                onChange={e => setAllowPlusOne(e.target.checked)}
+                onChange={e => {
+                  const checked = e.target.checked;
+                  setAllowPlusOne(checked);
+                  if (!checked) {
+                    setPartner('');
+                  }
+                }}
                 color="primary"
               />
             }
