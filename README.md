@@ -23,7 +23,7 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
 - **Production Ready**: cPanel deployment configuration
 - **Security**: Input validation, CORS protection, secure authentication
 - **Monitoring**: Health checks, structured logging, error tracking
-- **Backup System**: Automated database backups
+- **Data persistence**: PostgreSQL data persists via the Docker volume (`postgres_data`) between deploys
 
 ## Quick Start
 
@@ -293,6 +293,9 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to cPane
 ## Backup and Recovery
 
 ### Database Backups
+
+This project includes a backup script (`npm run backup:db`) that shells out to `pg_dump` / `psql`. Those tools are **not** installed in the backend Docker image by default (to keep builds reliable on hosted builders). If you want scheduled backups, run the script from a separate “ops” container/job that has PostgreSQL client tools available, or use your platform’s database backup feature / volume snapshots.
+
 ```bash
 # Create backup
 npm run backup:db -- create

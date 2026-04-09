@@ -3,7 +3,7 @@
 ## 2026-04-09 (database + admin API UX)
 
 - **PostgreSQL**: Replaced SQLite (`node:sqlite` / `data.sqlite`) with PostgreSQL via `pg`, `DATABASE_URL`, and versioned SQL migrations (`Wedding/backend/migrations`, applied by `src/db/run-migrations.mjs` from Docker entrypoint). Docker Compose now includes a `postgres` service and a `postgres_data` volume; backend depends on DB health checks.
-- **Backups**: `npm run backup:db` / `src/utils/dbBackup.js` now uses `pg_dump` / `psql` (PostgreSQL client tools; `postgresql-client` added to backend Docker image). Hardened the Docker build `apt-get` step with retries to reduce transient build failures on CI/PaaS.
+- **Backups**: `npm run backup:db` / `src/utils/dbBackup.js` uses `pg_dump` / `psql` (PostgreSQL client tools). The backend Docker image no longer installs `postgresql-client` by default (to avoid hosted builder `apt-get` flakiness); run backups from a separate ops container/job or use platform DB backup/snapshots.
 - **Admin API toasts + logging**: All frontend HTTP calls go through `src/services/apiFetch.js` (console request logging) with global MUI toasts via `src/notifications/ToastHost.js` and `notificationBus.js`.
 
 ## 2026-04-09
