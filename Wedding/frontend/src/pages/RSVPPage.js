@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -21,9 +21,9 @@ import Typography from '../components/ui/Typography';
 import Button from '../components/ui/Button';
 
 // Import shared utilities and components
-import { validateInviteeForm, sanitizeInput, validateEmail, validatePhone } from '../utils/validation';
+import { sanitizeInput, validateEmail, validatePhone } from '../utils/validation';
 import { APP_URLS, SUCCESS_MESSAGES, ERROR_MESSAGES } from '../utils/constants';
-import { TextInput, EmailInput, PhoneInput, TextAreaInput, SelectInput, ErrorMessage, SuccessMessage } from '../components/common';
+import { EmailInput, PhoneInput, TextAreaInput, SelectInput, ErrorMessage, SuccessMessage, TextInput } from '../components/common';
 
 /**
  * RSVP page component handling wedding attendance confirmation
@@ -32,6 +32,11 @@ export default function RSVPPage() {
   const { inviteCode } = useParams();
   const { invitees, updateInvitee } = useInvitees();
   
+  const inviteeFromLink = useMemo(() => {
+    if (!inviteCode) return null;
+    return invitees.find((inv) => inv.id === inviteCode) || null;
+  }, [inviteCode, invitees]);
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -43,93 +48,22 @@ export default function RSVPPage() {
   const [success, setSuccess] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
   const [rsvpDisabled, setRsvpDisabled] = useState(false);
-  const [showDetailsVerification, setShowDetailsVerification] = useState(false);
-  const [showRSVPButtons, setShowRSVPButtons] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
 
-  // Remove duplicate validation function - now using shared validation utilities
-
-  /**
-   * Handle name verification and show details form
-   */
-  const handleNameVerification = () => {
+  useEffect(() => {
     setError('');
-    
-    const validation = validateInviteeForm({ name }, { emailRequired: false, phoneRequired: false });
-    if (!validation.isValid) {
-      setError(validation.errors.name);
-      return;
-    }
-    
-    const invitee = invitees.find(
-      (inv) => inv.id === inviteCode && inv.name.trim().toLowerCase() === name.trim().toLowerCase()
-    );
-    
-    if (!invitee) {
-      setError('Name and invitation link do not match.');
-      return;
-    }
-    
-    // Pre-populate email and phone from invitee data
-    setEmail(invitee.email || '');
-    setPhone(invitee.phone || '');
-    setShowDetailsVerification(true);
-  };
+    setSuccess('');
 
-  /**
-   * Handle details verification and proceed to RSVP
-   */
-  const handleDetailsVerification = () => {
-    setEmailError('');
-    setPhoneError('');
-    
-    // Get trimmed values for validation (empty string if not provided)
-    const trimmedEmail = (email || '').trim();
-    // Remove dashes from phone number before validation
-    const trimmedPhone = (phone || '').trim().replace(/-/g, '');
-    
-    // Validate email and phone separately (name is already verified)
-    // Only validate if they have values (not required fields)
-    let hasErrors = false;
-    let emailErr = '';
-    let phoneErr = '';
-    
-    // Validate email only if provided
-    if (trimmedEmail) {
-      const emailValidation = validateEmail(trimmedEmail, false);
-      if (!emailValidation.isValid) {
-        emailErr = emailValidation.message;
-        hasErrors = true;
-      }
-    }
-    
-    // Validate phone only if provided
-    if (trimmedPhone) {
-      const phoneValidation = validatePhone(trimmedPhone, false);
-      if (!phoneValidation.isValid) {
-        phoneErr = phoneValidation.message;
-        hasErrors = true;
-      }
-    }
-    
-    // Set errors if any
-    if (emailErr) setEmailError(emailErr);
-    if (phoneErr) setPhoneError(phoneErr);
-    
-    // If there are errors, stop here
-    if (hasErrors) {
-      return;
-    }
-    // Update state with trimmed values and move to next step
-    // React batches these state updates automatically
-    setEmail(trimmedEmail);
-    setPhone(trimmedPhone);
-    setIsVerified(true);
-    setShowDetailsVerification(false);
-    setShowRSVPButtons(true);
-  };
+    if (!inviteCode) return;
+    if (!inviteeFromLink) return;
+
+    setName(inviteeFromLink.name || '');
+    setEmail(inviteeFromLink.email || '');
+    setPhone(inviteeFromLink.phone || '');
+    setPlusOneName(inviteeFromLink.plusOneName || '');
+    setStatus(inviteeFromLink.rsvp || null);
+  }, [inviteCode, inviteeFromLink]);
 
   /**
    * Handle RSVP submission with validation
@@ -138,32 +72,60 @@ export default function RSVPPage() {
   const handleRSVP = async (rsvpStatus) => {
     setError('');
     setSuccess('');
-    // Validate input
-    if (!name.trim()) {
-      setError('Please enter your name.');
+
+    if (!inviteeFromLink) {
+      setError('Invitation link not found. Please use the unique RSVP link from your invitation.');
       return;
     }
-    // Find invitee by id and name (case-insensitive)
-    const invitee = invitees.find(
-      (inv) => inv.id === inviteCode && inv.name.trim().toLowerCase() === name.trim().toLowerCase()
-    );
-    if (!invitee) {
-      setError('Name and invitation link do not match.');
-      return;
+
+    setEmailError('');
+    setPhoneError('');
+
+    const trimmedEmail = (email || '').trim();
+    const trimmedPhone = (phone || '').trim().replace(/-/g, '');
+
+    let hasErrors = false;
+    if (trimmedEmail) {
+      const emailValidation = validateEmail(trimmedEmail, false);
+      if (!emailValidation.isValid) {
+        setEmailError(emailValidation.message);
+        hasErrors = true;
+      }
     }
-    // If plus one is allowed, validate plus one's name if RSVP is accepted
-    if (invitee.allowPlusOne && rsvpStatus === 'accepted' && !plusOneName.trim()) {
+
+    if (trimmedPhone) {
+      const phoneValidation = validatePhone(trimmedPhone, false);
+      if (!phoneValidation.isValid) {
+        setPhoneError(phoneValidation.message);
+        hasErrors = true;
+      }
+    }
+
+    if (hasErrors) return;
+
+    // Keep state tidy for downstream comparisons/updates
+    setEmail(trimmedEmail);
+    setPhone(trimmedPhone);
+
+    const invitee = inviteeFromLink;
+
+    // If partner is explicitly set, treat it as the plus-one name for display/email purposes
+    const effectivePlusOneName = (invitee.partner || '').trim() || (plusOneName || '').trim();
+
+    // If plus one is allowed (and not pre-defined as a partner), require a name only when accepting
+    if (invitee.allowPlusOne && !invitee.partner && rsvpStatus === 'accepted' && !effectivePlusOneName) {
       setError('Please enter your plus one’s name.');
       return;
     }
+
     // Check if details were changed and email admin for approval
-    const detailsChanged = (email !== invitee.email) || (phone !== invitee.phone);
+    const detailsChanged = (trimmedEmail !== (invitee.email || '')) || (trimmedPhone !== (invitee.phone || ''));
     if (detailsChanged) {
       try {
         // Prepare the changes object
         const changes = {
-          email: email.trim(),
-          phone: phone.trim()
+          email: trimmedEmail,
+          phone: trimmedPhone
         };
         
         // Generate approval link
@@ -172,7 +134,7 @@ export default function RSVPPage() {
         await sendEmail({
           to: APP_URLS.ADMIN_EMAIL,
           subject: 'Invitee Details Change Request - Approval Required',
-          text: `Invitee ${invitee.name} has requested to update their details during RSVP:\n\nRequested changes:\nEmail: ${email}\nPhone: ${phone}\n\nOriginal details:\nEmail: ${invitee.email}\nPhone: ${invitee.phone}\n\nTo approve these changes, click the link below:\n${approvalLink}\n\nNote: Changes will not be applied until you approve them.`,
+          text: `Invitee ${invitee.name} has requested to update their details during RSVP:\n\nRequested changes:\nEmail: ${trimmedEmail}\nPhone: ${trimmedPhone}\n\nOriginal details:\nEmail: ${invitee.email}\nPhone: ${invitee.phone}\n\nTo approve these changes, click the link below:\n${approvalLink}\n\nNote: Changes will not be applied until you approve them.`,
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <h2 style="color: #333;">Invitee Details Change Request (RSVP)</h2>
@@ -180,8 +142,8 @@ export default function RSVPPage() {
               
               <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
                 <h3 style="color: #2e7d32; margin-top: 0;">Requested Changes:</h3>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Phone:</strong> ${phone}</p>
+                <p><strong>Email:</strong> ${trimmedEmail}</p>
+                <p><strong>Phone:</strong> ${trimmedPhone}</p>
               </div>
               
               <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0;">
@@ -210,15 +172,15 @@ export default function RSVPPage() {
 
     const updateData = { 
       rsvp: rsvpStatus, 
-      plusOneName: invitee.allowPlusOne ? plusOneName : undefined,
+      plusOneName: invitee.allowPlusOne ? (invitee.partner ? undefined : effectivePlusOneName) : undefined,
       mealSelection: rsvpStatus === 'accepted' ? mealSelection : undefined,
       songRequest: rsvpStatus === 'accepted' ? songRequest.trim() : undefined,
     };
     
     // Only update email/phone if they haven't changed (to avoid overriding pending approval)
     if (!detailsChanged) {
-      updateData.email = email.trim();
-      updateData.phone = phone.trim();
+      updateData.email = trimmedEmail;
+      updateData.phone = trimmedPhone;
     }
     
     updateInvitee(invitee.id, updateData);
@@ -228,8 +190,8 @@ export default function RSVPPage() {
     const emailDetails = {
       to: invitee.email,
       subject: 'RSVP Confirmation',
-      text: `Thank you, ${invitee.name}${invitee.allowPlusOne && plusOneName ? ' and ' + plusOneName : ''}, for your RSVP: ${rsvpStatus}`,
-      html: `<p>Thank you, <strong>${invitee.name}${invitee.allowPlusOne && plusOneName ? ' and ' + plusOneName : ''}</strong>, for your RSVP.</p>
+      text: `Thank you, ${invitee.name}${invitee.allowPlusOne && effectivePlusOneName ? ' and ' + effectivePlusOneName : ''}, for your RSVP: ${rsvpStatus}`,
+      html: `<p>Thank you, <strong>${invitee.name}${invitee.allowPlusOne && effectivePlusOneName ? ' and ' + effectivePlusOneName : ''}</strong>, for your RSVP.</p>
              <p>Your response: <strong>${rsvpStatus === 'accepted' ? 'Attending' : 'Not Attending'}</strong></p>`
     };
     console.log('Sending RSVP email:', emailDetails);
@@ -255,85 +217,57 @@ export default function RSVPPage() {
           >
             RSVP to the Wedding
           </Typography>
-          
-          {!showDetailsVerification && !isVerified ? (
+
+          {!inviteCode || (invitees.length > 0 && !inviteeFromLink) ? (
             <>
-              <TextInput
-                label="Your Name"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                onBlur={e => setName(sanitizeInput(e.target.value))}
-                className="rsvp-form-field"
-                required
-              />
-              <Button
-                variant="contained"
-                onClick={handleNameVerification}
-                className="rsvp-button"
-              >
-                Verify Name
+              <Typography variant="body1" className="rsvp-verification-complete">
+                Please use the unique link from your invitation to RSVP.
+              </Typography>
+              <Button component={Link} to="/rsvp" variant="outlined" className="rsvp-button" type="button">
+                Back to RSVP info
               </Button>
             </>
-          ) : showDetailsVerification ? (
+          ) : (
             <>
+              <Typography variant="body1" className="rsvp-verification-complete">
+                You’re RSVPing as <b>{name}</b>
+                {inviteeFromLink?.partner ? (
+                  <> &amp; <b>{inviteeFromLink.partner}</b></>
+                ) : null}
+              </Typography>
+
               <EmailInput
                 label="Email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
-                onBlur={e => setEmail(sanitizeInput(e.target.value))}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={(e) => setEmail(sanitizeInput(e.target.value))}
                 error={emailError}
                 className="rsvp-form-field"
               />
               <PhoneInput
                 label="Phone"
                 value={phone}
-                onChange={e => setPhone(e.target.value)}
-                onBlur={e => setPhone(sanitizeInput(e.target.value))}
+                onChange={(e) => setPhone(e.target.value)}
+                onBlur={(e) => setPhone(sanitizeInput(e.target.value))}
                 error={phoneError}
                 className="rsvp-form-field"
               />
-              <Button
-                variant="outlined"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleDetailsVerification();
-                }}
-                className="rsvp-button"
-                type="button"
-              >
-                Verify Details
-              </Button>
-            </>
-          ) : isVerified && (
-            <Typography 
-              variant="body1" 
-              className="rsvp-verification-complete"
-            >
-              ✓ Verification Complete
-            </Typography>
-          )}
-          {/* Plus One field if allowed - only show after verification */}
-          {isVerified && (() => {
-            const invitee = invitees.find(
-              (inv) => inv.id === inviteCode && inv.name.trim().toLowerCase() === name.trim().toLowerCase()
-            );
-            if (invitee && invitee.allowPlusOne) {
-              return (
+
+              {/* Plus One field if allowed and not pre-defined as a partner */}
+              {inviteeFromLink?.allowPlusOne && !inviteeFromLink?.partner ? (
                 <TextInput
                   label="Plus One Name"
                   value={plusOneName}
-                  onChange={e => setPlusOneName(e.target.value)}
-                  onBlur={e => setPlusOneName(sanitizeInput(e.target.value))}
+                  onChange={(e) => setPlusOneName(e.target.value)}
+                  onBlur={(e) => setPlusOneName(sanitizeInput(e.target.value))}
                   className="rsvp-form-field"
-                  required
                 />
-              );
-            }
-            return null;
-          })()}
+              ) : null}
+            </>
+          )}
 
           {/* Meal selection and song request - only when accepting */}
-          {showRSVPButtons && (
+          {inviteeFromLink && (
             <>
               <SelectInput
                 label="Meal Preference"
@@ -359,8 +293,8 @@ export default function RSVPPage() {
             </>
           )}
           
-          {/* Only show RSVP buttons after full verification */}
-          {showRSVPButtons && (
+          {/* RSVP buttons (link is the validation) */}
+          {inviteeFromLink && (
             <Box className="rsvp-buttons-container">
               <button
                 onClick={() => handleRSVP('accepted')}

@@ -6,7 +6,7 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
 
 ### Guest Features
 - **Wedding Information**: Beautiful homepage with countdown timer
-- **RSVP System**: Secure RSVP with email confirmation
+- **RSVP System**: RSVP via a unique invite link (details shown immediately) with email confirmation
 - **Photo Gallery**: Share and view wedding photos
 - **Wedding Details**: Schedule, accommodation, registry, and FAQ pages
 - **Responsive Design**: Works perfectly on all devices

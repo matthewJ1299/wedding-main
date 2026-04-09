@@ -74,11 +74,13 @@ export default function HeaderNavigation() {
           <NavLink sectionId={id} label={label} onNavigate={closeMobileMenu} />
         </Box>
       ))}
-      <Box component="div" sx={{ py: 1.5 }}>
-        <Link to={getUrlWithContext('/rsvp')} className="nav-link nav-link-rsvp" onClick={closeMobileMenu}>
-          RSVP
-        </Link>
-      </Box>
+      {hasInviteeContext && (
+        <Box component="div" sx={{ py: 1.5 }}>
+          <Link to={`/rsvp/${inviteeId}`} className="nav-link nav-link-rsvp" onClick={closeMobileMenu}>
+            RSVP
+          </Link>
+        </Box>
+      )}
     </>
   );
 
@@ -99,9 +101,11 @@ export default function HeaderNavigation() {
           {SECTION_LINKS.map(({ id, label }) => (
             <NavLink key={id} sectionId={id} label={label} />
           ))}
-          <Link to={getUrlWithContext('/rsvp')} className="nav-link nav-link-rsvp">
-            RSVP
-          </Link>
+          {hasInviteeContext && (
+            <Link to={`/rsvp/${inviteeId}`} className="nav-link nav-link-rsvp">
+              RSVP
+            </Link>
+          )}
         </Box>
         <IconButton
           className="header-hamburger"

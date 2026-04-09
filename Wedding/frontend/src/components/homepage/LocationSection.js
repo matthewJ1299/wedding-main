@@ -1,19 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { useInviteeNavigation } from '../../contexts/InviteeNavigationContext';
 import { WEDDING_VENUE } from '../../utils/constants';
 import map from '../../assets/images/dehartemap.jpeg';
 
 export default function LocationSection() {
-  const { inviteeId, hasInviteeContext } = useInviteeNavigation();
-
-  const getUrlWithContext = (path) => {
-    return hasInviteeContext ? `${path}?invitee=${inviteeId}` : path;
-  };
-
   return (
     <Box id="location" className="location-section">
       <Typography className="section-title location-title">

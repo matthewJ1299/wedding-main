@@ -8,6 +8,10 @@
 
 - **NavBar RSVP gating**: The navigation bar now only shows the RSVP link when an invitee context/id is present (i.e., when accessed via an invite-specific link).
 
+- **Homepage header/footer RSVP gating**: The homepage `HeaderNavigation` and `FooterNavigation` now also hide RSVP unless an invitee context/id is present.
+
+- **RSVP flow (link-first)**: Guests who open their unique `/rsvp/:inviteCode` link are taken straight to a details summary (guest + partner/plus-one, email, phone) and can RSVP without typing their name to “verify”.
+
 - **Invitee table robustness**: Invitee rows now render empty strings for missing fields to prevent visual/header misalignment when data is incomplete.
 
 ## 2026-04-08

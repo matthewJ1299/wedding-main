@@ -16,7 +16,9 @@ export default function FooterNavigation() {
       <Link to={`${getUrlWithContext("/")}#our-story`} className="footer-link">OUR STORY</Link>
       <Link to={`${getUrlWithContext("/")}#travel-stay`} className="footer-link">TRAVEL & STAY</Link>
       <Link to={`${getUrlWithContext("/")}#registry`} className="footer-link">REGISTRY</Link>
-      <Link to={getUrlWithContext("/rsvp")} className="footer-link footer-link-rsvp">RSVP</Link>
+      {hasInviteeContext && (
+        <Link to={`/rsvp/${inviteeId}`} className="footer-link footer-link-rsvp">RSVP</Link>
+      )}
       <Link to={`${getUrlWithContext("/")}#faq`} className="footer-link">FAQS</Link>
     </Box>
   );
