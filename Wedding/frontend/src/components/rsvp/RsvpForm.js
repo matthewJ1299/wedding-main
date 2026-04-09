@@ -41,8 +41,6 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [partnerName, setPartnerName] = useState('');
-  const [plusOneEmail, setPlusOneEmail] = useState('');
-  const [plusOnePhone, setPlusOnePhone] = useState('');
   const [mealSelection, setMealSelection] = useState('');
   const [songRequest, setSongRequest] = useState('');
   const [status, setStatus] = useState(null);
@@ -52,8 +50,6 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
   const [rsvpDisabled, setRsvpDisabled] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
-  const [plusOneEmailError, setPlusOneEmailError] = useState('');
-  const [plusOnePhoneError, setPlusOnePhoneError] = useState('');
 
   useEffect(() => {
     setError('');
@@ -66,8 +62,6 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
     setEmail(inviteeFromLink.email || '');
     setPhone(inviteeFromLink.phone || '');
     setPartnerName(inviteeFromLink.partner || '');
-    setPlusOneEmail(inviteeFromLink.plusOneEmail || '');
-    setPlusOnePhone(inviteeFromLink.plusOnePhone || '');
     setStatus(inviteeFromLink.rsvp || null);
   }, [inviteCode, inviteeFromLink]);
 
@@ -82,13 +76,9 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
 
     setEmailError('');
     setPhoneError('');
-    setPlusOneEmailError('');
-    setPlusOnePhoneError('');
 
     const trimmedEmail = (email || '').trim();
     const trimmedPhone = (phone || '').trim().replace(/-/g, '');
-    const trimmedPlusOneEmail = (plusOneEmail || '').trim();
-    const trimmedPlusOnePhone = (plusOnePhone || '').trim().replace(/-/g, '');
 
     let hasErrors = false;
     if (trimmedEmail) {
@@ -107,28 +97,10 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
       }
     }
 
-    if (trimmedPlusOneEmail) {
-      const plusOneEmailValidation = validateEmail(trimmedPlusOneEmail, false);
-      if (!plusOneEmailValidation.isValid) {
-        setPlusOneEmailError(plusOneEmailValidation.message);
-        hasErrors = true;
-      }
-    }
-
-    if (trimmedPlusOnePhone) {
-      const plusOnePhoneValidation = validatePhone(trimmedPlusOnePhone, false);
-      if (!plusOnePhoneValidation.isValid) {
-        setPlusOnePhoneError(plusOnePhoneValidation.message);
-        hasErrors = true;
-      }
-    }
-
     if (hasErrors) return;
 
     setEmail(trimmedEmail);
     setPhone(trimmedPhone);
-    setPlusOneEmail(trimmedPlusOneEmail);
-    setPlusOnePhone(trimmedPlusOnePhone);
 
     const invitee = inviteeFromLink;
     const effectivePartnerName = (partnerName || '').trim() || (invitee.partner || '').trim();
@@ -196,8 +168,6 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
         invitee.allowPlusOne && !(invitee.partner || '').trim()
           ? effectivePartnerName
           : undefined,
-      plusOneEmail: invitee.allowPlusOne && !(invitee.partner || '').trim() ? trimmedPlusOneEmail : undefined,
-      plusOnePhone: invitee.allowPlusOne && !(invitee.partner || '').trim() ? trimmedPlusOnePhone : undefined,
       mealSelection: rsvpStatus === 'accepted' ? mealSelection : undefined,
       songRequest: rsvpStatus === 'accepted' ? songRequest.trim() : undefined,
     };
@@ -207,7 +177,23 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
       updateData.phone = trimmedPhone;
     }
 
-    updateInvitee(invitee.id, updateData);
+    const linkedPartner = invitees.find((candidate) => {
+      if (!candidate || candidate.id === invitee.id) return false;
+      const inviteePartnerName = (invitee.partner || '').trim().toLowerCase();
+      const candidatePartnerName = (candidate.partner || '').trim().toLowerCase();
+      const inviteeName = (invitee.name || '').trim().toLowerCase();
+      const candidateName = (candidate.name || '').trim().toLowerCase();
+
+      return (
+        (inviteePartnerName && inviteePartnerName === candidateName) ||
+        (candidatePartnerName && candidatePartnerName === inviteeName)
+      );
+    });
+
+    await updateInvitee(invitee.id, updateData);
+    if (linkedPartner) {
+      await updateInvitee(linkedPartner.id, { rsvp: rsvpStatus });
+    }
     setStatus(rsvpStatus);
     setRsvpDisabled(true);
 
@@ -281,31 +267,13 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
             />
 
             {inviteeFromLink?.allowPlusOne && !inviteeFromLink?.partner ? (
-              <>
-                <TextInput
-                  label="Partner / Plus One Name"
-                  value={partnerName}
-                  onChange={(e) => setPartnerName(e.target.value)}
-                  onBlur={(e) => setPartnerName(sanitizeInput(e.target.value))}
-                  className="rsvp-form-field"
-                />
-                <EmailInput
-                  label="Plus One Email"
-                  value={plusOneEmail}
-                  onChange={(e) => setPlusOneEmail(e.target.value)}
-                  onBlur={(e) => setPlusOneEmail(sanitizeInput(e.target.value))}
-                  error={plusOneEmailError}
-                  className="rsvp-form-field"
-                />
-                <PhoneInput
-                  label="Plus One Phone"
-                  value={plusOnePhone}
-                  onChange={(e) => setPlusOnePhone(e.target.value)}
-                  onBlur={(e) => setPlusOnePhone(sanitizeInput(e.target.value))}
-                  error={plusOnePhoneError}
-                  className="rsvp-form-field"
-                />
-              </>
+              <TextInput
+                label="Partner / Plus One Name"
+                value={partnerName}
+                onChange={(e) => setPartnerName(e.target.value)}
+                onBlur={(e) => setPartnerName(sanitizeInput(e.target.value))}
+                className="rsvp-form-field"
+              />
             ) : null}
           </>
         )}

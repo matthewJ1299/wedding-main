@@ -112,7 +112,7 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
       const s = (i.rsvp || 'pending').toLowerCase();
       return s === statusFilter;
     });
-    const header = ['name','partner','email','phone','rsvp','allowPlusOne','plusOneEmail','plusOnePhone'];
+    const header = ['name','partner','email','phone','rsvp','allowPlusOne'];
     const csv = [header.join(',')]
       .concat(
         rows.map((r) => header.map((h) => JSON.stringify(r[h] ?? '')).join(','))
@@ -234,8 +234,6 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Email</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Phone</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>RSVP</TableCell>
-							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Plus One Email</TableCell>
-							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Plus One Phone</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Invite Link</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Actions</TableCell>
 						</TableRow>
@@ -298,13 +296,7 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 														<TextField value={editData.rsvp || ''} onChange={(e) => handleChange('rsvp', e.target.value)} size="small" />
 													</TableCell>
 													<TableCell>
-														<TextField value={editData.plusOneEmail || ''} onChange={(e) => handleChange('plusOneEmail', e.target.value.trimStart())} size="small" placeholder="Plus one email" />
-													</TableCell>
-													<TableCell>
-														<TextField value={editData.plusOnePhone || ''} onChange={(e) => handleChange('plusOnePhone', e.target.value.trimStart())} size="small" placeholder="Plus one phone" />
-													</TableCell>
-													<TableCell>
-														<Button component={Link} to={`/invitation/${editId || editData.id || ''}`}>View</Button>
+														<Button component={Link} to={`/invitation/${group[0].id}`}>View</Button>
 													</TableCell>
                                                   <TableCell>
                                                         <Button onClick={saveEdit}>Save</Button>
@@ -336,13 +328,11 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 													<TableCell>{asText(invitee.email)}</TableCell>
 													<TableCell>{asText(invitee.phone)}</TableCell>
 													<TableCell>{formatStatus(invitee.rsvp)}</TableCell>
-													<TableCell>{asText(invitee.plusOneEmail)}</TableCell>
-													<TableCell>{asText(invitee.plusOnePhone)}</TableCell>
 													<TableCell>
 														{invitee.isLinkedPlusOne ? (
 															<span style={{ color: '#999', fontStyle: 'italic' }}>Linked</span>
 														) : (
-															<Button component={Link} to={`/invitation/${invitee.id}`}>View</Button>
+															<Button component={Link} to={`/invitation/${group[0].id}`}>View</Button>
 														)}
 													</TableCell>
 													<TableCell>
@@ -388,12 +378,6 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 												<TextField value={editData.rsvp || ''} onChange={(e) => handleChange('rsvp', e.target.value)} size="small" />
 											</TableCell>
 											<TableCell>
-												<TextField value={editData.plusOneEmail || ''} onChange={(e) => handleChange('plusOneEmail', e.target.value.trimStart())} size="small" placeholder="Plus one email" />
-											</TableCell>
-											<TableCell>
-												<TextField value={editData.plusOnePhone || ''} onChange={(e) => handleChange('plusOnePhone', e.target.value.trimStart())} size="small" placeholder="Plus one phone" />
-											</TableCell>
-											<TableCell>
 												<Button component={Link} to={`/invitation/${editId || editData.id || ''}`}>View</Button>
 											</TableCell>
                                             <TableCell>
@@ -426,8 +410,6 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 											<TableCell>{asText(group[0].email)}</TableCell>
 											<TableCell>{asText(group[0].phone)}</TableCell>
 											<TableCell>{formatStatus(group[0].rsvp)}</TableCell>
-											<TableCell>{asText(group[0].plusOneEmail)}</TableCell>
-											<TableCell>{asText(group[0].plusOnePhone)}</TableCell>
 											<TableCell>
 												<Button component={Link} to={`/invitation/${group[0].id}`}>View</Button>
 											</TableCell>
