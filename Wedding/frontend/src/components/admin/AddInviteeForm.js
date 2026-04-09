@@ -26,7 +26,6 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
   const [partner, setPartner] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [plusOneName, setPlusOneName] = useState('');
   const [plusOneEmail, setPlusOneEmail] = useState('');
   const [plusOnePhone, setPlusOnePhone] = useState('');
   const [success, setSuccess] = useState('');
@@ -65,7 +64,6 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
       setPhoneError('');
     }
 
-    const trimmedPlusOneName = (plusOneName || '').trim();
     const trimmedPlusOneEmail = (plusOneEmail || '').trim();
     const trimmedPlusOnePhone = (plusOnePhone || '').trim();
 
@@ -92,7 +90,6 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
       email: email.trim(), 
       phone: phone.trim(), 
       allowPlusOne,
-      plusOneName: allowPlusOne ? trimmedPlusOneName : '',
       plusOneEmail: allowPlusOne ? trimmedPlusOneEmail : '',
       plusOnePhone: allowPlusOne ? trimmedPlusOnePhone : '',
     });
@@ -101,7 +98,6 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
     setPartner('');
     setEmail('');
     setPhone('');
-    setPlusOneName('');
     setPlusOneEmail('');
     setPlusOnePhone('');
     if (onAdded) onAdded();
@@ -148,7 +144,7 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Partner"
+              label={allowPlusOne ? 'Partner / Plus One Name' : 'Partner'}
               variant="outlined"
               margin="normal"
               fullWidth
@@ -191,13 +187,6 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
 
         {allowPlusOne ? (
           <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
-            <TextInput
-              label="Plus One Name"
-              value={plusOneName}
-              onChange={e => setPlusOneName(e.target.value)}
-              fullWidth
-              sx={{ m: 0 }}
-            />
             <TextInput
               label="Plus One Email"
               value={plusOneEmail}

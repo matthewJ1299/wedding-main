@@ -27,7 +27,7 @@ const EnhancedSummaryTab = ({ invitees }) => {
   
   // Plus one statistics
   const withPlusOne = invitees.filter(i => i.allowPlusOne).length;
-  const plusOneAccepted = invitees.filter(i => i.allowPlusOne && i.rsvp === 'accepted' && i.plusOneName).length;
+  const plusOneAccepted = invitees.filter(i => i.allowPlusOne && i.rsvp === 'accepted' && i.partner).length;
   
   // Couple statistics
   const couples = invitees.filter(i => i.partner).length / 2; // Divide by 2 since each couple appears twice
@@ -62,7 +62,7 @@ const EnhancedSummaryTab = ({ invitees }) => {
    * Export guest list to CSV
    */
   const exportToCSV = () => {
-    const headers = ['Name', 'Partner', 'Email', 'Phone', 'RSVP Status', 'Plus One Allowed', 'Plus One Name', 'Plus One Email', 'Plus One Phone', 'Invite Code'];
+    const headers = ['Name', 'Partner', 'Email', 'Phone', 'RSVP Status', 'Plus One Allowed', 'Plus One Email', 'Plus One Phone', 'Invite Code'];
     const csvContent = [
       headers.join(','),
       ...invitees.map(invitee => [
@@ -72,7 +72,6 @@ const EnhancedSummaryTab = ({ invitees }) => {
         `"${invitee.phone || ''}"`,
         `"${invitee.rsvp || 'pending'}"`,
         `"${invitee.allowPlusOne ? 'Yes' : 'No'}"`,
-        `"${invitee.plusOneName || ''}"`,
         `"${invitee.plusOneEmail || ''}"`,
         `"${invitee.plusOnePhone || ''}"`,
         `"${invitee.id}"`

@@ -88,7 +88,7 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
       const s = (i.rsvp || 'pending').toLowerCase();
       return s === statusFilter;
     });
-    const header = ['name','partner','email','phone','rsvp','allowPlusOne','plusOneName','plusOneEmail','plusOnePhone'];
+    const header = ['name','partner','email','phone','rsvp','allowPlusOne','plusOneEmail','plusOnePhone'];
     const csv = [header.join(',')]
       .concat(
         rows.map((r) => header.map((h) => JSON.stringify(r[h] ?? '')).join(','))
@@ -210,7 +210,6 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Email</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Phone</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>RSVP</TableCell>
-							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Plus One Name</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Plus One Email</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Plus One Phone</TableCell>
 							<TableCell sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>Invite Link</TableCell>
@@ -275,9 +274,6 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 														<TextField value={editData.rsvp || ''} onChange={(e) => handleChange('rsvp', e.target.value)} size="small" />
 													</TableCell>
 													<TableCell>
-														<TextField value={editData.plusOneName || ''} onChange={(e) => handleChange('plusOneName', e.target.value)} size="small" placeholder="Plus one name" />
-													</TableCell>
-													<TableCell>
 														<TextField value={editData.plusOneEmail || ''} onChange={(e) => handleChange('plusOneEmail', e.target.value.trimStart())} size="small" placeholder="Plus one email" />
 													</TableCell>
 													<TableCell>
@@ -311,17 +307,6 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 													<TableCell>{asText(invitee.email)}</TableCell>
 													<TableCell>{asText(invitee.phone)}</TableCell>
 													<TableCell>{formatStatus(invitee.rsvp)}</TableCell>
-													<TableCell>
-														{invitee.plusOneName ? (
-															<span style={{ color: '#2e7d32', fontWeight: 'bold' }}>
-																{asText(invitee.plusOneName)}
-															</span>
-														) : (
-															<span style={{ color: '#666', fontStyle: 'italic' }}>
-																{invitee.allowPlusOne ? 'Not specified' : 'Not allowed'}
-															</span>
-														)}
-													</TableCell>
 													<TableCell>{asText(invitee.plusOneEmail)}</TableCell>
 													<TableCell>{asText(invitee.plusOnePhone)}</TableCell>
 													<TableCell>
@@ -366,9 +351,6 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 												<TextField value={editData.rsvp || ''} onChange={(e) => handleChange('rsvp', e.target.value)} size="small" />
 											</TableCell>
 											<TableCell>
-												<TextField value={editData.plusOneName || ''} onChange={(e) => handleChange('plusOneName', e.target.value)} size="small" placeholder="Plus one name" />
-											</TableCell>
-											<TableCell>
 												<TextField value={editData.plusOneEmail || ''} onChange={(e) => handleChange('plusOneEmail', e.target.value.trimStart())} size="small" placeholder="Plus one email" />
 											</TableCell>
 											<TableCell>
@@ -407,17 +389,6 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 											<TableCell>{asText(group[0].email)}</TableCell>
 											<TableCell>{asText(group[0].phone)}</TableCell>
 											<TableCell>{formatStatus(group[0].rsvp)}</TableCell>
-											<TableCell>
-												{group[0].plusOneName ? (
-													<span style={{ color: '#2e7d32', fontWeight: 'bold' }}>
-														{asText(group[0].plusOneName)}
-													</span>
-												) : (
-													<span style={{ color: '#666', fontStyle: 'italic' }}>
-														{group[0].allowPlusOne ? 'Not specified' : 'Not allowed'}
-													</span>
-												)}
-											</TableCell>
 											<TableCell>{asText(group[0].plusOneEmail)}</TableCell>
 											<TableCell>{asText(group[0].plusOnePhone)}</TableCell>
 											<TableCell>

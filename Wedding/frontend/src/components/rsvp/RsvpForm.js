@@ -40,7 +40,7 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [plusOneName, setPlusOneName] = useState('');
+  const [partnerName, setPartnerName] = useState('');
   const [plusOneEmail, setPlusOneEmail] = useState('');
   const [plusOnePhone, setPlusOnePhone] = useState('');
   const [mealSelection, setMealSelection] = useState('');
@@ -65,7 +65,7 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
     setName(inviteeFromLink.name || '');
     setEmail(inviteeFromLink.email || '');
     setPhone(inviteeFromLink.phone || '');
-    setPlusOneName(inviteeFromLink.plusOneName || '');
+    setPartnerName(inviteeFromLink.partner || '');
     setPlusOneEmail(inviteeFromLink.plusOneEmail || '');
     setPlusOnePhone(inviteeFromLink.plusOnePhone || '');
     setStatus(inviteeFromLink.rsvp || null);
@@ -131,10 +131,10 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
     setPlusOnePhone(trimmedPlusOnePhone);
 
     const invitee = inviteeFromLink;
-    const effectivePlusOneName = (invitee.partner || '').trim() || (plusOneName || '').trim();
+    const effectivePartnerName = (partnerName || '').trim() || (invitee.partner || '').trim();
 
-    if (invitee.allowPlusOne && !invitee.partner && rsvpStatus === 'accepted' && !effectivePlusOneName) {
-      setError('Please enter your plus one’s name.');
+    if (invitee.allowPlusOne && !(invitee.partner || '').trim() && rsvpStatus === 'accepted' && !effectivePartnerName) {
+      setError('Please enter your partner/plus one’s name.');
       return;
     }
 
@@ -191,9 +191,13 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
 
     const updateData = {
       rsvp: rsvpStatus,
-      plusOneName: invitee.allowPlusOne ? (invitee.partner ? undefined : effectivePlusOneName) : undefined,
-      plusOneEmail: invitee.allowPlusOne && !invitee.partner ? trimmedPlusOneEmail : undefined,
-      plusOnePhone: invitee.allowPlusOne && !invitee.partner ? trimmedPlusOnePhone : undefined,
+      // Partner and plus-one are the same person: store their name in `partner`.
+      partner:
+        invitee.allowPlusOne && !(invitee.partner || '').trim()
+          ? effectivePartnerName
+          : undefined,
+      plusOneEmail: invitee.allowPlusOne && !(invitee.partner || '').trim() ? trimmedPlusOneEmail : undefined,
+      plusOnePhone: invitee.allowPlusOne && !(invitee.partner || '').trim() ? trimmedPlusOnePhone : undefined,
       mealSelection: rsvpStatus === 'accepted' ? mealSelection : undefined,
       songRequest: rsvpStatus === 'accepted' ? songRequest.trim() : undefined,
     };
@@ -211,10 +215,10 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
       to: invitee.email,
       subject: 'RSVP Confirmation',
       text: `Thank you, ${invitee.name}${
-        invitee.allowPlusOne && effectivePlusOneName ? ' and ' + effectivePlusOneName : ''
+        invitee.allowPlusOne && effectivePartnerName ? ' and ' + effectivePartnerName : ''
       }, for your RSVP: ${rsvpStatus}`,
       html: `<p>Thank you, <strong>${invitee.name}${
-        invitee.allowPlusOne && effectivePlusOneName ? ' and ' + effectivePlusOneName : ''
+        invitee.allowPlusOne && effectivePartnerName ? ' and ' + effectivePartnerName : ''
       }</strong>, for your RSVP.</p>
              <p>Your response: <strong>${rsvpStatus === 'accepted' ? 'Attending' : 'Not Attending'}</strong></p>`,
     };
@@ -279,10 +283,10 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
             {inviteeFromLink?.allowPlusOne && !inviteeFromLink?.partner ? (
               <>
                 <TextInput
-                  label="Plus One Name"
-                  value={plusOneName}
-                  onChange={(e) => setPlusOneName(e.target.value)}
-                  onBlur={(e) => setPlusOneName(sanitizeInput(e.target.value))}
+                  label="Partner / Plus One Name"
+                  value={partnerName}
+                  onChange={(e) => setPartnerName(e.target.value)}
+                  onBlur={(e) => setPartnerName(sanitizeInput(e.target.value))}
                   className="rsvp-form-field"
                 />
                 <EmailInput

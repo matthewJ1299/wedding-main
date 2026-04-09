@@ -257,7 +257,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to cPane
 - `rsvp` - RSVP status (pending/accepted/declined)
 - `inviteCode` - Unique invitation code
 - `allowPlusOne` - Whether plus one is allowed
-- `plusOneName` - Plus one name if attending
+- `partner` - Partner / plus one name (same person)
 - `plusOneEmail` - Plus one email address (optional)
 - `plusOnePhone` - Plus one phone number (optional)
 
