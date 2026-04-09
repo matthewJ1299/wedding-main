@@ -163,46 +163,7 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
           sx={{ m: 0 }}
         />
         
-        {allowPlusOne ? (
-          <>
-            <Autocomplete
-              options={invitees.map(inv => inv.name)}
-              value={partner}
-              onChange={(_, newValue) => setPartner(newValue || '')}
-              inputValue={partner}
-              onInputChange={(_, newInputValue) => setPartner(newInputValue || '')}
-              freeSolo
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Partner Name"
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  sx={{ m: 0 }}
-                />
-              )}
-            />
-            <TextInput
-              label="Partner Email"
-              value={partnerEmail}
-              onChange={e => setPartnerEmail(e.target.value)}
-              error={partnerEmailError}
-              required
-              fullWidth
-              sx={{ m: 0 }}
-            />
-            <TextInput
-              label="Partner Phone"
-              value={partnerPhone}
-              onChange={e => setPartnerPhone(e.target.value)}
-              error={partnerPhoneError}
-              fullWidth
-              sx={{ m: 0 }}
-            />
-          </>
-        ) : null}
-        
+     
         <TextInput
           label="Email"
           value={email}
@@ -245,6 +206,46 @@ const AddInviteeForm = ({ addInvitee, hideTitle = false, onAdded }) => {
           />
         </Box>
 
+        {allowPlusOne ? (
+          <>
+            <Autocomplete
+              options={invitees.map(inv => inv.name)}
+              value={partner}
+              onChange={(_, newValue) => setPartner(newValue || '')}
+              inputValue={partner}
+              onInputChange={(_, newInputValue) => setPartner(newInputValue || '')}
+              freeSolo
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Partner Name"
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  sx={{ m: 0 }}
+                />
+              )}
+            />
+            <TextInput
+              label="Partner Email"
+              value={partnerEmail}
+              onChange={e => setPartnerEmail(e.target.value)}
+              error={partnerEmailError}
+              required
+              fullWidth
+              sx={{ m: 0 }}
+            />
+            <TextInput
+              label="Partner Phone"
+              value={partnerPhone}
+              onChange={e => setPartnerPhone(e.target.value)}
+              error={partnerPhoneError}
+              fullWidth
+              sx={{ m: 0 }}
+            />
+          </>
+        ) : null}
+        
         <Button 
           variant="contained" 
           onClick={handleAdd} 
