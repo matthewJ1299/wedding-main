@@ -80,6 +80,10 @@ export async function apiFetch(url, options = {}) {
       let msg = `Request failed (${res.status})`;
       const j = await parseJsonSafe(res);
       if (j && typeof j === 'object' && j.error) msg = String(j.error);
+      if (j && typeof j === 'object' && Array.isArray(j.missingFields) && j.missingFields.length > 0) {
+        const fields = j.missingFields.join(', ');
+        if (!msg.includes(fields)) msg = `${msg} (fields: ${fields})`;
+      }
       if (!skipToast) notifyToast({ type: 'error', message: msg });
       throw new Error(msg);
     }
@@ -97,6 +101,17 @@ export async function apiFetch(url, options = {}) {
   if (!res.ok) {
     let msg = `Request failed (${res.status})`;
     if (body && typeof body === 'object' && body.error) msg = String(body.error);
+    if (
+      body &&
+      typeof body === 'object' &&
+      Array.isArray(body.missingFields) &&
+      body.missingFields.length > 0
+    ) {
+      const fields = body.missingFields.join(', ');
+      if (!msg.includes(fields)) {
+        msg = `${msg} (fields: ${fields})`;
+      }
+    }
     if (!skipToast) notifyToast({ type: 'error', message: msg });
     throw new Error(msg);
   }

@@ -253,7 +253,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to cPane
 - `DELETE /api/invitees/:id` - Delete invitee
 
 ### Email Endpoints
-- `POST /api/send-email` - Send email
+- `POST /api/send-email` - Send email (`to`, `subject` required; body requires non-empty `text` and/or `html`. On validation failure, response JSON includes `missingFields`.)
 - `GET /api/email-templates` - Get email templates
 
 ## Database Schema

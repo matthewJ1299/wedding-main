@@ -22,3 +22,11 @@
 ## Environment
 
 Set `DATABASE_URL`, `UPLOAD_DIR`, `FRONTEND_URL`, `ORIGIN_URL`, and SMTP variables as documented in the repository root `README.md`.
+
+## API notes
+
+### `POST /api/send-email`
+
+- **Required:** `to`, `subject`, and a non-empty **body**: either `text` or `html` (both may be sent).
+- **400 responses** include `error` (human-readable) and `missingFields` (machine-readable names, e.g. `["to"]`, `["text","html"]` when both body fields are empty).
+- If `html` is set and `text` is empty, the server derives a plain-text part from HTML for the MIME message.

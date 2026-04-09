@@ -59,27 +59,57 @@ function resolveFromAddress() {
 }
 
 /**
+ * Rough plain-text fallback for multipart/alternative when only HTML is provided.
+ * @param {string} html
+ * @returns {string}
+ */
+function htmlToPlainText(html) {
+  if (!html || typeof html !== 'string') return '';
+  return html
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim()
+    .slice(0, 20000);
+}
+
+/**
  * Send mail via SMTP, or log only when SMTP is not configured.
  * @param {Object} options
  * @param {string} options.to
  * @param {string} options.subject
- * @param {string} options.text
+ * @param {string} [options.text]
  * @param {string} [options.html]
  * @returns {Promise}
  */
 export function sendEmail({ to, subject, text, html }) {
+  const textTrim = text != null ? String(text).trim() : '';
+  const htmlTrim = html != null ? String(html).trim() : '';
+  const plainBody = textTrim || (htmlTrim ? htmlToPlainText(htmlTrim) : '');
+
   const mailOptions = {
     from: resolveFromAddress(),
     to,
     subject,
-    text,
-    html,
+    text: plainBody || ' ',
+    html: htmlTrim || undefined,
   };
 
   console.log('Email details:', {
     to: mailOptions.to,
     subject: mailOptions.subject,
-    text: mailOptions.text,
+    text: plainBody ? `${plainBody.slice(0, 120)}${plainBody.length > 120 ? '…' : ''}` : '(empty)',
     html: mailOptions.html ? 'HTML content present' : 'No HTML content',
     timestamp: new Date().toISOString(),
     smtpConfigured: hasEmailCredentials,
