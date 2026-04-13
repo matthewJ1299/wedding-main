@@ -59,8 +59,8 @@ function App() {
 		<AuthProvider>
 			<InviteeProvider>
 				<InviteeNavigationProvider>
-					<RsvpModalProvider>
-						<EmailTemplateProvider>
+					<EmailTemplateProvider>
+						<RsvpModalProvider>
 							<CustomThemeProvider>
 								<ThemeProvider theme={muiTheme}>
 									<LandingNoticeDialog />
@@ -125,8 +125,8 @@ function App() {
 									</Box>
 								</ThemeProvider>
 							</CustomThemeProvider>
-						</EmailTemplateProvider>
-					</RsvpModalProvider>
+						</RsvpModalProvider>
+					</EmailTemplateProvider>
 				</InviteeNavigationProvider>
 			</InviteeProvider>
 		</AuthProvider>

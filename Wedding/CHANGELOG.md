@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- **RSVP modal context fix**: `EmailTemplateProvider` now wraps `RsvpModalProvider` in `App.js` so `RsvpForm` (rendered from modal context) can safely call `useEmailTemplates` without runtime context errors.
 - **RSVP thank-you email**: After submit, guests receive the seeded Canva template **RSVP thanks — attending** (`tpl-canva-rsvp-yes`) or **RSVP thanks — unable to attend** (`tpl-canva-rsvp-no`) with the same merge fields as Admin sends; if those templates are missing from context, a short plain fallback email is used.
 - **Frontend notifications**: Removed `ToastHost` / `notificationBus`, `apiFetch` success and error toasts, RSVP form snackbars, and admin email-template snackbars. API traffic is still logged in the console; RSVP keeps inline `SuccessMessage` / `ErrorMessage`; template save/delete errors log with `console.error`.
 - **RSVP**: Meal preference dropdown replaced with optional free-text **dietary requirements and allergies** (stored in existing `mealSelection` column). New optional **message to the happy couple** field persisted as `messageToCouple`. Migration `002_invitee_message_to_couple.sql` adds the column; admin CSV exports (Invitees table and Summary tab) include dietary, song, and message columns.
