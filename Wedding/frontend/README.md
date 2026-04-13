@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Guest site navigation
+
+The fixed header bar on the home, invitation, and RSVP entry pages is `src/components/homepage/HeaderNavigation.js`. It includes **HOME** (to `/`, preserving `?invitee=` when applicable) plus in-page section links (Our Story, Location, Schedule, and so on) and RSVP when an invitee context exists.
+
 ## cPanel (Apache) static hosting
 
 React Router uses paths such as `/admin` and `/login`. On Apache, those requests must fall back to `index.html`. The file `public/.htaccess` contains the rewrite rules and is **copied into `build/`** when you run `npm run build`. Upload the full `build` output to `public_html` (include hidden files so `.htaccess` is present). Full steps: [CPANEL_DEPLOYMENT.md](../../CPANEL_DEPLOYMENT.md) in the repo root.

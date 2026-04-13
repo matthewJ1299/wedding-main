@@ -13,6 +13,7 @@ const INVITEE_COLUMNS = new Set([
   'plusOneName',
   'mealSelection',
   'songRequest',
+  'messageToCouple',
 ]);
 
 class InviteeRepository {
@@ -27,8 +28,8 @@ class InviteeRepository {
    */
   async create(invitee) {
     await this.db.query(
-      `INSERT INTO invitees (id, name, partner, email, phone, rsvp, "inviteCode", "allowPlusOne", "plusOneName", "mealSelection", "songRequest")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      `INSERT INTO invitees (id, name, partner, email, phone, rsvp, "inviteCode", "allowPlusOne", "plusOneName", "mealSelection", "songRequest", "messageToCouple")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
       [
         invitee.id,
         invitee.name,
@@ -41,6 +42,7 @@ class InviteeRepository {
         invitee.plusOneName ?? null,
         invitee.mealSelection ?? null,
         invitee.songRequest ?? null,
+        invitee.messageToCouple ?? null,
       ]
     );
   }
@@ -81,7 +83,7 @@ class InviteeRepository {
 
     return this.db.query(
       `UPDATE invitees SET name = $1, partner = $2, email = $3, phone = $4, rsvp = $5, "inviteCode" = $6,
-       "allowPlusOne" = $7, "plusOneName" = $8, "mealSelection" = $9, "songRequest" = $10 WHERE id = $11`,
+       "allowPlusOne" = $7, "plusOneName" = $8, "mealSelection" = $9, "songRequest" = $10, "messageToCouple" = $11 WHERE id = $12`,
       [
         merged.name,
         merged.partner,
@@ -93,6 +95,7 @@ class InviteeRepository {
         merged.plusOneName,
         merged.mealSelection ?? null,
         merged.songRequest ?? null,
+        merged.messageToCouple ?? null,
         id,
       ]
     );

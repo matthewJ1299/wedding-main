@@ -20,7 +20,6 @@ import {
   EmailInput,
   PhoneInput,
   TextAreaInput,
-  SelectInput,
   ErrorMessage,
   SuccessMessage,
   TextInput,
@@ -43,6 +42,7 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
   const [partnerName, setPartnerName] = useState('');
   const [mealSelection, setMealSelection] = useState('');
   const [songRequest, setSongRequest] = useState('');
+  const [messageToCouple, setMessageToCouple] = useState('');
   const [status, setStatus] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -63,6 +63,9 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
     setPhone(inviteeFromLink.phone || '');
     setPartnerName(inviteeFromLink.partner || '');
     setStatus(inviteeFromLink.rsvp || null);
+    setMealSelection(inviteeFromLink.mealSelection || '');
+    setSongRequest(inviteeFromLink.songRequest || '');
+    setMessageToCouple(inviteeFromLink.messageToCouple || '');
   }, [inviteCode, inviteeFromLink]);
 
   const handleRSVP = async (rsvpStatus) => {
@@ -168,8 +171,9 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
         invitee.allowPlusOne && !(invitee.partner || '').trim()
           ? effectivePartnerName
           : undefined,
-      mealSelection: rsvpStatus === 'accepted' ? mealSelection : undefined,
-      songRequest: rsvpStatus === 'accepted' ? songRequest.trim() : undefined,
+      mealSelection: rsvpStatus === 'accepted' ? (mealSelection || '').trim() || null : null,
+      songRequest: rsvpStatus === 'accepted' ? (songRequest || '').trim() || null : null,
+      messageToCouple: (messageToCouple || '').trim() || null,
     };
 
     if (!detailsChanged) {
@@ -280,26 +284,32 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
 
         {inviteeFromLink ? (
           <>
-            <SelectInput
-              label="Meal Preference"
+            <TextAreaInput
+              label="Dietary requirements and allergies (optional)"
               value={mealSelection}
               onChange={(e) => setMealSelection(e.target.value)}
-              options={[
-                { value: '', label: 'Select meal preference' },
-                { value: 'standard', label: 'Standard' },
-                { value: 'vegetarian', label: 'Vegetarian' },
-                { value: 'other', label: 'Other (please specify in dietary notes)' },
-              ]}
+              onBlur={(e) => setMealSelection(sanitizeInput(e.target.value))}
+              placeholder="For example vegetarian, nut allergy, or other requirements"
               className="rsvp-form-field"
+              rows={3}
             />
             <TextAreaInput
-              label="Song Request (optional)"
+              label="Song request (optional)"
               value={songRequest}
               onChange={(e) => setSongRequest(e.target.value)}
               onBlur={(e) => setSongRequest(sanitizeInput(e.target.value))}
               placeholder="A song you would love to hear on the dance floor"
               className="rsvp-form-field"
               rows={2}
+            />
+            <TextAreaInput
+              label="Send a message to the happy couple (optional)"
+              value={messageToCouple}
+              onChange={(e) => setMessageToCouple(e.target.value)}
+              onBlur={(e) => setMessageToCouple(sanitizeInput(e.target.value))}
+              placeholder="A note, congratulations, or anything you would like to share"
+              className="rsvp-form-field"
+              rows={3}
             />
           </>
         ) : null}

@@ -73,8 +73,27 @@ export default function HeaderNavigation() {
     );
   };
 
+  const homePath = getUrlWithContext('/');
+  const HomeNavLink = ({ onNavigate }) => {
+    const handleHomeClick = (e) => {
+      if (pathname === '/') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      onNavigate?.();
+    };
+    return (
+      <Link to={homePath} className="nav-link" onClick={handleHomeClick}>
+        HOME
+      </Link>
+    );
+  };
+
   const drawerLinks = (
     <>
+      <Box component="div" sx={{ py: 1.5, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+        <HomeNavLink onNavigate={closeMobileMenu} />
+      </Box>
       {SECTION_LINKS.map(({ id, label }) => (
         <Box key={id} component="div" sx={{ py: 1.5, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           <NavLink sectionId={id} label={label} onNavigate={closeMobileMenu} />
@@ -111,6 +130,7 @@ export default function HeaderNavigation() {
           className="header-nav-bar"
           sx={{ display: { xs: 'none', md: 'flex' } }}
         >
+          <HomeNavLink />
           {SECTION_LINKS.map(({ id, label }) => (
             <NavLink key={id} sectionId={id} label={label} />
           ))}

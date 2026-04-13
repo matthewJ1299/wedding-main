@@ -58,7 +58,7 @@ export async function PUT(request, { params }) {
     const updates = await request.json();
     console.log('PUT /api/invitees/[id] - ID:', id, 'Updates:', updates);
 
-    const allowedFields = ['name', 'partner', 'email', 'phone', 'rsvp', 'inviteCode', 'allowPlusOne', 'plusOneName', 'plusOneEmail', 'plusOnePhone', 'mealSelection', 'songRequest'];
+    const allowedFields = ['name', 'partner', 'email', 'phone', 'rsvp', 'inviteCode', 'allowPlusOne', 'plusOneName', 'plusOneEmail', 'plusOnePhone', 'mealSelection', 'songRequest', 'messageToCouple'];
     const sanitizedUpdates = {};
 
     for (const [key, value] of Object.entries(updates)) {

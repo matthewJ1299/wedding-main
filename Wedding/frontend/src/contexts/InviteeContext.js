@@ -80,6 +80,9 @@ export const InviteeProvider = ({ children }) => {
     if (trimmed.plusOneName !== undefined) trimmed.plusOneName = (trimmed.plusOneName || '').trim();
     if (trimmed.plusOneEmail !== undefined) trimmed.plusOneEmail = (trimmed.plusOneEmail || '').trim();
     if (trimmed.plusOnePhone !== undefined) trimmed.plusOnePhone = (trimmed.plusOnePhone || '').trim();
+    if (trimmed.mealSelection !== undefined) trimmed.mealSelection = (trimmed.mealSelection || '').trim() || null;
+    if (trimmed.songRequest !== undefined) trimmed.songRequest = (trimmed.songRequest || '').trim() || null;
+    if (trimmed.messageToCouple !== undefined) trimmed.messageToCouple = (trimmed.messageToCouple || '').trim() || null;
     const updated = await updateInviteeApi(id, trimmed);
     setInvitees((prev) => prev.map((i) => (i.id === id ? updated : i)));
   };
