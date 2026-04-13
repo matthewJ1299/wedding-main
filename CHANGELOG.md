@@ -2,6 +2,10 @@
 
 ## 2026-04-13
 
+- **RSVP email**: Thank-you message after RSVP uses DB templates `tpl-canva-rsvp-yes` / `tpl-canva-rsvp-no` (see `RSVP_THANK_YOU_TEMPLATE_IDS` in frontend constants). Shared guest merge fields live in `getGuestEmailMergeFields()` (`emailTemplateDefaults.js`).
+
+- **Frontend**: Removed global API toasts (`ToastHost`, `notificationBus`) and all MUI `Snackbar` toast-style notifications. `apiFetch` only logs to the console; RSVP still shows inline success/error alerts; admin email template actions log errors to the console on failure.
+
 - **RSVP guest notes**: Optional free-text dietary/allergies (replacing meal dropdown; still stored as `mealSelection`), optional message to the couple (`messageToCouple`), backend migration `002_invitee_message_to_couple.sql`, repository/API updates, and CSV export columns on admin Invitees + Summary exports.
 
 ## 2026-04-09 (database + admin API UX)
@@ -10,7 +14,7 @@
 - **Backups**: `npm run backup:db` / `src/utils/dbBackup.js` uses `pg_dump` / `psql` (PostgreSQL client tools). The backend Docker image no longer installs `postgresql-client` by default (to avoid hosted builder `apt-get` flakiness); run backups from a separate ops container/job or use platform DB backup/snapshots.
 - **Coolify build stability**: Backend and frontend Docker build stages now use `npm ci --include=dev` so builds succeed even when `NODE_ENV=production` is injected as a build argument (which otherwise omits devDependencies required for `npm run build`).
 - **Seed build fix**: Restored `DUMMY_INVITEES` export in `src/seed/invitees.js` (and deployment mirror) to fix backend `next build` failure in `/api/seed` route (`Export DUMMY_INVITEES doesn't exist in target module`).
-- **Admin API toasts + logging**: All frontend HTTP calls go through `src/services/apiFetch.js` (console request logging) with global MUI toasts via `src/notifications/ToastHost.js` and `notificationBus.js`.
+- **Admin API logging**: Frontend HTTP calls go through `src/services/apiFetch.js` (console request logging). (Toasts were added then later removed; see 2026-04-13 changelog entry.)
 
 ## 2026-04-09
 

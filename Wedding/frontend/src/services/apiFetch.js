@@ -1,31 +1,3 @@
-import { notifyToast } from '../notifications/notificationBus';
-
-/**
- * @param {string} url
- * @returns {string}
- */
-function pathnameOnly(url) {
-  try {
-    const base =
-      typeof window !== 'undefined' && window.location?.origin
-        ? window.location.origin
-        : 'http://localhost';
-    return new URL(url, base).pathname;
-  } catch {
-    return url;
-  }
-}
-
-/**
- * @param {string} method
- * @param {string} url
- * @returns {string}
- */
-function defaultSuccessMessage(method, url) {
-  const path = pathnameOnly(url);
-  return `${method} ${path} — OK`;
-}
-
 /**
  * @param {Response} res
  * @returns {Promise<unknown>}
@@ -43,18 +15,14 @@ async function parseJsonSafe(res) {
 }
 
 /**
- * Central API fetch: logs every request and shows success/error toasts (unless disabled).
+ * Central API fetch: logs every request; throws on non-OK responses.
  *
  * @param {string} url
- * @param {RequestInit & {
- *   successMessage?: string,
- *   skipToast?: boolean,
- *   parseJson?: boolean,
- * }} [options]
+ * @param {RequestInit & { parseJson?: boolean }} [options]
  * @returns {Promise<unknown>}
  */
 export async function apiFetch(url, options = {}) {
-  const { successMessage, skipToast = false, parseJson = true, ...init } = options;
+  const { parseJson = true, ...init } = options;
   const method = (init.method || 'GET').toUpperCase();
   const started = Date.now();
   console.log('[API]', method, url, 'started');
@@ -66,9 +34,6 @@ export async function apiFetch(url, options = {}) {
   } catch (err) {
     const ms = Date.now() - started;
     console.error('[API]', method, url, 'network error after', ms, 'ms', err);
-    if (!skipToast) {
-      notifyToast({ type: 'error', message: err.message || 'Network error' });
-    }
     throw err;
   }
 
@@ -84,14 +49,7 @@ export async function apiFetch(url, options = {}) {
         const fields = j.missingFields.join(', ');
         if (!msg.includes(fields)) msg = `${msg} (fields: ${fields})`;
       }
-      if (!skipToast) notifyToast({ type: 'error', message: msg });
       throw new Error(msg);
-    }
-    if (!skipToast) {
-      notifyToast({
-        type: 'success',
-        message: successMessage || defaultSuccessMessage(method, url),
-      });
     }
     return res;
   }
@@ -112,15 +70,7 @@ export async function apiFetch(url, options = {}) {
         msg = `${msg} (fields: ${fields})`;
       }
     }
-    if (!skipToast) notifyToast({ type: 'error', message: msg });
     throw new Error(msg);
-  }
-
-  if (!skipToast) {
-    notifyToast({
-      type: 'success',
-      message: successMessage || defaultSuccessMessage(method, url),
-    });
   }
 
   return body;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Grid, Dialog, DialogTitle, DialogContent, 
          DialogActions, TextField, Button, Tab, Tabs, CircularProgress, 
-         Alert, Snackbar } from '@mui/material';
+         Alert } from '@mui/material';
 import { useEmailTemplates } from '../../contexts/EmailTemplateContext';
 import EmailTemplate from './EmailTemplate';
 import EmailTemplateEditor from './EmailTemplateEditor';
@@ -32,12 +32,6 @@ const EmailTemplateManager = () => {
     name: '',
     subject: '',
   });
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    severity: 'success'
-  });
-
   // Reset editor content when editing template changes
   useEffect(() => {
     if (editingTemplate) {
@@ -89,27 +83,13 @@ const EmailTemplateManager = () => {
 
       if (editingTemplate) {
         updateTemplate(editingTemplate.id, templateToSave);
-        setSnackbar({
-          open: true,
-          message: 'Template updated successfully',
-          severity: 'success'
-        });
       } else {
         addTemplate(templateToSave);
-        setSnackbar({
-          open: true,
-          message: 'New template created successfully',
-          severity: 'success'
-        });
       }
 
       handleCloseDialog();
     } catch (error) {
-      setSnackbar({
-        open: true,
-        message: 'Error saving template: ' + error.message,
-        severity: 'error'
-      });
+      console.error('Error saving template:', error);
     }
   };
 
@@ -119,17 +99,8 @@ const EmailTemplateManager = () => {
       if (selectedTemplate?.id === id) {
         setSelectedTemplate(null);
       }
-      setSnackbar({
-        open: true,
-        message: 'Template deleted successfully',
-        severity: 'success'
-      });
     } catch (error) {
-      setSnackbar({
-        open: true,
-        message: 'Error deleting template: ' + error.message,
-        severity: 'error'
-      });
+      console.error('Error deleting template:', error);
     }
   };
 
@@ -141,28 +112,14 @@ const EmailTemplateManager = () => {
         id: undefined
       };
       addTemplate(duplicatedTemplate);
-      setSnackbar({
-        open: true,
-        message: 'Template duplicated successfully',
-        severity: 'success'
-      });
     } catch (error) {
-      setSnackbar({
-        open: true,
-        message: 'Error duplicating template: ' + error.message,
-        severity: 'error'
-      });
+      console.error('Error duplicating template:', error);
     }
   };
 
   const handleResetTemplates = () => {
     if (window.confirm('This will reset all templates to defaults. Are you sure?')) {
       resetTemplates();
-      setSnackbar({
-        open: true,
-        message: 'Templates reset to defaults',
-        severity: 'info'
-      });
     }
   };
 
@@ -281,21 +238,6 @@ const EmailTemplateManager = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({...snackbar, open: false})}
-      >
-        <Alert 
-          onClose={() => setSnackbar({...snackbar, open: false})} 
-          severity={snackbar.severity} 
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

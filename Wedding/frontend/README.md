@@ -6,6 +6,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 The fixed header bar on the home, invitation, and RSVP entry pages is `src/components/homepage/HeaderNavigation.js`. It includes **HOME** (to `/`, preserving `?invitee=` when applicable) plus in-page section links (Our Story, Location, Schedule, and so on) and RSVP when an invitee context exists.
 
+## HTTP client
+
+Admin and other API calls use `src/services/apiFetch.js`. It logs each request to the browser console and throws on failure; it does not show pop-up toasts. Components should surface errors with inline alerts, dialogs, or other UI as needed.
+
 ## cPanel (Apache) static hosting
 
 React Router uses paths such as `/admin` and `/login`. On Apache, those requests must fall back to `index.html`. The file `public/.htaccess` contains the rewrite rules and is **copied into `build/`** when you run `npm run build`. Upload the full `build` output to `public_html` (include hidden files so `.htaccess` is present). Full steps: [CPANEL_DEPLOYMENT.md](../../CPANEL_DEPLOYMENT.md) in the repo root.

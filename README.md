@@ -197,7 +197,7 @@ From the repository root (`wedding-main/`), with Docker installed:
 
 Compose runs a **`postgres`** service (with a `postgres_data` volume) and sets **`DATABASE_URL`** on the backend to reach it on the Docker network. The backend also mounts **`wedding_data`** at `/data` for uploads (`UPLOAD_DIR=/data/uploads`) and backups (`BACKUP_DIR=/data/backups`). The static site image is built with `REACT_APP_API_URL` / `REACT_APP_SITE_URL` build args so the browser calls the correct API origin.
 
-**Architecture notes:** API routes use repository classes backed by a `PostgresDb` adapter (`src/db/`). The React app centralizes HTTP in `src/services/apiFetch.js` (logging + success/error toasts via `src/notifications/ToastHost.js`).
+**Architecture notes:** API routes use repository classes backed by a `PostgresDb` adapter (`src/db/`). The React app centralizes HTTP in `src/services/apiFetch.js` (console request logging; callers handle success and error UI).
 
 **Coolify:** attach domains in the UI to the **frontend** (container port **80**) and **backend** (container port **3001**). Do not rely on publishing host ports 8080/3001; the default `docker-compose.yml` is built for that. If you ever see `Bind for 0.0.0.0:8080 failed: port is already allocated`, you are using a compose file that publishes 8080 on the host; use the repo default or remove host `ports` for Coolify.
 

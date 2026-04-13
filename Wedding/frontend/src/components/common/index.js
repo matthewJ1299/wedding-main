@@ -9,7 +9,6 @@ export { default as FormField, TextInput, EmailInput, PhoneInput, PasswordInput,
 // Alert components
 export { 
   default as AlertMessage, 
-  SnackbarAlert, 
   ErrorMessage, 
   SuccessMessage, 
   WarningMessage, 

@@ -4,8 +4,7 @@ import { useInvitees } from '../../contexts/InviteeContext';
 import { useEmailTemplates } from '../../contexts/EmailTemplateContext';
 import { sendEmail } from '../../services/emailService';
 import { trackEmail, EMAIL_EVENTS, generateTrackingPixel } from '../../services/emailTrackingService';
-import { APP_URLS } from '../../utils/constants';
-import { getEmailTemplateMergeDefaults } from '../../utils/emailTemplateDefaults';
+import { getGuestEmailMergeFields } from '../../utils/emailTemplateDefaults';
 import EmailTemplateManager from '../../components/email/EmailTemplateManager';
 import EmailPreview from '../../components/email/EmailPreview';
 import EmailStats from '../../components/email/EmailStats';
@@ -48,22 +47,7 @@ const EmailTab = () => {
 
   const toRecipientData = (inv) => {
     if (!inv) return null;
-    const siteUrl = (APP_URLS.SITE_URL || '').replace(/\/+$/, '');
-    const invitationLink = inv.id ? `${siteUrl}/invitation/${inv.id}` : '';
-    const rsvpLink = inv.id ? `${siteUrl}/rsvp/${inv.id}` : '';
-    return {
-      ...getEmailTemplateMergeDefaults(),
-      guestName: inv.name || '',
-      guestPartner: inv.partner || '',
-      email: inv.email || '',
-      phone: inv.phone || '',
-      rsvp: inv.rsvp || 'pending',
-      rsvpLink,
-      invitationLink,
-
-      name: inv.name || '',
-      partner: inv.partner || '',
-    };
+    return getGuestEmailMergeFields(inv);
   };
 
   const previewRecipientData = useMemo(

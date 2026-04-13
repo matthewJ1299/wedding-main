@@ -1,6 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -8,6 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import '../../styles/RSVPPage.css';
 
 import { useInvitees } from '../../contexts/InviteeContext';
+import { useEmailTemplates } from '../../contexts/EmailTemplateContext';
 import { sendEmail } from '../../services/emailService';
 import { generateApprovalLink } from '../../services/approvalService';
 
@@ -15,7 +14,13 @@ import Typography from '../ui/Typography';
 import Button from '../ui/Button';
 
 import { sanitizeInput, validateEmail, validatePhone } from '../../utils/validation';
-import { APP_URLS, SUCCESS_MESSAGES, ERROR_MESSAGES } from '../../utils/constants';
+import {
+  APP_URLS,
+  SUCCESS_MESSAGES,
+  ERROR_MESSAGES,
+  RSVP_THANK_YOU_TEMPLATE_IDS,
+} from '../../utils/constants';
+import { getGuestEmailMergeFields } from '../../utils/emailTemplateDefaults';
 import {
   EmailInput,
   PhoneInput,
@@ -30,6 +35,7 @@ import {
  */
 export default function RsvpForm({ inviteCode, onRequestClose }) {
   const { invitees, updateInvitee } = useInvitees();
+  const { prepareTemplate } = useEmailTemplates();
 
   const inviteeFromLink = useMemo(() => {
     if (!inviteCode) return null;
@@ -46,7 +52,6 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
   const [status, setStatus] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
   const [rsvpDisabled, setRsvpDisabled] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
@@ -201,25 +206,45 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
     setStatus(rsvpStatus);
     setRsvpDisabled(true);
 
-    const emailDetails = {
-      to: invitee.email,
-      subject: 'RSVP Confirmation',
-      text: `Thank you, ${invitee.name}${
-        invitee.allowPlusOne && effectivePartnerName ? ' and ' + effectivePartnerName : ''
-      }, for your RSVP: ${rsvpStatus}`,
-      html: `<p>Thank you, <strong>${invitee.name}${
-        invitee.allowPlusOne && effectivePartnerName ? ' and ' + effectivePartnerName : ''
-      }</strong>, for your RSVP.</p>
+    const partnerForEmail =
+      invitee.allowPlusOne && !(invitee.partner || '').trim() && rsvpStatus === 'accepted'
+        ? effectivePartnerName
+        : invitee.partner || '';
+    const mergeInvitee = { ...invitee, partner: partnerForEmail, rsvp: rsvpStatus };
+    const guestMerge = getGuestEmailMergeFields(mergeInvitee);
+    const templateId =
+      rsvpStatus === 'accepted'
+        ? RSVP_THANK_YOU_TEMPLATE_IDS.ATTENDING
+        : RSVP_THANK_YOU_TEMPLATE_IDS.DECLINED;
+    const prepared = prepareTemplate(templateId, guestMerge);
+
+    const emailDetails =
+      prepared && (prepared.html || prepared.text)
+        ? {
+            to: invitee.email,
+            subject: prepared.subject,
+            text: prepared.text || '',
+            html: prepared.html || '',
+          }
+        : {
+            to: invitee.email,
+            subject: 'RSVP Confirmation',
+            text: `Thank you, ${invitee.name}${
+              invitee.allowPlusOne && effectivePartnerName ? ' and ' + effectivePartnerName : ''
+            }, for your RSVP: ${rsvpStatus}`,
+            html: `<p>Thank you, <strong>${invitee.name}${
+              invitee.allowPlusOne && effectivePartnerName ? ' and ' + effectivePartnerName : ''
+            }</strong>, for your RSVP.</p>
              <p>Your response: <strong>${rsvpStatus === 'accepted' ? 'Attending' : 'Not Attending'}</strong></p>`,
-    };
+          };
 
     try {
       await sendEmail(emailDetails);
-      setSuccess(rsvpStatus === 'accepted' ? SUCCESS_MESSAGES.RSVP_ACCEPTED : SUCCESS_MESSAGES.RSVP_DECLINED);
-      setSnackbar({ open: true, message: SUCCESS_MESSAGES.EMAIL_SENT, severity: 'success' });
+      const rsvpMsg =
+        rsvpStatus === 'accepted' ? SUCCESS_MESSAGES.RSVP_ACCEPTED : SUCCESS_MESSAGES.RSVP_DECLINED;
+      setSuccess(`${rsvpMsg} ${SUCCESS_MESSAGES.EMAIL_SENT}`);
     } catch (err) {
       setError(ERROR_MESSAGES.EMAIL_SEND_FAILED);
-      setSnackbar({ open: true, message: ERROR_MESSAGES.EMAIL_SEND_FAILED, severity: 'error' });
     }
   };
 
@@ -335,17 +360,6 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
 
         {error ? <ErrorMessage message={error} className="rsvp-alert" /> : null}
         {success ? <SuccessMessage message={success} className="rsvp-alert" /> : null}
-
-        <Snackbar
-          open={snackbar.open}
-          autoHideDuration={4000}
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <MuiAlert elevation={6} variant="filled" severity={snackbar.severity}>
-            {snackbar.message}
-          </MuiAlert>
-        </Snackbar>
 
         {status ? (
           <Typography variant="body2" className="rsvp-status">

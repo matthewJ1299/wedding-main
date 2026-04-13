@@ -72,6 +72,15 @@ export const RSVP_CONFIG = {
 };
 
 /**
+ * Email template IDs from backend seed (`DEFAULT_EMAIL_TEMPLATES` / Canva bodies).
+ * Used when a guest submits RSVP to send the correct thank-you layout.
+ */
+export const RSVP_THANK_YOU_TEMPLATE_IDS = {
+  ATTENDING: 'tpl-canva-rsvp-yes',
+  DECLINED: 'tpl-canva-rsvp-no',
+};
+
+/**
  * Theme configuration
  */
 export const THEME_CONFIG = {

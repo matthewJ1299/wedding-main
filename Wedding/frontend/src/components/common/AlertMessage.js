@@ -1,6 +1,5 @@
 import React from 'react';
 import Alert from '@mui/material/Alert';
-import Snackbar from '@mui/material/Snackbar';
 import Box from '@mui/material/Box';
 
 /**
@@ -34,38 +33,6 @@ export const AlertMessage = ({
     >
       {message}
     </Alert>
-  );
-};
-
-/**
- * Snackbar alert component for temporary notifications
- */
-export const SnackbarAlert = ({
-  open,
-  onClose,
-  message,
-  type = 'info',
-  duration = 4000,
-  position = { vertical: 'top', horizontal: 'center' },
-  ...props
-}) => {
-  return (
-    <Snackbar
-      open={open}
-      autoHideDuration={duration}
-      onClose={onClose}
-      anchorOrigin={position}
-      {...props}
-    >
-      <Alert
-        onClose={onClose}
-        severity={type}
-        variant="filled"
-        sx={{ width: '100%' }}
-      >
-        {message}
-      </Alert>
-    </Snackbar>
   );
 };
 
