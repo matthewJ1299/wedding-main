@@ -19,6 +19,7 @@
 - `npm run migrate` — apply pending migrations
 - `npm run backup:db` — `pg_dump`-based backups (requires `postgresql-client` / `pg_dump` on `PATH`)
 - `npm run email-templates:generate` — strip RTF from `../invite.html`, `../rsvpyes.html`, `../rsvpno.txt`, write clean HTML back to those paths, and refresh `src/seed/generatedEmailBodies.js` (used by `src/seed/emailTemplates.js` default rows)
+- **Container:** set env `REPLACE_EMAIL_TEMPLATES=true` to run `src/db/reseed-email-templates.mjs` on startup (wipes `email_templates` then inserts defaults). Set back to `false` after first run if templates are edited in admin.
 
 ## Environment
 

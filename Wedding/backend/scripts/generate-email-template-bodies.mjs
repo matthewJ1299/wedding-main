@@ -23,7 +23,9 @@ const inputs = [
 function applyInvitePlaceholders(html) {
   let h = html;
   h = h.replace(/\[Name\]/g, '{guestName}');
-  h = h.replace(/https:\/\/matthewandsydney\.co\.za/g, '{websiteLink}');
+  h = h.replace(/\{websiteLink\}/g, '{rsvpLink}');
+  h = h.replace(/https:\/\/matthewandsydney\.co\.za/g, '{rsvpLink}');
+  h = h.replace(/#ffffff">Website/g, '#ffffff">RSVP');
   h = h.replace(/Saturday,\s*03\s*October\s*2026/g, '{weddingDate}');
   h = h.replace(
     /<span style="white-space:pre-wrap">Please arrive at<\/span><span style="white-space:pre-wrap"> <\/span><span style="white-space:pre-wrap">15:00<\/span>/g,
@@ -38,7 +40,9 @@ function applyInvitePlaceholders(html) {
 function applyRsvpYesPlaceholders(html) {
   let h = html;
   h = h.replace(/\[Name\]/g, '{guestName}');
-  h = h.replace(/https:\/\/matthewandsydney\.co\.za/g, '{websiteLink}');
+  h = h.replace(/\{websiteLink\}/g, '{rsvpLink}');
+  h = h.replace(/https:\/\/matthewandsydney\.co\.za/g, '{rsvpLink}');
+  h = h.replace(/#ffffff">Website/g, '#ffffff">RSVP');
   h = h.replace(
     /<span style="font-weight:700;white-space:pre-wrap">Saturday,\s*03\s*October\s*2026<\/span>/g,
     '<span style="font-weight:700;white-space:pre-wrap">{weddingDate}</span>'

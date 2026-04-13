@@ -260,7 +260,8 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to cPane
 
 - Source files: `Wedding/invite.html`, `Wedding/rsvpyes.html`, `Wedding/rsvpno.txt` (plain HTML, no RTF wrapper).
 - Regenerate seed payloads and rewrite those files after editing exports: from `Wedding/backend`, run `npm run email-templates:generate`.
-- Default API seed adds `tpl-canva-invite`, `tpl-canva-rsvp-yes`, and `tpl-canva-rsvp-no` only when the `email_templates` table is empty. See `Wedding/CHANGELOG.md` for upgrading existing databases.
+- Default API seed inserts **only** the three Canva templates when `email_templates` is empty.
+- **Coolify / Docker — replace all templates on startup:** set **`REPLACE_EMAIL_TEMPLATES=true`** on the **backend** service (see root `docker-compose.yml`). On each container start, after migrations, the backend runs `src/db/reseed-email-templates.mjs`, which **deletes every row** in `email_templates` and re-inserts the defaults. Use this once to drop old templates, then set it back to **`false`** so admin edits are not wiped on every deploy. Primary email buttons use **`{rsvpLink}`** (per-invitee RSVP URL), not the public homepage.
 
 ## Database Schema
 
