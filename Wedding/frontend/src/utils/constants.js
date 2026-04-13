@@ -63,7 +63,7 @@ export const EMAIL_CONFIG = {
  * RSVP configuration
  */
 export const RSVP_CONFIG = {
-  DEADLINE: '2026-05-03', // May 3 , 2026
+  DEADLINE: '2026-06-03', // May 3 , 2026
   STATUSES: {
     PENDING: 'pending',
     ACCEPTED: 'accepted',

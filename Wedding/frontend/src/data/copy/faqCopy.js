@@ -41,6 +41,6 @@ export const getFaqItems = (rsvpDeadlineFormatted) => [
   },
   {
     question: 'Will there be a cash bar?',
-    answer: "As much as we'd love to keep everyone's drinks flowing all night, knowing how much some of you can put away would bankrupt us😉. We'll have a limited tab during canapés(beer, cider and wine), and after that the bar will be cash.",
+    answer: "As much as we'd love to keep everyone's drinks flowing all night, knowing how much some of you can put away would bankrupt us 😉 We'll have a limited tab during canapés (beer, cider and wine), and after that the bar will be cash.",
   }
 ];
