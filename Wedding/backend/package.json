@@ -11,7 +11,8 @@
     "start:cpanel": "NODE_ENV=production PORT=3001 node server.js",
     "lint": "eslint",
     "migrate": "node src/db/run-migrations.mjs",
-    "backup:db": "node src/utils/dbBackup.js"
+    "backup:db": "node src/utils/dbBackup.js",
+    "email-templates:generate": "node scripts/generate-email-template-bodies.mjs"
   },
   "dependencies": {
     "compression": "^1.7.4",

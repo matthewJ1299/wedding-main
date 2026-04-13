@@ -3,6 +3,7 @@ import { Box, Typography, Paper, Tabs, Tab, TextField, Button,
          Grid, FormControl, InputLabel, OutlinedInput, InputAdornment, 
          IconButton, Dialog, DialogTitle, DialogContent, CircularProgress } from '@mui/material';
 import { useEmailTemplates } from '../../contexts/EmailTemplateContext';
+import { getEmailTemplateMergeDefaults } from '../../utils/emailTemplateDefaults';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -45,15 +46,13 @@ const EmailPreview = ({ template, recipientData, onSend }) => {
     if (recipientData) {
       setPreviewData(recipientData);
     } else {
-      // Default sample data
       setPreviewData({
+        ...getEmailTemplateMergeDefaults(),
         guestName: 'Sample Guest',
         guestPartner: 'Sample Partner',
-        weddingDate: 'June 15, 2025',
-        weddingLocation: 'Beautiful Venue',
-        eventAddress: '123 Wedding Lane, Celebration City',
         rsvpLink: 'https://wedding.example.com/rsvp',
-        websiteLink: 'https://wedding.example.com'
+        invitationLink: 'https://wedding.example.com/invitation/sample',
+        email: '',
       });
     }
   }, [recipientData]);

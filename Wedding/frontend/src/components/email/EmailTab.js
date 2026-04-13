@@ -5,6 +5,7 @@ import { useEmailTemplates } from '../../contexts/EmailTemplateContext';
 import { sendEmail } from '../../services/emailService';
 import { trackEmail, EMAIL_EVENTS, generateTrackingPixel } from '../../services/emailTrackingService';
 import { APP_URLS } from '../../utils/constants';
+import { getEmailTemplateMergeDefaults } from '../../utils/emailTemplateDefaults';
 import EmailTemplateManager from '../../components/email/EmailTemplateManager';
 import EmailPreview from '../../components/email/EmailPreview';
 import EmailStats from '../../components/email/EmailStats';
@@ -51,7 +52,7 @@ const EmailTab = () => {
     const invitationLink = inv.id ? `${siteUrl}/invitation/${inv.id}` : '';
     const rsvpLink = inv.id ? `${siteUrl}/rsvp/${inv.id}` : '';
     return {
-      // Template variable values (supports `{var}` and `{{var}}` placeholders)
+      ...getEmailTemplateMergeDefaults(),
       guestName: inv.name || '',
       guestPartner: inv.partner || '',
       email: inv.email || '',
@@ -60,7 +61,6 @@ const EmailTab = () => {
       rsvpLink,
       invitationLink,
 
-      // Aliases (common template naming)
       name: inv.name || '',
       partner: inv.partner || '',
     };

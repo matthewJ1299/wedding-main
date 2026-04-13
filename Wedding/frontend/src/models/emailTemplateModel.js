@@ -17,10 +17,12 @@ export const TEMPLATE_VARIABLES = {
   GUEST_NAME: '{guestName}',
   GUEST_PARTNER: '{guestPartner}',
   WEDDING_DATE: '{weddingDate}',
+  WEDDING_TIME: '{weddingTime}',
   WEDDING_LOCATION: '{weddingLocation}',
   RSVP_LINK: '{rsvpLink}',
   EVENT_ADDRESS: '{eventAddress}',
   WEBSITE_LINK: '{websiteLink}',
+  RSVP_DEADLINE: '{rsvpDeadline}',
 };
 
 /**

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DEFAULT_TEMPLATES, populateTemplate } from '../models/emailTemplateModel';
 import { fetchTemplates, createTemplate, updateTemplateApi, deleteTemplateApi } from '../services/emailTemplateService';
+import { getEmailTemplateMergeDefaults } from '../utils/emailTemplateDefaults';
 
 /**
  * Context for managing email templates
@@ -94,12 +95,14 @@ export const EmailTemplateProvider = ({ children }) => {
   const prepareTemplate = (templateId, guestData) => {
     const template = getTemplateById(templateId);
     if (!template) return null;
-    
+
+    const mergeData = { ...getEmailTemplateMergeDefaults(), ...(guestData || {}) };
+
     const preparedTemplate = { ...template };
-    preparedTemplate.text = populateTemplate(template.text, guestData);
-    preparedTemplate.html = populateTemplate(template.html, guestData);
-    preparedTemplate.subject = populateTemplate(template.subject, guestData);
-    
+    preparedTemplate.text = populateTemplate(template.text, mergeData);
+    preparedTemplate.html = populateTemplate(template.html, mergeData);
+    preparedTemplate.subject = populateTemplate(template.subject, mergeData);
+
     return preparedTemplate;
   };
   

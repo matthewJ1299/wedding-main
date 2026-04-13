@@ -25,7 +25,9 @@ The system consists of several components:
 
 ### Static invitation HTML (copy/paste source)
 
-- `Wedding/invite.html` at the repo root is valid **email-oriented HTML** (table layout, no scripts, UTF-8). Preview in a browser or paste into Admin > Email template HTML. Use the same merge fields as other templates, e.g. `{guestName}` and `{websiteLink}`. Images use absolute Canva CDN URLs; for production longevity, mirror assets to your own HTTPS host and update `img` `src` values.
+- `Wedding/invite.html`, `Wedding/rsvpyes.html`, and `Wedding/rsvpno.txt` at the repo root are **email-oriented HTML** (no RTF wrapper, no scripts, preload tags removed). They stay in sync with the database seed bodies when you run `npm run email-templates:generate` from `Wedding/backend` (see `scripts/generate-email-template-bodies.mjs`). The same layouts are inserted automatically for **new** databases as `tpl-canva-invite`, `tpl-canva-rsvp-yes`, and `tpl-canva-rsvp-no` in `backend/src/seed/emailTemplates.js` (via `generatedEmailBodies.js`).
+- Merge fields: `{guestName}`, `{websiteLink}`, `{weddingDate}`, `{weddingTime}`, `{weddingLocation}`, `{eventAddress}`, `{rsvpDeadline}`, plus per-invitee `{rsvpLink}`, `{invitationLink}`, `{guestPartner}`, and aliases `{name}` / `{{name}}`. Shared fields are filled from `frontend/src/utils/constants.js` through `getEmailTemplateMergeDefaults()`.
+- Images use absolute Canva CDN URLs; for production longevity, mirror assets to your own HTTPS host and update `img` `src` values.
 
 ### Models
 - `models/emailTemplateModel.js`: Defines template structure and provides helper functions
@@ -74,6 +76,8 @@ The system consists of several components:
 - `{eventAddress}`: Complete venue address
 - `{rsvpLink}`: Link to RSVP page
 - `{websiteLink}`: Link to wedding website
+- `{weddingTime}`: Ceremony time (from `WEDDING_DATE` in constants)
+- `{rsvpDeadline}`: RSVP cutoff date (from `RSVP_CONFIG.DEADLINE`)
 
 **Common aliases**
 

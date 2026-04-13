@@ -256,6 +256,12 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to cPane
 - `POST /api/send-email` - Send email (`to`, `subject` required; body requires non-empty `text` and/or `html`. On validation failure, response JSON includes `missingFields`.)
 - `GET /api/email-templates` - Get email templates
 
+### Canva / RTF email layouts
+
+- Source files: `Wedding/invite.html`, `Wedding/rsvpyes.html`, `Wedding/rsvpno.txt` (plain HTML, no RTF wrapper).
+- Regenerate seed payloads and rewrite those files after editing exports: from `Wedding/backend`, run `npm run email-templates:generate`.
+- Default API seed adds `tpl-canva-invite`, `tpl-canva-rsvp-yes`, and `tpl-canva-rsvp-no` only when the `email_templates` table is empty. See `Wedding/CHANGELOG.md` for upgrading existing databases.
+
 ## Database Schema
 
 ### Invitees Table

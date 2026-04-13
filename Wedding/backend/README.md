@@ -18,6 +18,7 @@
 - `npm run start:production` — run `server.js` after build
 - `npm run migrate` — apply pending migrations
 - `npm run backup:db` — `pg_dump`-based backups (requires `postgresql-client` / `pg_dump` on `PATH`)
+- `npm run email-templates:generate` — strip RTF from `../invite.html`, `../rsvpyes.html`, `../rsvpno.txt`, write clean HTML back to those paths, and refresh `src/seed/generatedEmailBodies.js` (used by `src/seed/emailTemplates.js` default rows)
 
 ## Environment
 
