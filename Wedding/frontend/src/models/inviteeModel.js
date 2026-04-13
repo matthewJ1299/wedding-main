@@ -7,6 +7,9 @@
  * @property {string} email - Invitee email address
  * @property {string} phone - Invitee phone number
  * @property {string|null} rsvp - RSVP status: 'accepted', 'declined', or null (pending)
+ * @property {string|null} mealSelection - Free-text dietary requirements and allergies (RSVP)
+ * @property {string|null} songRequest - Optional song request (RSVP)
+ * @property {string|null} messageToCouple - Optional message to the couple (RSVP)
  */
 
 /**

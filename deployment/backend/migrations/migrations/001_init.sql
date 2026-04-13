@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS invitees (
   "allowPlusOne" BOOLEAN DEFAULT FALSE,
   "plusOneName" TEXT,
   "mealSelection" TEXT,
-  "songRequest" TEXT
+  "songRequest" TEXT,
+  "messageToCouple" TEXT
 );
 
 CREATE TABLE IF NOT EXISTS photos (

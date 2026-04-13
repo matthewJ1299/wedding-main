@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-04-13
+
+- **RSVP guest notes**: Optional free-text dietary/allergies (replacing meal dropdown; still stored as `mealSelection`), optional message to the couple (`messageToCouple`), backend migration `002_invitee_message_to_couple.sql`, repository/API updates, and CSV export columns on admin Invitees + Summary exports.
+
 ## 2026-04-09 (database + admin API UX)
 
 - **PostgreSQL**: Replaced SQLite (`node:sqlite` / `data.sqlite`) with PostgreSQL via `pg`, `DATABASE_URL`, and versioned SQL migrations (`Wedding/backend/migrations`, applied by `src/db/run-migrations.mjs` from Docker entrypoint). Docker Compose now includes a `postgres` service and a `postgres_data` volume; backend depends on DB health checks.

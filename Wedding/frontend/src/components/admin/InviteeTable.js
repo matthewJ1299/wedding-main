@@ -112,10 +112,21 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
       const s = (i.rsvp || 'pending').toLowerCase();
       return s === statusFilter;
     });
-    const header = ['name','partner','email','phone','rsvp','allowPlusOne'];
-    const csv = [header.join(',')]
+    const exportSpec = [
+      ['name', 'name'],
+      ['partner', 'partner'],
+      ['email', 'email'],
+      ['phone', 'phone'],
+      ['rsvp', 'rsvp'],
+      ['allowPlusOne', 'allowPlusOne'],
+      ['mealSelection', 'dietaryRequirementsAndAllergies'],
+      ['songRequest', 'songRequest'],
+      ['messageToCouple', 'messageToCouple'],
+    ];
+    const headers = exportSpec.map(([, label]) => label);
+    const csv = [headers.join(',')]
       .concat(
-        rows.map((r) => header.map((h) => JSON.stringify(r[h] ?? '')).join(','))
+        rows.map((r) => exportSpec.map(([key]) => JSON.stringify(r[key] ?? '')).join(','))
       )
       .join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });

@@ -62,7 +62,20 @@ const EnhancedSummaryTab = ({ invitees }) => {
    * Export guest list to CSV
    */
   const exportToCSV = () => {
-    const headers = ['Name', 'Partner', 'Email', 'Phone', 'RSVP Status', 'Plus One Allowed', 'Plus One Email', 'Plus One Phone', 'Invite Code'];
+    const headers = [
+      'Name',
+      'Partner',
+      'Email',
+      'Phone',
+      'RSVP Status',
+      'Plus One Allowed',
+      'Plus One Email',
+      'Plus One Phone',
+      'Dietary requirements and allergies',
+      'Song request',
+      'Message to couple',
+      'Invite Code',
+    ];
     const csvContent = [
       headers.join(','),
       ...invitees.map(invitee => [
@@ -74,8 +87,11 @@ const EnhancedSummaryTab = ({ invitees }) => {
         `"${invitee.allowPlusOne ? 'Yes' : 'No'}"`,
         `"${invitee.plusOneEmail || ''}"`,
         `"${invitee.plusOnePhone || ''}"`,
-        `"${invitee.id}"`
-      ].join(','))
+        `"${(invitee.mealSelection || '').replace(/"/g, '""')}"`,
+        `"${(invitee.songRequest || '').replace(/"/g, '""')}"`,
+        `"${(invitee.messageToCouple || '').replace(/"/g, '""')}"`,
+        `"${invitee.id}"`,
+      ].join(',')),
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
