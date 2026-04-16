@@ -110,6 +110,9 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
     const rows = invitees.filter((i) => {
       if (statusFilter === 'all') return true;
       const s = (i.rsvp || 'pending').toLowerCase();
+      if (statusFilter === 'accepted') {
+        return s === 'accepted' || s === 'mixed';
+      }
       return s === statusFilter;
     });
     const exportSpec = [

@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- **RSVP (2026-04-15)**: Bottom-centered green floating RSVP button; after submit, navigate home. Per-guest **Will attend** checkboxes with `rsvpPrimary` / `rsvpPartner` and aggregate `mixed`; migration `003_invitee_per_person_rsvp.sql`. Email README: deliverability (SPF/DKIM/DMARC) section.
 - **RSVP modal context fix**: `EmailTemplateProvider` now wraps `RsvpModalProvider` in `App.js` so `RsvpForm` (rendered from modal context) can safely call `useEmailTemplates` without runtime context errors.
 - **RSVP thank-you email**: After submit, guests receive the seeded Canva template **RSVP thanks — attending** (`tpl-canva-rsvp-yes`) or **RSVP thanks — unable to attend** (`tpl-canva-rsvp-no`) with the same merge fields as Admin sends; if those templates are missing from context, a short plain fallback email is used.
 - **Frontend notifications**: Removed `ToastHost` / `notificationBus`, `apiFetch` success and error toasts, RSVP form snackbars, and admin email-template snackbars. API traffic is still logged in the console; RSVP keeps inline `SuccessMessage` / `ErrorMessage`; template save/delete errors log with `console.error`.

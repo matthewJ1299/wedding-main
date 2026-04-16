@@ -3,6 +3,7 @@ import { useInviteeNavigation } from '../../contexts/InviteeNavigationContext';
 import { useRsvpModal } from '../../contexts/RsvpModalContext';
 import Button from '../ui/Button';
 import Box from '@mui/material/Box';
+import { COLORS } from '../../styles/styleConstants';
 
 /**
  * Global RSVP button that appears when invitee context is available
@@ -24,12 +25,13 @@ const RSVPButton = () => {
       sx={{
         position: 'fixed',
         bottom: 20,
-        right: 20,
+        left: '50%',
+        transform: 'translateX(-50%)',
         zIndex: 1000,
       }}
     >
       <Button
-        variant="elegant"
+        variant="primary"
         onClick={handleRSVPClick}
         sx={{
           borderRadius: '50px',
@@ -37,9 +39,12 @@ const RSVPButton = () => {
           py: 1.5,
           fontSize: '1rem',
           fontWeight: 600,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+          background: `var(--accent-color, ${COLORS.PRIMARY.MAIN})`,
+          color: COLORS.PRIMARY.CONTRAST,
+          boxShadow: '0 4px 20px rgba(45, 92, 58, 0.35)',
           '&:hover': {
-            boxShadow: '0 6px 25px rgba(0,0,0,0.2)',
+            background: `var(--accent-color-dark, ${COLORS.PRIMARY.DARK})`,
+            boxShadow: '0 6px 25px rgba(45, 92, 58, 0.45)',
             transform: 'translateY(-2px)',
           },
           transition: 'all 0.3s ease',

@@ -42,7 +42,13 @@ const EmailTab = () => {
 
   const groupRecipients = useMemo(() => {
     if (recipientGroup === 'all') return validInvitees;
-    return validInvitees.filter((inv) => (inv.rsvp || 'pending').toLowerCase() === recipientGroup);
+    return validInvitees.filter((inv) => {
+      const s = (inv.rsvp || 'pending').toLowerCase();
+      if (recipientGroup === 'accepted') {
+        return s === 'accepted' || s === 'mixed';
+      }
+      return s === recipientGroup;
+    });
   }, [recipientGroup, validInvitees]);
 
   const toRecipientData = (inv) => {

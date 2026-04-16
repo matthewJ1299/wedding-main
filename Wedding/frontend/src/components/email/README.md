@@ -110,6 +110,27 @@ The Email Statistics tab shows:
 - Email tracking uses web beacons and link tracking
 - The editor uses browser's contentEditable for simplicity
 
+## Deliverability (why mail goes to Junk / Spam)
+
+Transactional mail from a wedding app often hits Junk first because **inbox providers score trust**, not because your template is “wrong”.
+
+**Common causes**
+
+- **Missing or misaligned DNS auth**: SPF, DKIM, and DMARC must align with the **envelope sender** and **From** domain you use in SMTP (`SMTP_FROM` / provider defaults). Sending “from” your personal Gmail while using a different SMTP host fails alignment unless configured correctly.
+- **New domain or IP**: Low reputation until volume and engagement build.
+- **Content and URLs**: Heavy images, URL shorteners, spammy words, or mismatched link domains can add risk (usually secondary to authentication).
+- **Bounces and complaints**: Bad lists or test loops hurt sender reputation.
+
+**What actually fixes it**
+
+1. Send from a domain **you control** (e.g. `hello@matthewandsydney.co.za`), not a free mailbox as the technical From domain, unless the provider documents that exact setup.
+2. Configure **SPF**, **DKIM**, and **DMARC** for that domain in DNS; use your SMTP host’s wizard (SendGrid, SES, Mailgun, Microsoft 365, Google Workspace, etc.).
+3. Use a **consistent From** address and a sensible **Reply-To**; avoid no-reply if you want replies, but keep the domain aligned.
+4. After DNS changes, use your provider’s **domain verification** tools and send test messages to Gmail, Outlook, and Yahoo; use **Google Postmaster Tools** / Microsoft SNDS where applicable.
+5. For production, prefer a **transactional SMTP** product with documented alignment rather than ad-hoc SMTP on a shared host.
+
+This app sends mail via the backend SMTP module (`Wedding/backend/src/emailModule.js`); fixing Junk is almost always **DNS + SMTP identity**, not a React change.
+
 ## Future Enhancements
 
 - Server-side template storage

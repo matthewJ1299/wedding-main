@@ -22,8 +22,9 @@ const EnhancedSummaryTab = ({ invitees }) => {
   // Calculate invitee statistics
   const totalInvitees = invitees.length;
   const accepted = invitees.filter(i => (i.rsvp || '').toLowerCase() === 'accepted').length;
+  const mixed = invitees.filter(i => (i.rsvp || '').toLowerCase() === 'mixed').length;
   const declined = invitees.filter(i => (i.rsvp || '').toLowerCase() === 'declined').length;
-  const pending = totalInvitees - accepted - declined;
+  const pending = totalInvitees - accepted - mixed - declined;
   
   // Plus one statistics
   const withPlusOne = invitees.filter(i => i.allowPlusOne).length;
@@ -160,6 +161,16 @@ const EnhancedSummaryTab = ({ invitees }) => {
                 {accepted} ({totalInvitees > 0 ? Math.round((accepted / totalInvitees) * 100) : 0}%)
               </Typography>
               <Chip label="Accepted" color="success" size="small" />
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="body1">Mixed</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                {mixed} ({totalInvitees > 0 ? Math.round((mixed / totalInvitees) * 100) : 0}%)
+              </Typography>
+              <Chip label="Mixed" color="info" size="small" />
             </Box>
           </Box>
           

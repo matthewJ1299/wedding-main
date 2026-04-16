@@ -8,6 +8,8 @@ const INVITEE_COLUMNS = new Set([
   'email',
   'phone',
   'rsvp',
+  'rsvpPrimary',
+  'rsvpPartner',
   'inviteCode',
   'allowPlusOne',
   'plusOneName',
@@ -28,8 +30,8 @@ class InviteeRepository {
    */
   async create(invitee) {
     await this.db.query(
-      `INSERT INTO invitees (id, name, partner, email, phone, rsvp, "inviteCode", "allowPlusOne", "plusOneName", "mealSelection", "songRequest", "messageToCouple")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+      `INSERT INTO invitees (id, name, partner, email, phone, rsvp, "rsvpPrimary", "rsvpPartner", "inviteCode", "allowPlusOne", "plusOneName", "mealSelection", "songRequest", "messageToCouple")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
       [
         invitee.id,
         invitee.name,
@@ -37,6 +39,8 @@ class InviteeRepository {
         invitee.email ?? '',
         invitee.phone ?? '',
         invitee.rsvp ?? null,
+        invitee.rsvpPrimary ?? null,
+        invitee.rsvpPartner ?? null,
         invitee.inviteCode ?? null,
         invitee.allowPlusOne === true,
         invitee.plusOneName ?? null,
@@ -82,14 +86,17 @@ class InviteeRepository {
     }
 
     return this.db.query(
-      `UPDATE invitees SET name = $1, partner = $2, email = $3, phone = $4, rsvp = $5, "inviteCode" = $6,
-       "allowPlusOne" = $7, "plusOneName" = $8, "mealSelection" = $9, "songRequest" = $10, "messageToCouple" = $11 WHERE id = $12`,
+      `UPDATE invitees SET name = $1, partner = $2, email = $3, phone = $4, rsvp = $5,
+       "rsvpPrimary" = $6, "rsvpPartner" = $7, "inviteCode" = $8,
+       "allowPlusOne" = $9, "plusOneName" = $10, "mealSelection" = $11, "songRequest" = $12, "messageToCouple" = $13 WHERE id = $14`,
       [
         merged.name,
         merged.partner,
         merged.email,
         merged.phone,
         merged.rsvp,
+        merged.rsvpPrimary ?? null,
+        merged.rsvpPartner ?? null,
         merged.inviteCode,
         merged.allowPlusOne === true,
         merged.plusOneName,

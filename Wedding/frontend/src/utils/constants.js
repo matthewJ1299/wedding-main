@@ -136,6 +136,8 @@ export const ERROR_MESSAGES = {
  */
 export const SUCCESS_MESSAGES = {
   RSVP_ACCEPTED: 'RSVP accepted! Thank you for confirming your attendance.',
+  RSVP_MIXED:
+    'RSVP recorded: mixed response (one guest attending, one not). Thank you — we have your details.',
   RSVP_DECLINED: 'RSVP declined. Thank you for letting us know.',
   EMAIL_SENT: 'Email sent successfully!',
   PHOTO_UPLOADED: 'Photo uploaded successfully!',

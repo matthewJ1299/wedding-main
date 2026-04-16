@@ -30,7 +30,13 @@ const EmailForm = ({ invitees, sendEmail }) => {
     // Filter recipients by selected status
     let recipients = invitees;
     if (status !== 'all') {
-      recipients = invitees.filter(inv => (inv.rsvp || 'pending').toLowerCase() === status);
+      recipients = invitees.filter((inv) => {
+        const s = (inv.rsvp || 'pending').toLowerCase();
+        if (status === 'accepted') {
+          return s === 'accepted' || s === 'mixed';
+        }
+        return s === status;
+      });
     }
     
     // Filter out invalid emails

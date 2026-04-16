@@ -298,7 +298,7 @@ const BulkActionsToolbar = ({
               </Typography>
               
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                {['pending', 'accepted', 'declined'].map((status) => (
+                {['pending', 'accepted', 'mixed', 'declined'].map((status) => (
                   <Chip
                     key={status}
                     label={status.charAt(0).toUpperCase() + status.slice(1)}

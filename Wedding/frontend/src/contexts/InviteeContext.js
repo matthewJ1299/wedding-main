@@ -83,6 +83,8 @@ export const InviteeProvider = ({ children }) => {
     if (trimmed.mealSelection !== undefined) trimmed.mealSelection = (trimmed.mealSelection || '').trim() || null;
     if (trimmed.songRequest !== undefined) trimmed.songRequest = (trimmed.songRequest || '').trim() || null;
     if (trimmed.messageToCouple !== undefined) trimmed.messageToCouple = (trimmed.messageToCouple || '').trim() || null;
+    if (trimmed.rsvpPrimary !== undefined) trimmed.rsvpPrimary = trimmed.rsvpPrimary || null;
+    if (trimmed.rsvpPartner !== undefined) trimmed.rsvpPartner = trimmed.rsvpPartner || null;
     const updated = await updateInviteeApi(id, trimmed);
     setInvitees((prev) => prev.map((i) => (i.id === id ? updated : i)));
   };

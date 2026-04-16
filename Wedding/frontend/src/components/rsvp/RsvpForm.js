@@ -1,7 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 import '../../styles/RSVPPage.css';
 
@@ -21,6 +24,7 @@ import {
   RSVP_THANK_YOU_TEMPLATE_IDS,
 } from '../../utils/constants';
 import { getGuestEmailMergeFields } from '../../utils/emailTemplateDefaults';
+import { deriveAggregateRsvp } from '../../utils/rsvpAggregate';
 import {
   EmailInput,
   PhoneInput,
@@ -30,10 +34,13 @@ import {
   TextInput,
 } from '../common';
 
+const RSVP_NAV_DELAY_MS = 1400;
+
 /**
  * RSVP form content (shared between page and modal).
  */
 export default function RsvpForm({ inviteCode, onRequestClose }) {
+  const navigate = useNavigate();
   const { invitees, updateInvitee } = useInvitees();
   const { prepareTemplate } = useEmailTemplates();
 
@@ -55,6 +62,18 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
   const [rsvpDisabled, setRsvpDisabled] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
+  const [attendPrimary, setAttendPrimary] = useState(false);
+  const [attendPartner, setAttendPartner] = useState(false);
+
+  const secondGuestName = useMemo(() => {
+    if (!inviteeFromLink) return '';
+    const fromDb = (inviteeFromLink.partner || '').trim();
+    if (fromDb) return fromDb;
+    if (inviteeFromLink.allowPlusOne) return (partnerName || '').trim();
+    return '';
+  }, [inviteeFromLink, partnerName]);
+
+  const hasSecondGuest = Boolean(secondGuestName);
 
   useEffect(() => {
     setError('');
@@ -71,9 +90,53 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
     setMealSelection(inviteeFromLink.mealSelection || '');
     setSongRequest(inviteeFromLink.songRequest || '');
     setMessageToCouple(inviteeFromLink.messageToCouple || '');
+
+    const legacy = inviteeFromLink.rsvp;
+    const rp = inviteeFromLink.rsvpPrimary;
+    const rq = inviteeFromLink.rsvpPartner;
+    const partnerKnown = (inviteeFromLink.partner || '').trim();
+
+    const setPrimaryFromStored = () => {
+      if (rp === 'accepted' || rp === 'declined') {
+        setAttendPrimary(rp === 'accepted');
+      } else if (legacy === 'accepted' || legacy === 'declined') {
+        setAttendPrimary(legacy === 'accepted');
+      } else {
+        setAttendPrimary(false);
+      }
+    };
+
+    if (!partnerKnown && !inviteeFromLink.allowPlusOne) {
+      setPrimaryFromStored();
+      setAttendPartner(false);
+      return;
+    }
+
+    if (!partnerKnown && inviteeFromLink.allowPlusOne) {
+      setPrimaryFromStored();
+      setAttendPartner(false);
+      return;
+    }
+
+    setPrimaryFromStored();
+
+    if (rq === 'accepted' || rq === 'declined') {
+      setAttendPartner(rq === 'accepted');
+    } else if (legacy === 'accepted' || legacy === 'declined') {
+      setAttendPartner(legacy === 'accepted');
+    } else {
+      setAttendPartner(false);
+    }
   }, [inviteCode, inviteeFromLink]);
 
-  const handleRSVP = async (rsvpStatus) => {
+  const scheduleNavigateHome = useCallback(() => {
+    window.setTimeout(() => {
+      if (onRequestClose) onRequestClose();
+      navigate('/', { replace: true });
+    }, RSVP_NAV_DELAY_MS);
+  }, [navigate, onRequestClose]);
+
+  const handleSubmitRsvp = async () => {
     setError('');
     setSuccess('');
 
@@ -113,10 +176,15 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
     const invitee = inviteeFromLink;
     const effectivePartnerName = (partnerName || '').trim() || (invitee.partner || '').trim();
 
-    if (invitee.allowPlusOne && !(invitee.partner || '').trim() && rsvpStatus === 'accepted' && !effectivePartnerName) {
+    if (invitee.allowPlusOne && !(invitee.partner || '').trim() && attendPartner && !effectivePartnerName) {
       setError('Please enter your partner/plus one’s name.');
       return;
     }
+
+    const effectiveSecond = hasSecondGuest ? secondGuestName : '';
+    const nextPrimary = attendPrimary ? 'accepted' : 'declined';
+    const nextPartner = effectiveSecond ? (attendPartner ? 'accepted' : 'declined') : null;
+    const aggregate = deriveAggregateRsvp(nextPrimary, nextPartner);
 
     const detailsChanged =
       trimmedEmail !== (invitee.email || '') || trimmedPhone !== (invitee.phone || '');
@@ -169,15 +237,18 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
       }
     }
 
+    const anyAttending = aggregate === 'accepted' || aggregate === 'mixed';
+
     const updateData = {
-      rsvp: rsvpStatus,
-      // Partner and plus-one are the same person: store their name in `partner`.
+      rsvp: aggregate,
+      rsvpPrimary: nextPrimary,
+      rsvpPartner: nextPartner,
       partner:
         invitee.allowPlusOne && !(invitee.partner || '').trim()
           ? effectivePartnerName
           : undefined,
-      mealSelection: rsvpStatus === 'accepted' ? (mealSelection || '').trim() || null : null,
-      songRequest: rsvpStatus === 'accepted' ? (songRequest || '').trim() || null : null,
+      mealSelection: anyAttending ? (mealSelection || '').trim() || null : null,
+      songRequest: anyAttending ? (songRequest || '').trim() || null : null,
       messageToCouple: (messageToCouple || '').trim() || null,
     };
 
@@ -199,23 +270,33 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
       );
     });
 
-    await updateInvitee(invitee.id, updateData);
-    if (linkedPartner) {
-      await updateInvitee(linkedPartner.id, { rsvp: rsvpStatus });
+    try {
+      await updateInvitee(invitee.id, updateData);
+      if (linkedPartner) {
+        await updateInvitee(linkedPartner.id, {
+          rsvp: aggregate,
+          rsvpPrimary: nextPartner,
+          rsvpPartner: nextPrimary,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      setError(ERROR_MESSAGES.SERVER_ERROR);
+      return;
     }
-    setStatus(rsvpStatus);
+
+    setStatus(aggregate);
     setRsvpDisabled(true);
 
     const partnerForEmail =
-      invitee.allowPlusOne && !(invitee.partner || '').trim() && rsvpStatus === 'accepted'
+      invitee.allowPlusOne && !(invitee.partner || '').trim() && anyAttending
         ? effectivePartnerName
         : invitee.partner || '';
-    const mergeInvitee = { ...invitee, partner: partnerForEmail, rsvp: rsvpStatus };
+    const mergeInvitee = { ...invitee, partner: partnerForEmail, rsvp: aggregate };
     const guestMerge = getGuestEmailMergeFields(mergeInvitee);
-    const templateId =
-      rsvpStatus === 'accepted'
-        ? RSVP_THANK_YOU_TEMPLATE_IDS.ATTENDING
-        : RSVP_THANK_YOU_TEMPLATE_IDS.DECLINED;
+    const templateId = anyAttending
+      ? RSVP_THANK_YOU_TEMPLATE_IDS.ATTENDING
+      : RSVP_THANK_YOU_TEMPLATE_IDS.DECLINED;
     const prepared = prepareTemplate(templateId, guestMerge);
 
     const emailDetails =
@@ -230,22 +311,34 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
             to: invitee.email,
             subject: 'RSVP Confirmation',
             text: `Thank you, ${invitee.name}${
-              invitee.allowPlusOne && effectivePartnerName ? ' and ' + effectivePartnerName : ''
-            }, for your RSVP: ${rsvpStatus}`,
+              effectiveSecond ? ' and ' + effectiveSecond : ''
+            }, for your RSVP.`,
             html: `<p>Thank you, <strong>${invitee.name}${
-              invitee.allowPlusOne && effectivePartnerName ? ' and ' + effectivePartnerName : ''
+              effectiveSecond ? ' and ' + effectiveSecond : ''
             }</strong>, for your RSVP.</p>
-             <p>Your response: <strong>${rsvpStatus === 'accepted' ? 'Attending' : 'Not Attending'}</strong></p>`,
+             <p>Your response: <strong>${
+               aggregate === 'mixed'
+                 ? 'Mixed (one attending, one not)'
+                 : aggregate === 'accepted'
+                   ? 'Attending'
+                   : 'Not attending'
+             }</strong></p>`,
           };
 
     try {
       await sendEmail(emailDetails);
-      const rsvpMsg =
-        rsvpStatus === 'accepted' ? SUCCESS_MESSAGES.RSVP_ACCEPTED : SUCCESS_MESSAGES.RSVP_DECLINED;
+      let rsvpMsg = SUCCESS_MESSAGES.RSVP_DECLINED;
+      if (aggregate === 'accepted') rsvpMsg = SUCCESS_MESSAGES.RSVP_ACCEPTED;
+      else if (aggregate === 'mixed') rsvpMsg = SUCCESS_MESSAGES.RSVP_MIXED;
       setSuccess(`${rsvpMsg} ${SUCCESS_MESSAGES.EMAIL_SENT}`);
     } catch (err) {
-      setError(ERROR_MESSAGES.EMAIL_SEND_FAILED);
+      let rsvpMsg = SUCCESS_MESSAGES.RSVP_DECLINED;
+      if (aggregate === 'accepted') rsvpMsg = SUCCESS_MESSAGES.RSVP_ACCEPTED;
+      else if (aggregate === 'mixed') rsvpMsg = SUCCESS_MESSAGES.RSVP_MIXED;
+      setSuccess(`${rsvpMsg} ${ERROR_MESSAGES.EMAIL_SEND_FAILED}`);
     }
+
+    scheduleNavigateHome();
   };
 
   return (
@@ -309,6 +402,36 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
 
         {inviteeFromLink ? (
           <>
+            <Box className="rsvp-guest-checkboxes" sx={{ mt: 2, mb: 1 }}>
+              <Typography variant="body2" sx={{ mb: 1, fontFamily: 'Cormorant Garamond, serif', color: '#444' }}>
+                Who will attend?
+              </Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={attendPrimary}
+                    onChange={(e) => setAttendPrimary(e.target.checked)}
+                    disabled={rsvpDisabled}
+                    color="success"
+                  />
+                }
+                label={`${(name || inviteeFromLink.name || 'Guest').trim()} will attend`}
+              />
+              {hasSecondGuest ? (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={attendPartner}
+                      onChange={(e) => setAttendPartner(e.target.checked)}
+                      disabled={rsvpDisabled}
+                      color="success"
+                    />
+                  }
+                  label={`${secondGuestName} will attend`}
+                />
+              ) : null}
+            </Box>
+
             <TextAreaInput
               label="Dietary requirements and allergies (optional)"
               value={mealSelection}
@@ -342,18 +465,12 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
         {inviteeFromLink ? (
           <Box className="rsvp-buttons-container">
             <button
-              onClick={() => handleRSVP('accepted')}
+              type="button"
+              onClick={handleSubmitRsvp}
               disabled={rsvpDisabled}
-              className="rsvp-accept-button"
+              className="rsvp-submit-rsvp-button"
             >
-              Accept
-            </button>
-            <button
-              onClick={() => handleRSVP('declined')}
-              disabled={rsvpDisabled}
-              className="rsvp-decline-button"
-            >
-              Decline
+              Submit RSVP
             </button>
           </Box>
         ) : null}
@@ -370,4 +487,3 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
     </Card>
   );
 }
-

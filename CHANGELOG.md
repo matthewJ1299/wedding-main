@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-04-15
+
+- **RSVP UI**: Floating RSVP button uses the site green (`COLORS.PRIMARY` / `--accent-color`), fixed to the bottom center of the viewport. After a successful RSVP submit, the modal closes and the app navigates to the home page (`/`) after a short delay.
+- **Per-guest RSVP**: Couples (or primary + plus-one once the name is entered) get a **Will attend** checkbox per person. Stored as `rsvpPrimary` / `rsvpPartner` (`accepted` | `declined`); aggregate `rsvp` is `accepted`, `declined`, or `mixed`. Migration `003_invitee_per_person_rsvp.sql` (Wedding/backend and deployment/backend). Linked partner invitee rows stay in sync with swapped primary/partner fields. Admin summaries, CSV export filters, and email recipient group **Accepted** include `mixed` (at least one guest attending).
+- **Email (deliverability)**: Documented in `Wedding/frontend/src/components/email/README.md` why transactional mail often lands in Junk (SPF/DKIM/DMARC, reputation, content) and practical remediation steps.
+
 ## 2026-04-13
 
 - **RSVP email**: Thank-you message after RSVP uses DB templates `tpl-canva-rsvp-yes` / `tpl-canva-rsvp-no` (see `RSVP_THANK_YOU_TEMPLATE_IDS` in frontend constants). Shared guest merge fields live in `getGuestEmailMergeFields()` (`emailTemplateDefaults.js`).

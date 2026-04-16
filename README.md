@@ -6,7 +6,7 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
 
 ### Guest Features
 - **Wedding Information**: Beautiful homepage with countdown timer
-- **RSVP System**: RSVP via a unique invite link (details shown immediately) with email confirmation; RSVP opens in a modal from the nav or floating RSVP button. Guests can enter optional free-text **dietary requirements and allergies**, an optional **song request**, and an optional **message to the happy couple**; these are stored on the invitee record and included in admin CSV exports.
+- **RSVP System**: RSVP via a unique invite link (details shown immediately) with email confirmation; RSVP opens in a modal from the nav or a **bottom-centered floating RSVP button** (brand green). After submitting, guests are returned to the **home page**. For invitations with two named guests (partner on the record or plus-one with an entered name), each person has a **Will attend** checkbox so one can accept and one can decline; responses are stored per guest (`rsvpPrimary` / `rsvpPartner`) with an aggregate status including **mixed**. Guests can enter optional free-text **dietary requirements and allergies**, an optional **song request**, and an optional **message to the happy couple**; these are stored on the invitee record and included in admin CSV exports.
 - **Photo Gallery**: Share and view wedding photos
 - **Wedding Details**: Schedule, accommodation, registry, and FAQ pages
 - **Responsive Design**: Works perfectly on all devices
@@ -15,7 +15,7 @@ A beautiful, modern wedding website built with React and Node.js, featuring RSVP
 - **Guest Management**: Add, edit, and manage invitees
 - **RSVP Tracking**: Monitor responses and guest details
 - **Photo Moderation**: Approve/reject uploaded photos
-- **Email Templates**: Customize email communications and send to recipient groups (All/Accepted/Declined/Pending)
+- **Email Templates**: Customize email communications and send to recipient groups (All/Accepted/Declined/Pending; **Accepted** includes guests with a mixed per-person RSVP if at least one person is attending)
 - **Analytics**: View RSVP statistics and summaries
 
 ### Technical Features
