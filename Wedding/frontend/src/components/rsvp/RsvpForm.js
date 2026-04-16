@@ -315,14 +315,7 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
             }, for your RSVP.`,
             html: `<p>Thank you, <strong>${invitee.name}${
               effectiveSecond ? ' and ' + effectiveSecond : ''
-            }</strong>, for your RSVP.</p>
-             <p>Your response: <strong>${
-               aggregate === 'mixed'
-                 ? 'Mixed (one attending, one not)'
-                 : aggregate === 'accepted'
-                   ? 'Attending'
-                   : 'Not attending'
-             }</strong></p>`,
+            }</strong>, for your RSVP.</p>`,
           };
 
     try {
