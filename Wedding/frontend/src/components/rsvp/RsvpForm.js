@@ -479,9 +479,32 @@ export default function RsvpForm({ inviteCode, onRequestClose }) {
         {success ? <SuccessMessage message={success} className="rsvp-alert" /> : null}
 
         {status ? (
-          <Typography variant="body2" className="rsvp-status">
-            Your RSVP: <b>{status}</b>
-          </Typography>
+          <Box className="rsvp-status">
+            <Typography variant="body2" sx={{ textAlign: 'center' }}>
+              Your RSVP:{' '}
+              <b>
+                {status === 'mixed'
+                  ? 'Mixed'
+                  : status === 'accepted'
+                    ? 'Accepted'
+                    : status === 'declined'
+                      ? 'Declined'
+                      : status}
+              </b>
+            </Typography>
+            {status === 'mixed' ? (
+              <Box sx={{ mt: 0.5 }}>
+                <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                  <b>{(name || inviteeFromLink?.name || 'Guest').trim()}</b>: {attendPrimary ? 'Yes' : 'No'}
+                </Typography>
+                {hasSecondGuest ? (
+                  <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                    <b>{secondGuestName}</b>: {attendPartner ? 'Yes' : 'No'}
+                  </Typography>
+                ) : null}
+              </Box>
+            ) : null}
+          </Box>
         ) : null}
       </CardContent>
     </Card>

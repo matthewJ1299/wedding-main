@@ -40,6 +40,40 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 
 	const asText = (value) => (value === null || value === undefined ? '' : String(value));
 
+	const personRsvpLabel = (value) => {
+		const s = (value || '').toLowerCase();
+		if (s === 'accepted') return 'Yes';
+		if (s === 'declined') return 'No';
+		return 'Pending';
+	};
+
+	const getPersonRsvp = (row) => {
+		if (!row) return null;
+		if (row.isLinkedPlusOne && row.linkedInviteeId) {
+			const primary = invitees.find((i) => i?.id === row.linkedInviteeId);
+			return primary?.rsvpPartner ?? null;
+		}
+		return row.rsvpPrimary ?? row.rsvp ?? null;
+	};
+
+	const renderRsvpCell = (row) => {
+		const aggregate = (row?.rsvp || '').toLowerCase();
+		const person = getPersonRsvp(row);
+		if (aggregate === 'mixed') {
+			return (
+				<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+					<Chip label={`Yes/No: ${personRsvpLabel(person)}`} size="small" color="info" />
+					<Typography variant="caption" sx={{ color: '#666' }}>
+						Aggregate: Mixed
+					</Typography>
+				</Box>
+			);
+		}
+		const label = personRsvpLabel(person);
+		const color = label === 'Yes' ? 'success' : label === 'No' ? 'error' : 'warning';
+		return <Chip label={label} size="small" color={color} />;
+	};
+
 	// Start editing an invitee
 	const startEdit = (invitee) => {
 		setEditId(invitee.id);
@@ -121,6 +155,8 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
       ['email', 'email'],
       ['phone', 'phone'],
       ['rsvp', 'rsvp'],
+      ['rsvpPrimary', 'rsvpPrimary'],
+      ['rsvpPartner', 'rsvpPartner'],
       ['allowPlusOne', 'allowPlusOne'],
       ['mealSelection', 'dietaryRequirementsAndAllergies'],
       ['songRequest', 'songRequest'],
@@ -341,7 +377,7 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 													</TableCell>
 													<TableCell>{asText(invitee.email)}</TableCell>
 													<TableCell>{asText(invitee.phone)}</TableCell>
-													<TableCell>{formatStatus(invitee.rsvp)}</TableCell>
+													<TableCell>{renderRsvpCell(invitee)}</TableCell>
 													<TableCell>
 														{invitee.isLinkedPlusOne ? (
 															<span style={{ color: '#999', fontStyle: 'italic' }}>Linked</span>
@@ -423,7 +459,7 @@ const InviteeTable = ({ invitees, addInvitee, updateInvitee, removeInvitee }) =>
 											</TableCell>
 											<TableCell>{asText(group[0].email)}</TableCell>
 											<TableCell>{asText(group[0].phone)}</TableCell>
-											<TableCell>{formatStatus(group[0].rsvp)}</TableCell>
+											<TableCell>{renderRsvpCell(group[0])}</TableCell>
 											<TableCell>
 												<Button component={Link} to={`/invitation/${group[0].id}`}>View</Button>
 											</TableCell>
